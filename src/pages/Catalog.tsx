@@ -3,7 +3,7 @@ import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from
 import { Link } from 'react-router-dom';
 import { products, Product } from '../data/products';
 import { cn } from '../utils/cn';
-import { ShoppingBag, Bell, Search, SlidersHorizontal, Filter, ArrowRight, Compass, Check } from 'lucide-react';
+import { ShoppingBag, Bell, Search, SlidersHorizontal, Filter, ArrowRight, Compass, Check, X } from 'lucide-react';
 import { useStore } from '../store/useStore';
 
 const categories = [
@@ -352,22 +352,34 @@ export function Catalog() {
           </div>
         </div>
 
-        {/* Search input — expands when search is active */}
+        {/* Search input — expands inline when search is active */}
         <AnimatePresence>
           {searchOpen && (
             <motion.div
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
               className="overflow-hidden"
             >
-              <input
-                autoFocus
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Поиск по названию..."
-                className="w-full bg-white rounded-full px-6 py-3 border-none shadow-sm focus:ring-2 focus:ring-primary outline-none text-sm"
-              />
+              <div className="relative max-w-sm">
+                <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 opacity-30" />
+                <input
+                  autoFocus
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Поиск по названию..."
+                  className="w-full bg-white rounded-2xl pl-11 pr-5 py-3 shadow-sm focus:ring-2 focus:ring-primary outline-none text-sm border border-primary/5"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 opacity-30 hover:opacity-60 transition-opacity"
+                  >
+                    <X size={16} />
+                  </button>
+                )}
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
