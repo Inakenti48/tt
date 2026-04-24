@@ -44,7 +44,7 @@ export function Profile() {
           <label className="text-sm font-bold  px-4">Эл. почта</label>
           <input
             type="email"
-            placeholder="zen@space.com"
+            placeholder="info@rooomebel.ru"
             className="w-full bg-white pill px-6 py-4 border-none shadow-sm focus:ring-2 focus:ring-primary outline-none "
           />
         </div>

@@ -22,7 +22,7 @@ export const products: Product[] = [
   {
     id: '1',
     name: 'минималист кресло',
-    sku: 'ZN01045',
+    sku: 'RM01045',
     price: 450,
     image: 'https://images.unsplash.com/photo-1592078615290-033ee584e267?auto=format&fit=crop&q=80&w=800',
     category: 'мебель',
@@ -40,7 +40,7 @@ export const products: Product[] = [
   {
     id: '2',
     name: 'керамическая ваза',
-    sku: 'ZN02018',
+    sku: 'RM02018',
     price: 85,
     image: 'https://images.unsplash.com/photo-1578500494198-246f612d3b3d?auto=format&fit=crop&q=80&w=800',
     category: 'декор',
@@ -58,7 +58,7 @@ export const products: Product[] = [
   {
     id: '3',
     name: 'дзен лампа',
-    sku: 'ZN03092',
+    sku: 'RM03092',
     price: 120,
     image: 'https://images.unsplash.com/photo-1534073828943-f801091bb18c?auto=format&fit=crop&q=80&w=800',
     category: 'освещение',
@@ -75,7 +75,7 @@ export const products: Product[] = [
   {
     id: '4',
     name: 'льняная подушка',
-    sku: 'ZN04037',
+    sku: 'RM04037',
     price: 45,
     image: 'https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&q=80&w=800',
     category: 'текстиль',
@@ -93,7 +93,7 @@ export const products: Product[] = [
   {
     id: '5',
     name: 'деревянный столик',
-    sku: 'ZN05061',
+    sku: 'RM05061',
     price: 280,
     image: 'https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?auto=format&fit=crop&q=80&w=800',
     category: 'мебель',
@@ -110,7 +110,7 @@ export const products: Product[] = [
   {
     id: '6',
     name: 'ароматическая свеча',
-    sku: 'ZN06014',
+    sku: 'RM06014',
     price: 35,
     image: 'https://images.unsplash.com/photo-1602607544604-e41efb538828?auto=format&fit=crop&q=80&w=800',
     category: 'декор',
