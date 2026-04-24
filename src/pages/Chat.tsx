@@ -44,8 +44,8 @@ export function Chat() {
       {/* Chat header */}
       <div className="flex items-center gap-3 mb-4">
         <button
-          onClick={() => navigate('/catalog')}
-          className="p-2 hover:bg-primary/5 rounded-full transition-colors"
+          onClick={() => navigate(-1)}
+          className="bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-sm hover:shadow-md transition-shadow"
         >
           <ArrowLeft size={20} />
         </button>

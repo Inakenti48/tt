@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { Package, CheckCircle, Bell, MessageCircle, Send, ArrowLeft } from 'lucide-react';
 import { useStore, Order } from '../store/useStore';
 import { cn } from '../utils/cn';
@@ -22,7 +23,7 @@ function AdminChat({ order, onBack }: { order: Order; onBack: () => void }) {
   return (
     <div className="flex flex-col h-[60vh]">
       <div className="flex items-center gap-3 mb-4">
-        <button onClick={onBack} className="p-2 hover:bg-primary/5 rounded-full transition-colors">
+        <button onClick={onBack} className="bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-sm hover:shadow-md transition-shadow">
           <ArrowLeft size={20} />
         </button>
         <div>
@@ -82,6 +83,7 @@ function AdminChat({ order, onBack }: { order: Order; onBack: () => void }) {
 }
 
 export function Admin() {
+  const navigate = useNavigate();
   const { orders } = useStore();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [login, setLogin] = useState('');
@@ -103,7 +105,15 @@ export function Admin() {
 
   if (!isLoggedIn) {
     return (
-      <div className="max-w-md mx-auto py-24">
+      <div className="max-w-md mx-auto py-12">
+        <div className="mb-6">
+          <button
+            onClick={() => navigate(-1)}
+            className="bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-sm hover:shadow-md transition-shadow"
+          >
+            <ArrowLeft size={20} />
+          </button>
+        </div>
         <h2 className="text-3xl font-bold mb-8 text-center">Панель администратора</h2>
         <form onSubmit={handleLogin} className="space-y-4">
           <div className="space-y-2">
@@ -139,6 +149,14 @@ export function Admin() {
 
   return (
     <div className="py-8">
+      <div className="mb-4">
+        <button
+          onClick={() => navigate(-1)}
+          className="bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-sm hover:shadow-md transition-shadow"
+        >
+          <ArrowLeft size={20} />
+        </button>
+      </div>
       <div className="flex justify-between items-center mb-8">
         <h2 className="text-3xl font-bold">Панель администратора</h2>
         <div className="flex items-center gap-2 bg-primary/5 px-4 py-2 pill text-sm">

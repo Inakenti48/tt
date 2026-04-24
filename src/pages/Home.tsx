@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { Plus } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Plus, ArrowLeft } from 'lucide-react';
 import { products } from '../data/products';
 
 function HandDrawnCircle() {
@@ -81,11 +81,21 @@ function useTypewriter(phrases: string[], typingSpeed = 70, deletingSpeed = 40, 
 }
 
 export function Home() {
+  const navigate = useNavigate();
   const heroProduct = products[0];
   const typedText = useTypewriter(phrases, 80, 45, 2400);
 
   return (
     <div className="flex flex-col items-center min-h-[80vh] pt-4">
+      {/* Back button */}
+      <div className="w-full mb-4">
+        <button
+          onClick={() => navigate(-1)}
+          className="bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-sm hover:shadow-md transition-shadow"
+        >
+          <ArrowLeft size={20} />
+        </button>
+      </div>
       {/* Hero text with typewriter effect */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
