@@ -21,7 +21,7 @@ export function Profile() {
             isLogin ? "bg-primary text-white" : "opacity-50 hover:opacity-100"
           )}
         >
-          login
+          вход
         </button>
         <button
           onClick={() => setIsLogin(false)}
@@ -30,7 +30,7 @@ export function Profile() {
             !isLogin ? "bg-primary text-white" : "opacity-50 hover:opacity-100"
           )}
         >
-          register
+          регистрация
         </button>
       </div>
 
@@ -41,7 +41,7 @@ export function Profile() {
         className="space-y-6"
       >
         <div className="space-y-2">
-          <label className="text-sm font-bold lowercase px-4">email</label>
+          <label className="text-sm font-bold lowercase px-4">эл. почта</label>
           <input
             type="email"
             placeholder="zen@space.com"
@@ -50,7 +50,7 @@ export function Profile() {
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-bold lowercase px-4">password</label>
+          <label className="text-sm font-bold lowercase px-4">пароль</label>
           <input
             type="password"
             placeholder="••••••••"
@@ -60,19 +60,19 @@ export function Profile() {
 
         {!isLogin && (
           <div className="space-y-2">
-            <label className="text-sm font-bold lowercase px-4">upload avatar</label>
+            <label className="text-sm font-bold lowercase px-4">загрузить аватар</label>
             <button
               onClick={handleUploadClick}
               className="w-full bg-white pill px-6 py-4 border-dashed border-2 border-primary/10 flex items-center justify-center gap-2 text-primary/50 hover:bg-primary/5 transition-colors"
             >
               <Upload size={18} />
-              <span>select image</span>
+              <span>выбрать изображение</span>
             </button>
           </div>
         )}
 
         <button className="w-full bg-primary text-white pill py-5 text-lg font-bold hover:scale-[1.02] active:scale-[0.98] transition-all">
-          {isLogin ? 'proceed to login' : 'create account'}
+          {isLogin ? 'войти' : 'создать аккаунт'}
         </button>
       </motion.div>
 
@@ -99,7 +99,7 @@ export function Profile() {
                 onClick={() => setShowModal(false)}
                 className="bg-white text-primary pill px-6 py-2 text-sm font-bold hover:bg-white/90"
               >
-                got it
+                понятно
               </button>
             </motion.div>
           </div>

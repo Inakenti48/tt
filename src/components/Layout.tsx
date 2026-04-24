@@ -11,7 +11,7 @@ export function Layout({ children }: LayoutProps) {
     <div className="min-h-screen pb-32">
       <header className="p-8 flex justify-between items-center">
         <h1 className="text-2xl tracking-tighter">zenspace</h1>
-        <div className="text-sm opacity-50 lowercase">explore peace</div>
+        <div className="text-sm opacity-50 lowercase">обретите покой</div>
       </header>
 
       <motion.main

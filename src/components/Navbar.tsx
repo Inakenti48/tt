@@ -4,10 +4,10 @@ import { Link, useLocation } from 'react-router-dom';
 import { cn } from '../utils/cn';
 
 const navItems = [
-  { id: 'home', icon: Home, label: 'home', path: '/' },
-  { id: 'catalog', icon: ShoppingBag, label: 'catalog', path: '/catalog' },
-  { id: 'favorites', icon: Star, label: 'favorites', path: '/favorites' },
-  { id: 'profile', icon: User, label: 'profile', path: '/profile' },
+  { id: 'home', icon: Home, label: 'главная', path: '/' },
+  { id: 'catalog', icon: ShoppingBag, label: 'каталог', path: '/catalog' },
+  { id: 'favorites', icon: Star, label: 'избранное', path: '/favorites' },
+  { id: 'profile', icon: User, label: 'профиль', path: '/profile' },
 ];
 
 export function Navbar() {
