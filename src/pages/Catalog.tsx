@@ -3,7 +3,8 @@ import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from
 import { Link } from 'react-router-dom';
 import { products, Product } from '../data/products';
 import { cn } from '../utils/cn';
-import { ShoppingBag, Bell, Search, SlidersHorizontal, Filter, ArrowRight, Compass } from 'lucide-react';
+import { ShoppingBag, Bell, Search, SlidersHorizontal, Filter, ArrowRight, Compass, Check } from 'lucide-react';
+import { useStore } from '../store/useStore';
 
 const categories = [
   { key: 'все', label: 'все' },
@@ -23,7 +24,7 @@ const dropVariants = [
   { rotate: 5, x: 15 },
 ];
 
-function TumblerCard({ product, index, onOrder }: { product: Product; index: number; onOrder: (e: React.MouseEvent) => void }) {
+function TumblerCard({ product, index, onOrder }: { product: Product; index: number; onOrder: (e: React.MouseEvent, product: Product) => void }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -119,7 +120,7 @@ function TumblerCard({ product, index, onOrder }: { product: Product; index: num
               <div className="flex items-center gap-2">
                 <span className="text-lg font-bold">{product.price} ₽</span>
                 <button
-                  onClick={onOrder}
+                  onClick={(e) => onOrder(e, product)}
                   className="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center hover:scale-110 active:scale-95 transition-transform shadow-md"
                 >
                   <ShoppingBag size={16} />
@@ -147,14 +148,16 @@ function TumblerCard({ product, index, onOrder }: { product: Product; index: num
 }
 
 export function Catalog() {
+  const { addToCart } = useStore();
   const [showOrderToast, setShowOrderToast] = useState(false);
   const [activeCategory, setActiveCategory] = useState('все');
 
-  const handleOrder = (e: React.MouseEvent) => {
+  const handleOrder = (e: React.MouseEvent, product: Product) => {
     e.preventDefault();
     e.stopPropagation();
+    addToCart(product);
     setShowOrderToast(true);
-    setTimeout(() => setShowOrderToast(false), 3000);
+    setTimeout(() => setShowOrderToast(false), 2000);
   };
 
   const filtered = activeCategory === 'все'
@@ -174,8 +177,8 @@ export function Catalog() {
             exit={{ opacity: 0, y: -100 }}
             className="fixed top-8 left-1/2 -translate-x-1/2 z-[100] bg-primary text-white pill px-6 py-3 flex items-center gap-3 shadow-xl"
           >
-            <Bell size={18} />
-            <span className="text-sm font-bold ">Уведомление о заказе отправлено</span>
+            <Check size={18} />
+            <span className="text-sm font-bold">Добавлено в корзину</span>
           </motion.div>
         )}
       </AnimatePresence>

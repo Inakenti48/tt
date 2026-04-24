@@ -7,6 +7,9 @@ import { ProductDetail } from './pages/ProductDetail';
 import { Favorites } from './pages/Favorites';
 import { Profile } from './pages/Profile';
 import { Admin } from './pages/Admin';
+import { Chat } from './pages/Chat';
+import { StoreProvider } from './store/useStore';
+import { CartSidebar } from './components/CartSidebar';
 
 const pageVariants = {
   initial: { opacity: 0, y: 24, scale: 0.99 },
@@ -40,6 +43,7 @@ function AnimatedRoutes() {
           <Route path="/favorites" element={<Favorites />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/chat" element={<Chat />} />
         </Routes>
       </motion.div>
     </AnimatePresence>
@@ -48,11 +52,14 @@ function AnimatedRoutes() {
 
 function App() {
   return (
-    <Router>
-      <Layout>
-        <AnimatedRoutes />
-      </Layout>
-    </Router>
+    <StoreProvider>
+      <Router>
+        <Layout>
+          <AnimatedRoutes />
+          <CartSidebar />
+        </Layout>
+      </Router>
+    </StoreProvider>
   );
 }
 

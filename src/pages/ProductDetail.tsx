@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Star, ShoppingBag, ArrowRight, ChevronLeft, ChevronRight, Bell } from 'lucide-react';
+import { ArrowLeft, Star, ShoppingBag, ArrowRight, ChevronLeft, ChevronRight, Check } from 'lucide-react';
 import { products } from '../data/products';
 import { cn } from '../utils/cn';
+import { useStore } from '../store/useStore';
 
 export function ProductDetail() {
   const { id } = useParams<{ id: string }>();
@@ -30,9 +31,12 @@ export function ProductDetail() {
     );
   }
 
+  const { addToCart } = useStore();
+
   const handleOrder = () => {
+    addToCart(product, activeColor);
     setShowOrderToast(true);
-    setTimeout(() => setShowOrderToast(false), 3000);
+    setTimeout(() => setShowOrderToast(false), 2000);
   };
 
   // Current color variant image
@@ -62,8 +66,8 @@ export function ProductDetail() {
             exit={{ opacity: 0, y: -100 }}
             className="fixed top-8 left-1/2 -translate-x-1/2 z-[100] bg-primary text-white pill px-6 py-3 flex items-center gap-3 shadow-xl"
           >
-            <Bell size={18} />
-            <span className="text-sm font-bold ">Добавлено В корзину</span>
+            <Check size={18} />
+            <span className="text-sm font-bold">Добавлено в корзину</span>
           </motion.div>
         )}
       </AnimatePresence>
