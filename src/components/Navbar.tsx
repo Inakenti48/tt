@@ -4,10 +4,10 @@ import { Link, useLocation } from 'react-router-dom';
 import { cn } from '../utils/cn';
 
 const navItems = [
-  { id: 'home', icon: Home, label: 'главная', path: '/' },
-  { id: 'catalog', icon: ShoppingBag, label: 'каталог', path: '/catalog' },
-  { id: 'favorites', icon: Star, label: 'избранное', path: '/favorites' },
-  { id: 'profile', icon: User, label: 'профиль', path: '/profile' },
+  { id: 'home', icon: Home, label: 'Главная', path: '/' },
+  { id: 'catalog', icon: ShoppingBag, label: 'Каталог', path: '/catalog' },
+  { id: 'favorites', icon: Star, label: 'Избранное', path: '/favorites' },
+  { id: 'profile', icon: User, label: 'Профиль', path: '/profile' },
 ];
 
 export function Navbar() {
@@ -34,7 +34,7 @@ export function Navbar() {
                 <motion.span
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
-                  className="text-sm font-bold lowercase"
+                  className="text-sm font-bold"
                 >
                   {item.label}
                 </motion.span>

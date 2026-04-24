@@ -154,7 +154,7 @@ export function Home() {
           to="/catalog"
           className="w-full bg-primary text-white rounded-full px-10 py-5 flex items-center justify-center gap-3 text-lg font-bold hover:scale-[1.02] active:scale-[0.98] transition-transform shadow-md"
         >
-          узнать больше
+          Узнать больше
         </Link>
       </motion.div>
     </div>

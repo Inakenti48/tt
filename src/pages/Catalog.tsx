@@ -175,7 +175,7 @@ export function Catalog() {
             className="fixed top-8 left-1/2 -translate-x-1/2 z-[100] bg-primary text-white pill px-6 py-3 flex items-center gap-3 shadow-xl"
           >
             <Bell size={18} />
-            <span className="text-sm font-bold lowercase">уведомление о заказе отправлено</span>
+            <span className="text-sm font-bold ">Уведомление о заказе отправлено</span>
           </motion.div>
         )}
       </AnimatePresence>
@@ -195,7 +195,7 @@ export function Catalog() {
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-6">
           <h2 className="text-5xl md:text-7xl font-bold tracking-tight mb-2">исследуй</h2>
           <p className="opacity-60 text-sm md:text-base mb-5 max-w-xs">
-            отражение вашего стиля, вкуса и индивидуальности
+            Отражение вашего стиля, вкуса и индивидуальности
           </p>
           <Link
             to="#catalog-grid"
@@ -206,7 +206,7 @@ export function Catalog() {
             className="bg-primary text-white rounded-full px-6 py-3 flex items-center gap-2 text-sm font-bold shadow-lg hover:scale-105 transition-transform"
           >
             <Compass size={16} />
-            узнать больше
+            Узнать больше
           </Link>
         </div>
       </motion.div>
@@ -214,7 +214,7 @@ export function Catalog() {
       {/* "Рекомендуем для вас" — horizontal scroll section from reference */}
       <div className="mb-12">
         <div className="flex items-center justify-between mb-5">
-          <h3 className="text-2xl font-bold">рекомендуем для вас</h3>
+          <h3 className="text-2xl font-bold">Рекомендуем для вас</h3>
           <Link to="#catalog-grid" className="flex items-center gap-1 opacity-50 hover:opacity-100 transition-opacity">
             <ArrowRight size={20} />
           </Link>
@@ -222,11 +222,11 @@ export function Catalog() {
 
         {/* Category pills for recommendations */}
         <div className="flex gap-2 mb-5">
-          {['гостиная', 'столовая', 'кабинет'].map((cat, i) => (
+          {['Гостиная', 'Столовая', 'Кабинет'].map((cat, i) => (
             <span
               key={cat}
               className={cn(
-                "px-4 py-2 rounded-full border text-sm lowercase transition-all cursor-pointer",
+                "px-4 py-2 rounded-full border text-sm  transition-all cursor-pointer",
                 i === 0 ? "border-primary bg-primary/5 font-bold" : "border-primary/10 hover:bg-primary/5"
               )}
             >
@@ -287,7 +287,7 @@ export function Catalog() {
               key={cat.key}
               onClick={() => setActiveCategory(cat.key)}
               className={cn(
-                "px-4 py-2 pill border border-primary/10 text-sm lowercase transition-all",
+                "px-4 py-2 pill border border-primary/10 text-sm  transition-all",
                 activeCategory === cat.key ? "bg-primary text-white" : "hover:bg-primary/5"
               )}
             >

@@ -17,17 +17,17 @@ export function Admin() {
   if (!isLoggedIn) {
     return (
       <div className="max-w-md mx-auto py-24">
-        <h2 className="text-3xl font-bold mb-8 text-center">доступ администратора</h2>
+        <h2 className="text-3xl font-bold mb-8 text-center">Доступ администратора</h2>
         <form onSubmit={handleLogin} className="space-y-4">
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="пароль администратора"
+            placeholder="Пароль администратора"
             className="w-full bg-white pill px-6 py-4 border-none shadow-sm focus:ring-2 focus:ring-primary outline-none"
           />
           <button className="w-full bg-primary text-white pill py-4 font-bold">
-            войти в панель
+            Войти в панель
           </button>
         </form>
       </div>
@@ -40,7 +40,7 @@ export function Admin() {
         <h2 className="text-4xl font-bold">панель администратора</h2>
         <div className="flex items-center gap-2 bg-primary/5 px-4 py-2 pill text-sm">
           <Bell size={16} />
-          <span>уведомления активны</span>
+          <span>Уведомления активны</span>
         </div>
       </div>
 
@@ -56,7 +56,7 @@ export function Admin() {
                 <stat.icon size={24} />
               </div>
               <div>
-                <p className="text-sm opacity-50 lowercase">{stat.label}</p>
+                <p className="text-sm opacity-50 ">{stat.label}</p>
                 <p className="text-2xl font-bold">{stat.value}</p>
               </div>
             </div>
@@ -66,12 +66,12 @@ export function Admin() {
 
       <div className="bg-white pill shadow-sm overflow-hidden">
         <div className="px-8 py-6 border-b border-primary/5">
-          <h3 className="text-xl font-bold">последние заказы</h3>
+          <h3 className="text-xl font-bold">Последние заказы</h3>
         </div>
         <div className="p-8">
           <table className="w-full text-left">
             <thead>
-              <tr className="text-sm opacity-50 lowercase">
+              <tr className="text-sm opacity-50 ">
                 <th className="pb-4 font-normal">номер заказа</th>
                 <th className="pb-4 font-normal">клиент</th>
                 <th className="pb-4 font-normal">статус</th>
@@ -86,7 +86,7 @@ export function Admin() {
               ].map((order) => (
                 <tr key={order.id} className="text-sm">
                   <td className="py-4 font-bold">{order.id}</td>
-                  <td className="py-4 lowercase">{order.customer}</td>
+                  <td className="py-4 ">{order.customer}</td>
                   <td className="py-4">
                     <span className={cn(
                       "px-3 py-1 pill text-xs font-bold",

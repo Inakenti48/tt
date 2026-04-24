@@ -19,12 +19,12 @@ export function ProductDetail() {
   if (!product) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] text-center">
-        <h2 className="text-3xl font-bold mb-4">товар не найден</h2>
+        <h2 className="text-3xl font-bold mb-4">Товар не найден</h2>
         <button
           onClick={() => navigate('/catalog')}
           className="bg-primary text-white pill px-8 py-3 font-bold"
         >
-          вернуться в каталог
+          Вернуться в каталог
         </button>
       </div>
     );
@@ -63,7 +63,7 @@ export function ProductDetail() {
             className="fixed top-8 left-1/2 -translate-x-1/2 z-[100] bg-primary text-white pill px-6 py-3 flex items-center gap-3 shadow-xl"
           >
             <Bell size={18} />
-            <span className="text-sm font-bold lowercase">добавлено в корзину</span>
+            <span className="text-sm font-bold ">Добавлено В корзину</span>
           </motion.div>
         )}
       </AnimatePresence>
@@ -205,7 +205,7 @@ export function ProductDetail() {
         {/* Description with toggle */}
         <div className="mb-6">
           <p className={cn(
-            "text-sm opacity-60 leading-relaxed lowercase transition-all",
+            "text-sm opacity-60 leading-relaxed  transition-all",
             !expanded && "line-clamp-2"
           )}>
             {product.description}
@@ -214,7 +214,7 @@ export function ProductDetail() {
             onClick={() => setExpanded(!expanded)}
             className="text-sm font-bold mt-1 hover:opacity-70 transition-opacity"
           >
-            {expanded ? 'скрыть —' : 'подробнее +'}
+            {expanded ? 'Скрыть —' : 'Подробнее +'}
           </button>
         </div>
 
@@ -274,7 +274,7 @@ export function ProductDetail() {
           <div className="bg-white/15 rounded-full p-2.5 mr-3">
             <ShoppingBag size={18} />
           </div>
-          <span className="text-base font-bold lowercase">в корзину</span>
+          <span className="text-base font-bold ">В корзину</span>
           <div className="ml-auto flex items-center gap-2">
             <span className="text-xl font-bold">${product.price}</span>
             <ArrowRight size={18} />
