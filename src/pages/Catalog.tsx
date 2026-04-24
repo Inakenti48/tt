@@ -151,6 +151,9 @@ export function Catalog() {
   const { addToCart } = useStore();
   const [showOrderToast, setShowOrderToast] = useState(false);
   const [activeCategory, setActiveCategory] = useState('все');
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortOrder, setSortOrder] = useState<'none' | 'asc' | 'desc'>('none');
 
   const handleOrder = (e: React.MouseEvent, product: Product) => {
     e.preventDefault();
@@ -160,9 +163,23 @@ export function Catalog() {
     setTimeout(() => setShowOrderToast(false), 2000);
   };
 
-  const filtered = activeCategory === 'все'
-    ? products
+  const toggleSort = () => {
+    setSortOrder((prev) => prev === 'none' ? 'asc' : prev === 'asc' ? 'desc' : 'none');
+  };
+
+  let filtered = activeCategory === 'все'
+    ? [...products]
     : products.filter((p) => p.category === activeCategory);
+
+  if (searchQuery.trim()) {
+    const q = searchQuery.trim().toLowerCase();
+    filtered = filtered.filter((p) =>
+      p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q)
+    );
+  }
+
+  if (sortOrder === 'asc') filtered.sort((a, b) => a.price - b.price);
+  if (sortOrder === 'desc') filtered.sort((a, b) => b.price - a.price);
 
   // Pick 3 recommended products (shuffle-like)
   const recommended = [products[0], products[3], products[2]];
@@ -272,32 +289,88 @@ export function Catalog() {
       </div>
 
       {/* Search / Filter / Sort icon row */}
-      <div id="catalog-grid" className="flex items-center gap-3 mb-8">
-        <button className="w-11 h-11 rounded-full border border-primary/15 flex items-center justify-center hover:bg-primary/5 transition-colors">
-          <Search size={18} className="opacity-60" />
-        </button>
-        <button className="w-11 h-11 rounded-full border border-primary/15 flex items-center justify-center hover:bg-primary/5 transition-colors">
-          <Filter size={18} className="opacity-60" />
-        </button>
-        <button className="w-11 h-11 rounded-full border border-primary/15 flex items-center justify-center hover:bg-primary/5 transition-colors">
-          <SlidersHorizontal size={18} className="opacity-60" />
-        </button>
+      <div id="catalog-grid" className="space-y-4 mb-8">
+        <div className="flex items-center gap-3">
+          {/* Search button */}
+          <button
+            onClick={() => setSearchOpen(!searchOpen)}
+            className={cn(
+              "w-11 h-11 rounded-full border flex items-center justify-center transition-all",
+              searchOpen ? "bg-primary text-white border-primary" : "border-primary/15 hover:bg-primary/5"
+            )}
+          >
+            <Search size={18} className={searchOpen ? "" : "opacity-60"} />
+          </button>
 
-        {/* Category pills */}
-        <div className="flex gap-2 ml-auto flex-wrap">
-          {categories.map((cat) => (
-            <button
-              key={cat.key}
-              onClick={() => setActiveCategory(cat.key)}
-              className={cn(
-                "px-4 py-2 pill border border-primary/10 text-sm  transition-all",
-                activeCategory === cat.key ? "bg-primary text-white" : "hover:bg-primary/5"
-              )}
+          {/* Filter button — toggles category pills */}
+          <button
+            onClick={() => setActiveCategory(activeCategory === 'все' ? 'мебель' : 'все')}
+            className={cn(
+              "w-11 h-11 rounded-full border flex items-center justify-center transition-all",
+              activeCategory !== 'все' ? "bg-primary text-white border-primary" : "border-primary/15 hover:bg-primary/5"
+            )}
+          >
+            <Filter size={18} className={activeCategory !== 'все' ? "" : "opacity-60"} />
+          </button>
+
+          {/* Sort button */}
+          <button
+            onClick={toggleSort}
+            className={cn(
+              "w-11 h-11 rounded-full border flex items-center justify-center transition-all",
+              sortOrder !== 'none' ? "bg-primary text-white border-primary" : "border-primary/15 hover:bg-primary/5"
+            )}
+          >
+            <SlidersHorizontal size={18} className={sortOrder !== 'none' ? "" : "opacity-60"} />
+          </button>
+
+          {/* Sort label */}
+          {sortOrder !== 'none' && (
+            <motion.span
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="text-xs opacity-50"
             >
-              {cat.label}
-            </button>
-          ))}
+              {sortOrder === 'asc' ? 'Цена ↑' : 'Цена ↓'}
+            </motion.span>
+          )}
+
+          {/* Category pills */}
+          <div className="flex gap-2 ml-auto flex-wrap">
+            {categories.map((cat) => (
+              <button
+                key={cat.key}
+                onClick={() => setActiveCategory(cat.key)}
+                className={cn(
+                  "px-4 py-2 pill border border-primary/10 text-sm transition-all",
+                  activeCategory === cat.key ? "bg-primary text-white" : "hover:bg-primary/5"
+                )}
+              >
+                {cat.label}
+              </button>
+            ))}
+          </div>
         </div>
+
+        {/* Search input — expands when search is active */}
+        <AnimatePresence>
+          {searchOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden"
+            >
+              <input
+                autoFocus
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Поиск по названию..."
+                className="w-full bg-white rounded-full px-6 py-3 border-none shadow-sm focus:ring-2 focus:ring-primary outline-none text-sm"
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Product grid */}
