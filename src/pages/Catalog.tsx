@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { products } from '../data/products';
 import { cn } from '../utils/cn';
-import { ShoppingBag, Bell, Search } from 'lucide-react';
+import { ShoppingBag, Bell, Search, SlidersHorizontal, Filter } from 'lucide-react';
 
 const categories = [
   { key: 'все', label: 'все' },
@@ -44,12 +44,26 @@ export function Catalog() {
         )}
       </AnimatePresence>
 
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
-        <div>
-          <h2 className="text-5xl md:text-6xl font-bold tracking-tight">исследуй</h2>
-          <p className="opacity-50 lowercase mt-1">наша коллекция</p>
-        </div>
-        <div className="flex gap-2 flex-wrap">
+      {/* Header */}
+      <div className="mb-8">
+        <h2 className="text-5xl md:text-6xl font-bold tracking-tight mb-1">исследуй</h2>
+        <p className="opacity-50 lowercase text-sm">наша коллекция</p>
+      </div>
+
+      {/* Search / Filter / Sort icon row - from reference */}
+      <div className="flex items-center gap-3 mb-8">
+        <button className="w-11 h-11 rounded-full border border-primary/15 flex items-center justify-center hover:bg-primary/5 transition-colors">
+          <Search size={18} className="opacity-60" />
+        </button>
+        <button className="w-11 h-11 rounded-full border border-primary/15 flex items-center justify-center hover:bg-primary/5 transition-colors">
+          <Filter size={18} className="opacity-60" />
+        </button>
+        <button className="w-11 h-11 rounded-full border border-primary/15 flex items-center justify-center hover:bg-primary/5 transition-colors">
+          <SlidersHorizontal size={18} className="opacity-60" />
+        </button>
+
+        {/* Category pills */}
+        <div className="flex gap-2 ml-auto flex-wrap">
           {categories.map((cat) => (
             <button
               key={cat.key}
@@ -65,43 +79,39 @@ export function Catalog() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+      {/* Product grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {filtered.map((product, index) => (
           <motion.div
             key={product.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
+            transition={{ delay: index * 0.08 }}
             className="group"
           >
             <Link to={`/product/${product.id}`}>
-              <div className="relative aspect-square mb-4 bg-white pill overflow-hidden shadow-sm group-hover:shadow-md transition-shadow">
+              <div className="relative aspect-square mb-4 bg-white rounded-2xl overflow-hidden shadow-sm group-hover:shadow-md transition-shadow">
                 <img
                   src={product.image}
                   alt={product.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
-                <div className="absolute top-4 right-4">
-                  <button
-                    onClick={handleOrder}
-                    className="bg-white/80 backdrop-blur-md p-2 pill text-primary hover:bg-white transition-colors"
-                  >
-                    <ShoppingBag size={18} />
-                  </button>
-                </div>
               </div>
 
-              <div className="flex justify-between items-start px-2">
+              <div className="flex justify-between items-start px-1">
                 <div>
-                  <h3 className="text-lg font-bold">{product.name}</h3>
-                  <p className="text-sm opacity-50 lowercase">{product.category}</p>
+                  <h3 className="text-base font-bold leading-tight">{product.name}</h3>
+                  <p className="text-xs opacity-40 tracking-wider uppercase mt-0.5">{product.sku}</p>
                 </div>
-                <button
-                  onClick={handleOrder}
-                  className="bg-primary text-white pill px-4 py-2 text-sm font-bold flex items-center gap-2 hover:scale-105 transition-transform"
-                >
-                  в корзину • ${product.price}
-                </button>
+                <div className="flex items-center gap-2">
+                  <span className="text-lg font-bold">${product.price}</span>
+                  <button
+                    onClick={handleOrder}
+                    className="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center hover:scale-110 active:scale-95 transition-transform shadow-md"
+                  >
+                    <ShoppingBag size={16} />
+                  </button>
+                </div>
               </div>
             </Link>
           </motion.div>

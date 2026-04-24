@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Heart, ShoppingBag, ArrowRight, Bell } from 'lucide-react';
+import { ArrowLeft, Plus, Bell } from 'lucide-react';
 import { products } from '../data/products';
 
 export function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [isFavorite, setIsFavorite] = useState(false);
   const [showOrderToast, setShowOrderToast] = useState(false);
 
   const product = products.find((p) => p.id === id);
@@ -31,6 +30,11 @@ export function ProductDetail() {
     setTimeout(() => setShowOrderToast(false), 3000);
   };
 
+  // Parse dimensions for the specs table
+  const dimParts = product.dimensions?.split('×').map((d) => d.trim()) || [];
+  const height = dimParts[2] || dimParts[0] || '—';
+  const width = dimParts[1] || dimParts[0] || '—';
+
   return (
     <div className="pb-32">
       <AnimatePresence>
@@ -48,35 +52,43 @@ export function ProductDetail() {
       </AnimatePresence>
 
       {/* Top navigation */}
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-center mb-6">
         <button
           onClick={() => navigate(-1)}
-          className="bg-white p-3 pill shadow-sm hover:shadow-md transition-shadow"
+          className="bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-sm hover:shadow-md transition-shadow"
         >
-          <ArrowLeft size={22} />
+          <ArrowLeft size={20} />
         </button>
         <button
-          onClick={() => setIsFavorite(!isFavorite)}
-          className="bg-white p-3 pill shadow-sm hover:shadow-md transition-shadow"
+          className="bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-sm hover:shadow-md transition-shadow"
         >
-          <Heart
-            size={22}
-            className={isFavorite ? 'fill-red-500 text-red-500' : ''}
-          />
+          <Plus size={20} />
         </button>
       </div>
 
-      {/* Product image */}
+      {/* Product image with rotated price sticker */}
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="relative aspect-square max-w-lg mx-auto mb-10 bg-white pill overflow-hidden shadow-sm"
+        className="relative aspect-square max-w-lg mx-auto mb-8 bg-white rounded-[2rem] overflow-visible"
       >
-        <img
-          src={product.image}
-          alt={product.name}
-          className="w-full h-full object-cover"
-        />
+        <div className="w-full h-full rounded-[2rem] overflow-hidden shadow-sm">
+          <img
+            src={product.image}
+            alt={product.name}
+            className="w-full h-full object-cover"
+          />
+        </div>
+
+        {/* Rotated price sticker - from reference */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8, rotate: 0 }}
+          animate={{ opacity: 1, scale: 1, rotate: 12 }}
+          transition={{ delay: 0.5, type: 'spring', bounce: 0.4 }}
+          className="absolute bottom-8 right-[-8px] bg-background border border-primary/10 rounded-2xl px-5 py-3 shadow-lg rotate-[12deg]"
+        >
+          <span className="text-2xl font-bold text-terracotta">${product.price}</span>
+        </motion.div>
       </motion.div>
 
       {/* Product info */}
@@ -86,34 +98,56 @@ export function ProductDetail() {
         transition={{ delay: 0.2 }}
         className="max-w-lg mx-auto"
       >
+        {/* Name and SKU */}
         <div className="mb-6">
-          <p className="text-sm opacity-50 lowercase mb-1">{product.category}</p>
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">{product.name}</h2>
-          <p className="text-base opacity-60 leading-relaxed lowercase">
-            {product.description}
-          </p>
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight leading-tight !uppercase">
+            {product.name}
+          </h2>
+          <p className="text-xs opacity-40 tracking-widest uppercase mt-1">{product.sku}</p>
         </div>
 
-        {/* Specs */}
-        {(product.dimensions || product.material) && (
-          <div className="flex gap-6 mb-8">
-            {product.dimensions && (
-              <div className="bg-white px-5 py-3 pill shadow-sm">
-                <p className="text-xs opacity-40 lowercase mb-1">размеры</p>
-                <p className="text-sm font-bold">{product.dimensions}</p>
-              </div>
+        {/* Specs table with thumbnail - from reference */}
+        <div className="flex gap-5 mb-8">
+          {/* Small product thumbnail */}
+          <div className="w-24 h-24 rounded-xl overflow-hidden shadow-sm flex-shrink-0 bg-white">
+            <img
+              src={product.image}
+              alt={product.name}
+              className="w-full h-full object-cover"
+            />
+          </div>
+
+          {/* Specs grid */}
+          <div className="flex-1 grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
+            <span className="opacity-50 font-medium">Высота</span>
+            <span className="font-bold text-right">{height}</span>
+
+            <span className="opacity-50 font-medium">Ширина</span>
+            <span className="font-bold text-right">{width}</span>
+
+            {product.weight && (
+              <>
+                <span className="opacity-50 font-medium">Вес</span>
+                <span className="font-bold text-right">{product.weight}</span>
+              </>
             )}
+
             {product.material && (
-              <div className="bg-white px-5 py-3 pill shadow-sm">
-                <p className="text-xs opacity-40 lowercase mb-1">материал</p>
-                <p className="text-sm font-bold">{product.material}</p>
-              </div>
+              <>
+                <span className="opacity-50 font-medium">Материал</span>
+                <span className="font-bold text-right">{product.material}</span>
+              </>
             )}
           </div>
-        )}
+        </div>
+
+        {/* Description */}
+        <p className="text-sm opacity-50 leading-relaxed lowercase mb-6">
+          {product.description}
+        </p>
       </motion.div>
 
-      {/* Floating bottom bar */}
+      {/* Bottom "Buy Now" button - full width pill like reference */}
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
@@ -122,16 +156,9 @@ export function ProductDetail() {
       >
         <button
           onClick={handleOrder}
-          className="w-full bg-primary text-white pill px-8 py-5 flex items-center justify-between shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all"
+          className="w-full bg-primary text-white rounded-full px-8 py-5 text-lg font-bold shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all"
         >
-          <div className="flex items-center gap-3">
-            <ShoppingBag size={22} />
-            <span className="text-lg font-bold lowercase">в корзину</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="text-lg font-bold">${product.price}</span>
-            <ArrowRight size={20} />
-          </div>
+          купить сейчас
         </button>
       </motion.div>
     </div>

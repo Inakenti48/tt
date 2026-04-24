@@ -15,3 +15,9 @@
 .pill {
   @apply rounded-pill;
 }
+
+/* Allow uppercase override on headings */
+h1.\!uppercase, h2.\!uppercase, h3.\!uppercase,
+h4.\!uppercase, h5.\!uppercase, h6.\!uppercase {
+  text-transform: uppercase;
+}
