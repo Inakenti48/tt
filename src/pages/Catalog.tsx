@@ -128,14 +128,14 @@ function TumblerCard({ product, index, onOrder }: { product: Product; index: num
             </div>
             {/* Color dots */}
             <div className="flex items-center gap-1.5 mt-2">
-              {product.colorDots.map((dot, i) => (
+              {product.colorVariants.map((variant, i) => (
                 <span
                   key={i}
                   className={cn(
                     "w-3 h-3 rounded-full border",
                     i === 0 ? "border-primary/40 ring-1 ring-primary/20 ring-offset-1" : "border-primary/10"
                   )}
-                  style={{ backgroundColor: dot }}
+                  style={{ backgroundColor: variant.hex }}
                 />
               ))}
             </div>
@@ -254,11 +254,11 @@ export function Catalog() {
               <div className="flex items-center justify-between mt-1.5">
                 <span className="text-base font-bold">${product.price}</span>
                 <div className="flex items-center gap-1">
-                  {product.colorDots.map((dot, i) => (
+                  {product.colorVariants.map((variant, i) => (
                     <span
                       key={i}
                       className="w-2.5 h-2.5 rounded-full border border-primary/10"
-                      style={{ backgroundColor: dot }}
+                      style={{ backgroundColor: variant.hex }}
                     />
                   ))}
                 </div>

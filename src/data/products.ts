@@ -1,3 +1,8 @@
+export interface ColorVariant {
+  hex: string;
+  image: string;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -10,7 +15,7 @@ export interface Product {
   weight?: string;
   material?: string;
   color?: 'terracotta' | 'mustard' | 'primary';
-  colorDots: string[];
+  colorVariants: ColorVariant[];
 }
 
 export const products: Product[] = [
@@ -26,7 +31,11 @@ export const products: Product[] = [
     weight: '8.2 кг',
     material: 'дуб, льняная ткань',
     color: 'terracotta',
-    colorDots: ['#8E392B', '#D18D3D', '#2D2D2D']
+    colorVariants: [
+      { hex: '#8E392B', image: 'https://images.unsplash.com/photo-1592078615290-033ee584e267?auto=format&fit=crop&q=80&w=800' },
+      { hex: '#D18D3D', image: 'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91?auto=format&fit=crop&q=80&w=800' },
+      { hex: '#2D2D2D', image: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&q=80&w=800' },
+    ]
   },
   {
     id: '2',
@@ -40,7 +49,11 @@ export const products: Product[] = [
     weight: '1.4 кг',
     material: 'керамика',
     color: 'mustard',
-    colorDots: ['#D18D3D', '#E8DDD0', '#6B8E6B']
+    colorVariants: [
+      { hex: '#D18D3D', image: 'https://images.unsplash.com/photo-1578500494198-246f612d3b3d?auto=format&fit=crop&q=80&w=800' },
+      { hex: '#E8DDD0', image: 'https://images.unsplash.com/photo-1612196808214-b8e1d6145a8c?auto=format&fit=crop&q=80&w=800' },
+      { hex: '#6B8E6B', image: 'https://images.unsplash.com/photo-1581783898377-1c85bf937427?auto=format&fit=crop&q=80&w=800' },
+    ]
   },
   {
     id: '3',
@@ -54,7 +67,10 @@ export const products: Product[] = [
     weight: '0.9 кг',
     material: 'бамбук, рисовая бумага',
     color: 'primary',
-    colorDots: ['#2D2D2D', '#E8DDD0']
+    colorVariants: [
+      { hex: '#2D2D2D', image: 'https://images.unsplash.com/photo-1534073828943-f801091bb18c?auto=format&fit=crop&q=80&w=800' },
+      { hex: '#E8DDD0', image: 'https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&q=80&w=800' },
+    ]
   },
   {
     id: '4',
@@ -68,7 +84,11 @@ export const products: Product[] = [
     weight: '0.5 кг',
     material: 'лён',
     color: 'terracotta',
-    colorDots: ['#8E392B', '#E8DDD0', '#4A6741']
+    colorVariants: [
+      { hex: '#8E392B', image: 'https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&q=80&w=800' },
+      { hex: '#E8DDD0', image: 'https://images.unsplash.com/photo-1629949009765-40fc74c9ec21?auto=format&fit=crop&q=80&w=800' },
+      { hex: '#4A6741', image: 'https://images.unsplash.com/photo-1616486029423-aaa4789e8c9a?auto=format&fit=crop&q=80&w=800' },
+    ]
   },
   {
     id: '5',
@@ -82,7 +102,10 @@ export const products: Product[] = [
     weight: '12.5 кг',
     material: 'массив дуба',
     color: 'mustard',
-    colorDots: ['#D18D3D', '#2D2D2D']
+    colorVariants: [
+      { hex: '#D18D3D', image: 'https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?auto=format&fit=crop&q=80&w=800' },
+      { hex: '#2D2D2D', image: 'https://images.unsplash.com/photo-1611967164521-abae8fba4668?auto=format&fit=crop&q=80&w=800' },
+    ]
   },
   {
     id: '6',
@@ -96,6 +119,10 @@ export const products: Product[] = [
     weight: '0.3 кг',
     material: 'соевый воск, хлопковый фитиль',
     color: 'primary',
-    colorDots: ['#2D2D2D', '#E8DDD0', '#8E392B']
+    colorVariants: [
+      { hex: '#2D2D2D', image: 'https://images.unsplash.com/photo-1602607544604-e41efb538828?auto=format&fit=crop&q=80&w=800' },
+      { hex: '#E8DDD0', image: 'https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&q=80&w=800' },
+      { hex: '#8E392B', image: 'https://images.unsplash.com/photo-1608181831718-2501a34781b3?auto=format&fit=crop&q=80&w=800' },
+    ]
   }
 ];

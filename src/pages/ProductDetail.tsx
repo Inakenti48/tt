@@ -10,6 +10,7 @@ export function ProductDetail() {
   const navigate = useNavigate();
   const [isFavorite, setIsFavorite] = useState(false);
   const [showOrderToast, setShowOrderToast] = useState(false);
+  const [activeColor, setActiveColor] = useState(0);
   const [activeThumb, setActiveThumb] = useState(0);
   const [expanded, setExpanded] = useState(false);
 
@@ -34,14 +35,22 @@ export function ProductDetail() {
     setTimeout(() => setShowOrderToast(false), 3000);
   };
 
-  // Generate fake "angle" thumbnails from the same image with different crops
+  // Current color variant image
+  const currentImage = product.colorVariants[activeColor]?.image || product.image;
+
+  // Thumbnails based on current color variant
   const thumbs = [
-    `${product.image}&fit=crop&crop=center`,
-    `${product.image}&fit=crop&crop=top`,
-    `${product.image}&fit=crop&crop=left`,
-    `${product.image}&fit=crop&crop=bottom`,
-    `${product.image}&fit=crop&crop=right`,
+    `${currentImage}&fit=crop&crop=center`,
+    `${currentImage}&fit=crop&crop=top`,
+    `${currentImage}&fit=crop&crop=left`,
+    `${currentImage}&fit=crop&crop=bottom`,
+    `${currentImage}&fit=crop&crop=right`,
   ];
+
+  const handleColorChange = (index: number) => {
+    setActiveColor(index);
+    setActiveThumb(0);
+  };
 
   return (
     <div className="pb-36">
@@ -59,7 +68,7 @@ export function ProductDetail() {
         )}
       </AnimatePresence>
 
-      {/* Top navigation — back + favorite star (from reference) */}
+      {/* Top navigation */}
       <div className="flex justify-between items-center mb-6">
         <button
           onClick={() => navigate(-1)}
@@ -88,11 +97,18 @@ export function ProductDetail() {
         className="relative aspect-square max-w-lg mx-auto mb-4 bg-background rounded-[2rem] overflow-visible"
       >
         <div className="w-full h-full rounded-[2rem] overflow-hidden shadow-sm">
-          <img
-            src={thumbs[activeThumb]}
-            alt={product.name}
-            className="w-full h-full object-cover"
-          />
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={`${activeColor}-${activeThumb}`}
+              src={thumbs[activeThumb]}
+              alt={product.name}
+              className="w-full h-full object-cover"
+              initial={{ opacity: 0, scale: 1.05 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.3 }}
+            />
+          </AnimatePresence>
         </div>
 
         {/* Rotated price sticker */}
@@ -106,12 +122,12 @@ export function ProductDetail() {
         </motion.div>
       </motion.div>
 
-      {/* Thumbnail carousel — from reference */}
+      {/* Thumbnail carousel */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="max-w-lg mx-auto flex items-center gap-2 mb-8 px-2"
+        className="max-w-lg mx-auto flex items-center gap-2 mb-6 px-2"
       >
         <button
           onClick={() => setActiveThumb(Math.max(0, activeThumb - 1))}
@@ -145,6 +161,33 @@ export function ProductDetail() {
         </button>
       </motion.div>
 
+      {/* Color variant selector */}
+      {product.colorVariants.length > 1 && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.35 }}
+          className="max-w-lg mx-auto flex items-center gap-3 mb-8 px-2"
+        >
+          <span className="text-xs opacity-40 uppercase tracking-wider">цвет</span>
+          <div className="flex gap-2">
+            {product.colorVariants.map((variant, i) => (
+              <button
+                key={i}
+                onClick={() => handleColorChange(i)}
+                className={cn(
+                  "w-8 h-8 rounded-full border-2 transition-all hover:scale-110",
+                  i === activeColor
+                    ? "border-primary scale-110 shadow-md ring-2 ring-primary/20 ring-offset-2"
+                    : "border-primary/10"
+                )}
+                style={{ backgroundColor: variant.hex }}
+              />
+            ))}
+          </div>
+        </motion.div>
+      )}
+
       {/* Product info */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -152,14 +195,14 @@ export function ProductDetail() {
         transition={{ delay: 0.2 }}
         className="max-w-lg mx-auto"
       >
-        {/* Name and SKU */}
+        {/* Name */}
         <div className="mb-4">
           <h2 className="text-2xl md:text-3xl font-bold tracking-tight leading-tight">
             {product.name}
           </h2>
         </div>
 
-        {/* Description with "View More +" toggle — from reference */}
+        {/* Description with toggle */}
         <div className="mb-6">
           <p className={cn(
             "text-sm opacity-60 leading-relaxed lowercase transition-all",
@@ -175,11 +218,11 @@ export function ProductDetail() {
           </button>
         </div>
 
-        {/* Specs table with thumbnail — kept from previous */}
+        {/* Specs table with thumbnail */}
         <div className="flex gap-5 mb-4">
           <div className="w-20 h-20 rounded-xl overflow-hidden shadow-sm flex-shrink-0 bg-white">
             <img
-              src={product.image}
+              src={currentImage}
               alt={product.name}
               className="w-full h-full object-cover"
             />
@@ -217,7 +260,7 @@ export function ProductDetail() {
         </div>
       </motion.div>
 
-      {/* Bottom bar — reference style: dark bar with bag icon + "Add to Cart" + price + arrow */}
+      {/* Bottom bar */}
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
