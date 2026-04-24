@@ -118,7 +118,7 @@ export function ProductDetail() {
           transition={{ delay: 0.5, type: 'spring', bounce: 0.4 }}
           className="absolute bottom-8 right-[-8px] bg-background border border-primary/10 rounded-2xl px-5 py-3 shadow-lg rotate-[12deg]"
         >
-          <span className="text-2xl font-bold text-terracotta">${product.price}</span>
+          <span className="text-2xl font-bold text-terracotta">{product.price} ₽</span>
         </motion.div>
       </motion.div>
 
@@ -275,7 +275,7 @@ export function ProductDetail() {
             <ShoppingBag size={16} />
           </div>
           <span className="text-sm font-bold">В корзину</span>
-          <span className="text-base font-bold">${product.price}</span>
+          <span className="text-base font-bold">{product.price} ₽</span>
           <ArrowRight size={16} />
         </button>
       </motion.div>

@@ -117,7 +117,7 @@ function TumblerCard({ product, index, onOrder }: { product: Product; index: num
                 <p className="text-xs opacity-40 tracking-wider uppercase mt-0.5">{product.sku}</p>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-lg font-bold">${product.price}</span>
+                <span className="text-lg font-bold">{product.price} ₽</span>
                 <button
                   onClick={onOrder}
                   className="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center hover:scale-110 active:scale-95 transition-transform shadow-md"
@@ -252,7 +252,7 @@ export function Catalog() {
               </div>
               <h4 className="text-sm font-bold leading-tight">{product.name}</h4>
               <div className="flex items-center justify-between mt-1.5">
-                <span className="text-base font-bold">${product.price}</span>
+                <span className="text-base font-bold">{product.price} ₽</span>
                 <div className="flex items-center gap-1">
                   {product.colorVariants.map((variant, i) => (
                     <span

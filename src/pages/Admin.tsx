@@ -80,9 +80,9 @@ export function Admin() {
             </thead>
             <tbody className="divide-y divide-primary/5">
               {[
-                { id: '#9283', customer: 'alex@example.com', status: 'в ожидании', statusKey: 'pending', amount: '$450' },
-                { id: '#9282', customer: 'martha.j@test.com', status: 'доставлен', statusKey: 'delivered', amount: '$85' },
-                { id: '#9281', customer: 'zen_user@web.com', status: 'доставлен', statusKey: 'delivered', amount: '$120' },
+                { id: '#9283', customer: 'alex@example.com', status: 'в ожидании', statusKey: 'pending', amount: '450 ₽' },
+                { id: '#9282', customer: 'martha.j@test.com', status: 'доставлен', statusKey: 'delivered', amount: '85 ₽' },
+                { id: '#9281', customer: 'zen_user@web.com', status: 'доставлен', statusKey: 'delivered', amount: '120 ₽' },
               ].map((order) => (
                 <tr key={order.id} className="text-sm">
                   <td className="py-4 font-bold">{order.id}</td>
