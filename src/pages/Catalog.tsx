@@ -3,7 +3,7 @@ import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from
 import { Link } from 'react-router-dom';
 import { products, Product } from '../data/products';
 import { cn } from '../utils/cn';
-import { ShoppingBag, Bell, Search, SlidersHorizontal, Filter } from 'lucide-react';
+import { ShoppingBag, Bell, Search, SlidersHorizontal, Filter, ArrowRight, Compass } from 'lucide-react';
 
 const categories = [
   { key: 'все', label: 'все' },
@@ -110,19 +110,34 @@ function TumblerCard({ product, index, onOrder }: { product: Product; index: num
             />
           </div>
 
-          <div className="flex justify-between items-start px-1">
-            <div>
-              <h3 className="text-base font-bold leading-tight">{product.name}</h3>
-              <p className="text-xs opacity-40 tracking-wider uppercase mt-0.5">{product.sku}</p>
+          <div className="px-1">
+            <div className="flex justify-between items-start">
+              <div>
+                <h3 className="text-base font-bold leading-tight">{product.name}</h3>
+                <p className="text-xs opacity-40 tracking-wider uppercase mt-0.5">{product.sku}</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-lg font-bold">${product.price}</span>
+                <button
+                  onClick={onOrder}
+                  className="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center hover:scale-110 active:scale-95 transition-transform shadow-md"
+                >
+                  <ShoppingBag size={16} />
+                </button>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-lg font-bold">${product.price}</span>
-              <button
-                onClick={onOrder}
-                className="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center hover:scale-110 active:scale-95 transition-transform shadow-md"
-              >
-                <ShoppingBag size={16} />
-              </button>
+            {/* Color dots */}
+            <div className="flex items-center gap-1.5 mt-2">
+              {product.colorDots.map((dot, i) => (
+                <span
+                  key={i}
+                  className={cn(
+                    "w-3 h-3 rounded-full border",
+                    i === 0 ? "border-primary/40 ring-1 ring-primary/20 ring-offset-1" : "border-primary/10"
+                  )}
+                  style={{ backgroundColor: dot }}
+                />
+              ))}
             </div>
           </div>
         </Link>
@@ -146,6 +161,9 @@ export function Catalog() {
     ? products
     : products.filter((p) => p.category === activeCategory);
 
+  // Pick 3 recommended products (shuffle-like)
+  const recommended = [products[0], products[3], products[2]];
+
   return (
     <div className="pb-20">
       <AnimatePresence>
@@ -162,14 +180,96 @@ export function Catalog() {
         )}
       </AnimatePresence>
 
-      {/* Header */}
-      <div className="mb-8">
-        <h2 className="text-5xl md:text-6xl font-bold tracking-tight mb-1">исследуй</h2>
-        <p className="opacity-50 lowercase text-sm">наша коллекция</p>
+      {/* Hero banner with background image — from reference */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative rounded-[2rem] overflow-hidden mb-10 aspect-[16/10] md:aspect-[16/7]"
+      >
+        <img
+          src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=1200"
+          alt="интерьер"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-white/60 via-white/30 to-white/70" />
+        <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-6">
+          <h2 className="text-5xl md:text-7xl font-bold tracking-tight mb-2">исследуй</h2>
+          <p className="opacity-60 text-sm md:text-base mb-5 max-w-xs">
+            отражение вашего стиля, вкуса и индивидуальности
+          </p>
+          <Link
+            to="#catalog-grid"
+            onClick={(e) => {
+              e.preventDefault();
+              document.getElementById('catalog-grid')?.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="bg-primary text-white rounded-full px-6 py-3 flex items-center gap-2 text-sm font-bold shadow-lg hover:scale-105 transition-transform"
+          >
+            <Compass size={16} />
+            узнать больше
+          </Link>
+        </div>
+      </motion.div>
+
+      {/* "Рекомендуем для вас" — horizontal scroll section from reference */}
+      <div className="mb-12">
+        <div className="flex items-center justify-between mb-5">
+          <h3 className="text-2xl font-bold">рекомендуем для вас</h3>
+          <Link to="#catalog-grid" className="flex items-center gap-1 opacity-50 hover:opacity-100 transition-opacity">
+            <ArrowRight size={20} />
+          </Link>
+        </div>
+
+        {/* Category pills for recommendations */}
+        <div className="flex gap-2 mb-5">
+          {['гостиная', 'столовая', 'кабинет'].map((cat, i) => (
+            <span
+              key={cat}
+              className={cn(
+                "px-4 py-2 rounded-full border text-sm lowercase transition-all cursor-pointer",
+                i === 0 ? "border-primary bg-primary/5 font-bold" : "border-primary/10 hover:bg-primary/5"
+              )}
+            >
+              {cat}
+            </span>
+          ))}
+        </div>
+
+        {/* Horizontal scroll cards */}
+        <div className="flex gap-5 overflow-x-auto pb-4 -mx-2 px-2 snap-x snap-mandatory scrollbar-hide">
+          {recommended.map((product) => (
+            <Link
+              key={product.id}
+              to={`/product/${product.id}`}
+              className="flex-shrink-0 w-44 snap-start group"
+            >
+              <div className="aspect-square bg-white rounded-2xl overflow-hidden shadow-sm mb-3 group-hover:shadow-md transition-shadow">
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+              <h4 className="text-sm font-bold leading-tight">{product.name}</h4>
+              <div className="flex items-center justify-between mt-1.5">
+                <span className="text-base font-bold">${product.price}</span>
+                <div className="flex items-center gap-1">
+                  {product.colorDots.map((dot, i) => (
+                    <span
+                      key={i}
+                      className="w-2.5 h-2.5 rounded-full border border-primary/10"
+                      style={{ backgroundColor: dot }}
+                    />
+                  ))}
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
       </div>
 
       {/* Search / Filter / Sort icon row */}
-      <div className="flex items-center gap-3 mb-8">
+      <div id="catalog-grid" className="flex items-center gap-3 mb-8">
         <button className="w-11 h-11 rounded-full border border-primary/15 flex items-center justify-center hover:bg-primary/5 transition-colors">
           <Search size={18} className="opacity-60" />
         </button>

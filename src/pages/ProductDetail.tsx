@@ -1,13 +1,17 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Plus, Bell } from 'lucide-react';
+import { ArrowLeft, Star, ShoppingBag, ArrowRight, ChevronLeft, ChevronRight, Bell } from 'lucide-react';
 import { products } from '../data/products';
+import { cn } from '../utils/cn';
 
 export function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [isFavorite, setIsFavorite] = useState(false);
   const [showOrderToast, setShowOrderToast] = useState(false);
+  const [activeThumb, setActiveThumb] = useState(0);
+  const [expanded, setExpanded] = useState(false);
 
   const product = products.find((p) => p.id === id);
 
@@ -30,13 +34,17 @@ export function ProductDetail() {
     setTimeout(() => setShowOrderToast(false), 3000);
   };
 
-  // Parse dimensions for the specs table
-  const dimParts = product.dimensions?.split('×').map((d) => d.trim()) || [];
-  const height = dimParts[2] || dimParts[0] || '—';
-  const width = dimParts[1] || dimParts[0] || '—';
+  // Generate fake "angle" thumbnails from the same image with different crops
+  const thumbs = [
+    `${product.image}&fit=crop&crop=center`,
+    `${product.image}&fit=crop&crop=top`,
+    `${product.image}&fit=crop&crop=left`,
+    `${product.image}&fit=crop&crop=bottom`,
+    `${product.image}&fit=crop&crop=right`,
+  ];
 
   return (
-    <div className="pb-32">
+    <div className="pb-36">
       <AnimatePresence>
         {showOrderToast && (
           <motion.div
@@ -51,7 +59,7 @@ export function ProductDetail() {
         )}
       </AnimatePresence>
 
-      {/* Top navigation */}
+      {/* Top navigation — back + favorite star (from reference) */}
       <div className="flex justify-between items-center mb-6">
         <button
           onClick={() => navigate(-1)}
@@ -60,9 +68,16 @@ export function ProductDetail() {
           <ArrowLeft size={20} />
         </button>
         <button
+          onClick={() => setIsFavorite(!isFavorite)}
           className="bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-sm hover:shadow-md transition-shadow"
         >
-          <Plus size={20} />
+          <Star
+            size={20}
+            className={cn(
+              'transition-colors',
+              isFavorite ? 'fill-yellow-400 text-yellow-400' : 'text-primary/40'
+            )}
+          />
         </button>
       </div>
 
@@ -70,17 +85,17 @@ export function ProductDetail() {
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="relative aspect-square max-w-lg mx-auto mb-8 bg-white rounded-[2rem] overflow-visible"
+        className="relative aspect-square max-w-lg mx-auto mb-4 bg-background rounded-[2rem] overflow-visible"
       >
         <div className="w-full h-full rounded-[2rem] overflow-hidden shadow-sm">
           <img
-            src={product.image}
+            src={thumbs[activeThumb]}
             alt={product.name}
             className="w-full h-full object-cover"
           />
         </div>
 
-        {/* Rotated price sticker - from reference */}
+        {/* Rotated price sticker */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8, rotate: 0 }}
           animate={{ opacity: 1, scale: 1, rotate: 12 }}
@@ -91,6 +106,45 @@ export function ProductDetail() {
         </motion.div>
       </motion.div>
 
+      {/* Thumbnail carousel — from reference */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="max-w-lg mx-auto flex items-center gap-2 mb-8 px-2"
+      >
+        <button
+          onClick={() => setActiveThumb(Math.max(0, activeThumb - 1))}
+          className="text-primary/30 hover:text-primary transition-colors flex-shrink-0"
+        >
+          <ChevronLeft size={18} />
+        </button>
+
+        <div className="flex gap-2 overflow-x-auto flex-1 justify-center">
+          {thumbs.map((src, i) => (
+            <button
+              key={i}
+              onClick={() => setActiveThumb(i)}
+              className={cn(
+                "w-12 h-12 rounded-full overflow-hidden border-2 flex-shrink-0 transition-all",
+                i === activeThumb
+                  ? "border-primary shadow-md scale-110"
+                  : "border-transparent opacity-60 hover:opacity-100"
+              )}
+            >
+              <img src={src} alt="" className="w-full h-full object-cover" />
+            </button>
+          ))}
+        </div>
+
+        <button
+          onClick={() => setActiveThumb(Math.min(thumbs.length - 1, activeThumb + 1))}
+          className="text-primary/30 hover:text-primary transition-colors flex-shrink-0"
+        >
+          <ChevronRight size={18} />
+        </button>
+      </motion.div>
+
       {/* Product info */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -99,17 +153,31 @@ export function ProductDetail() {
         className="max-w-lg mx-auto"
       >
         {/* Name and SKU */}
-        <div className="mb-6">
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight leading-tight !uppercase">
+        <div className="mb-4">
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight leading-tight">
             {product.name}
           </h2>
-          <p className="text-xs opacity-40 tracking-widest uppercase mt-1">{product.sku}</p>
         </div>
 
-        {/* Specs table with thumbnail - from reference */}
-        <div className="flex gap-5 mb-8">
-          {/* Small product thumbnail */}
-          <div className="w-24 h-24 rounded-xl overflow-hidden shadow-sm flex-shrink-0 bg-white">
+        {/* Description with "View More +" toggle — from reference */}
+        <div className="mb-6">
+          <p className={cn(
+            "text-sm opacity-60 leading-relaxed lowercase transition-all",
+            !expanded && "line-clamp-2"
+          )}>
+            {product.description}
+          </p>
+          <button
+            onClick={() => setExpanded(!expanded)}
+            className="text-sm font-bold mt-1 hover:opacity-70 transition-opacity"
+          >
+            {expanded ? 'скрыть —' : 'подробнее +'}
+          </button>
+        </div>
+
+        {/* Specs table with thumbnail — kept from previous */}
+        <div className="flex gap-5 mb-4">
+          <div className="w-20 h-20 rounded-xl overflow-hidden shadow-sm flex-shrink-0 bg-white">
             <img
               src={product.image}
               alt={product.name}
@@ -117,37 +185,39 @@ export function ProductDetail() {
             />
           </div>
 
-          {/* Specs grid */}
-          <div className="flex-1 grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
-            <span className="opacity-50 font-medium">Высота</span>
-            <span className="font-bold text-right">{height}</span>
-
-            <span className="opacity-50 font-medium">Ширина</span>
-            <span className="font-bold text-right">{width}</span>
+          <div className="flex-1 grid grid-cols-2 gap-x-6 gap-y-1.5 text-sm self-center">
+            {product.dimensions && (() => {
+              const parts = product.dimensions!.split('×').map((d) => d.trim());
+              const height = parts[2] || parts[0] || '—';
+              const width = parts[1] || parts[0] || '—';
+              return (
+                <>
+                  <span className="opacity-50">Высота</span>
+                  <span className="font-bold text-right">{height}</span>
+                  <span className="opacity-50">Ширина</span>
+                  <span className="font-bold text-right">{width}</span>
+                </>
+              );
+            })()}
 
             {product.weight && (
               <>
-                <span className="opacity-50 font-medium">Вес</span>
+                <span className="opacity-50">Вес</span>
                 <span className="font-bold text-right">{product.weight}</span>
               </>
             )}
 
             {product.material && (
               <>
-                <span className="opacity-50 font-medium">Материал</span>
+                <span className="opacity-50">Материал</span>
                 <span className="font-bold text-right">{product.material}</span>
               </>
             )}
           </div>
         </div>
-
-        {/* Description */}
-        <p className="text-sm opacity-50 leading-relaxed lowercase mb-6">
-          {product.description}
-        </p>
       </motion.div>
 
-      {/* Bottom "Buy Now" button - full width pill like reference */}
+      {/* Bottom bar — reference style: dark bar with bag icon + "Add to Cart" + price + arrow */}
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
@@ -156,9 +226,16 @@ export function ProductDetail() {
       >
         <button
           onClick={handleOrder}
-          className="w-full bg-primary text-white rounded-full px-8 py-5 text-lg font-bold shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all"
+          className="w-full bg-primary text-white rounded-full px-6 py-4 flex items-center shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all"
         >
-          купить сейчас
+          <div className="bg-white/15 rounded-full p-2.5 mr-3">
+            <ShoppingBag size={18} />
+          </div>
+          <span className="text-base font-bold lowercase">в корзину</span>
+          <div className="ml-auto flex items-center gap-2">
+            <span className="text-xl font-bold">${product.price}</span>
+            <ArrowRight size={18} />
+          </div>
         </button>
       </motion.div>
     </div>
