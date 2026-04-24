@@ -36,11 +36,11 @@ function HandDrawnCircle() {
 }
 
 const phrases = [
-  'КРЕСЛО\nСОЗДАННОЕ',
-  'УЮТНЫЙ\nИНТЕРЬЕР',
-  'СТИЛЬ\nПРОДУМАННЫЙ',
-  'КОМФОРТ\nСОЗДАННЫЙ',
-  'ДИЗАЙН\nВДОХНОВЛЁННЫЙ',
+  'КРЕСЛО',
+  'ИНТЕРЬЕР',
+  'СТИЛЬ',
+  'КОМФОРТ',
+  'ДИЗАЙН',
 ];
 
 function useTypewriter(phrases: string[], typingSpeed = 70, deletingSpeed = 40, pauseDuration = 2200) {
@@ -84,9 +84,6 @@ export function Home() {
   const heroProduct = products[0];
   const typedText = useTypewriter(phrases, 80, 45, 2400);
 
-  // Split typed text by newline for multi-line display
-  const lines = typedText.split('\n');
-
   return (
     <div className="flex flex-col items-center min-h-[80vh] pt-4">
       {/* Hero text with typewriter effect */}
@@ -96,15 +93,10 @@ export function Home() {
         transition={{ delay: 0.2 }}
         className="text-left w-full max-w-md mb-8"
       >
-        <h2 className="!uppercase text-5xl md:text-7xl font-bold tracking-tight leading-[1.05]">
-          {/* Typed rotating lines */}
-          <span className="inline">
-            {lines.map((line, i) => (
-              <span key={i}>
-                {line}
-                {i < lines.length - 1 && <br />}
-              </span>
-            ))}
+        <h2 className="!uppercase text-5xl md:text-7xl font-bold tracking-tight leading-[1.1]">
+          {/* Typed rotating word */}
+          <span className="whitespace-nowrap">
+            {typedText}
           </span>
           {/* Blinking cursor */}
           <motion.span
