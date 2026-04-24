@@ -1,18 +1,12 @@
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { products, Product } from '../data/products';
+import { products, categories as allCategories, Product } from '../data/products';
 import { cn } from '../utils/cn';
 import { ShoppingBag, Bell, Search, SlidersHorizontal, Filter, ArrowRight, Compass, Check, X } from 'lucide-react';
 import { useStore } from '../store/useStore';
 
-const categories = [
-  { key: 'все', label: 'все' },
-  { key: 'мебель', label: 'мебель' },
-  { key: 'декор', label: 'декор' },
-  { key: 'освещение', label: 'освещение' },
-  { key: 'текстиль', label: 'текстиль' },
-];
+const categoryList = allCategories.map((cat) => ({ key: cat, label: cat }));
 
 // Random initial tilt directions for the "tumbler" drop-in effect
 const dropVariants = [
@@ -150,7 +144,7 @@ function TumblerCard({ product, index, onOrder }: { product: Product; index: num
 export function Catalog() {
   const { addToCart } = useStore();
   const [showOrderToast, setShowOrderToast] = useState(false);
-  const [activeCategory, setActiveCategory] = useState('все');
+  const [activeCategory, setActiveCategory] = useState('Все');
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOrder, setSortOrder] = useState<'none' | 'asc' | 'desc'>('none');
@@ -167,7 +161,7 @@ export function Catalog() {
     setSortOrder((prev) => prev === 'none' ? 'asc' : prev === 'asc' ? 'desc' : 'none');
   };
 
-  let filtered = activeCategory === 'все'
+  let filtered = activeCategory === 'Все'
     ? [...products]
     : products.filter((p) => p.category === activeCategory);
 
@@ -181,8 +175,8 @@ export function Catalog() {
   if (sortOrder === 'asc') filtered.sort((a, b) => a.price - b.price);
   if (sortOrder === 'desc') filtered.sort((a, b) => b.price - a.price);
 
-  // Pick 3 recommended products (shuffle-like)
-  const recommended = [products[0], products[3], products[2]];
+  // Pick 4 recommended products
+  const recommended = [products[3], products[2], products[4], products[7]];
 
   return (
     <div className="pb-20">
@@ -241,12 +235,12 @@ export function Catalog() {
         </div>
 
         {/* Category pills for recommendations */}
-        <div className="flex gap-2 mb-5">
-          {['Гостиная', 'Столовая', 'Кабинет'].map((cat, i) => (
+        <div className="flex gap-2 mb-5 overflow-x-auto scrollbar-hide pb-1">
+          {['Кровати', 'Комоды', 'Консоли'].map((cat, i) => (
             <span
               key={cat}
               className={cn(
-                "px-4 py-2 rounded-full border text-sm  transition-all cursor-pointer",
+                "px-4 py-2 rounded-full border text-sm whitespace-nowrap transition-all cursor-pointer",
                 i === 0 ? "border-primary bg-primary/5 font-bold" : "border-primary/10 hover:bg-primary/5"
               )}
             >
@@ -304,13 +298,13 @@ export function Catalog() {
 
           {/* Filter button — toggles category pills */}
           <button
-            onClick={() => setActiveCategory(activeCategory === 'все' ? 'мебель' : 'все')}
+            onClick={() => setActiveCategory(activeCategory === 'Все' ? 'Тумбочки' : 'Все')}
             className={cn(
               "w-11 h-11 rounded-full border flex items-center justify-center transition-all",
-              activeCategory !== 'все' ? "bg-primary text-white border-primary" : "border-primary/15 hover:bg-primary/5"
+              activeCategory !== 'Все' ? "bg-primary text-white border-primary" : "border-primary/15 hover:bg-primary/5"
             )}
           >
-            <Filter size={18} className={activeCategory !== 'все' ? "" : "opacity-60"} />
+            <Filter size={18} className={activeCategory !== 'Все' ? "" : "opacity-60"} />
           </button>
 
           {/* Sort button */}
@@ -335,14 +329,14 @@ export function Catalog() {
             </motion.span>
           )}
 
-          {/* Category pills */}
-          <div className="flex gap-2 ml-auto flex-wrap">
-            {categories.map((cat) => (
+          {/* Category pills — scrollable */}
+          <div className="flex gap-2 ml-auto overflow-x-auto scrollbar-hide pb-1">
+            {categoryList.map((cat) => (
               <button
                 key={cat.key}
                 onClick={() => setActiveCategory(cat.key)}
                 className={cn(
-                  "px-4 py-2 pill border border-primary/10 text-sm transition-all",
+                  "px-4 py-2 pill border border-primary/10 text-sm whitespace-nowrap transition-all flex-shrink-0",
                   activeCategory === cat.key ? "bg-primary text-white" : "hover:bg-primary/5"
                 )}
               >
