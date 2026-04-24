@@ -127,7 +127,7 @@ export function ProductDetail() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="max-w-lg mx-auto flex items-center gap-2 mb-6 px-2"
+        className="max-w-lg mx-auto flex items-center gap-3 mb-6 px-6"
       >
         <button
           onClick={() => setActiveThumb(Math.max(0, activeThumb - 1))}
@@ -136,16 +136,16 @@ export function ProductDetail() {
           <ChevronLeft size={18} />
         </button>
 
-        <div className="flex gap-2 overflow-x-auto flex-1 justify-center">
+        <div className="flex gap-3 flex-1 justify-center py-1 px-1">
           {thumbs.map((src, i) => (
             <button
               key={i}
               onClick={() => setActiveThumb(i)}
               className={cn(
-                "w-12 h-12 rounded-full overflow-hidden border-2 flex-shrink-0 transition-all",
+                "w-11 h-11 rounded-full overflow-hidden border-2 flex-shrink-0 transition-all duration-200",
                 i === activeThumb
-                  ? "border-primary shadow-md scale-110"
-                  : "border-transparent opacity-60 hover:opacity-100"
+                  ? "border-primary shadow-md scale-[1.15]"
+                  : "border-transparent opacity-50 hover:opacity-100"
               )}
             >
               <img src={src} alt="" className="w-full h-full object-cover" />
@@ -260,25 +260,23 @@ export function ProductDetail() {
         </div>
       </motion.div>
 
-      {/* Bottom bar */}
+      {/* Bottom bar — compact, right-aligned */}
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
-        className="fixed bottom-24 left-1/2 -translate-x-1/2 z-40 w-[90%] max-w-lg"
+        className="fixed bottom-28 right-6 z-40"
       >
         <button
           onClick={handleOrder}
-          className="w-full bg-primary text-white rounded-full px-6 py-4 flex items-center shadow-2xl hover:scale-[1.02] active:scale-[0.98] transition-all"
+          className="bg-primary text-white rounded-full pl-4 pr-5 py-3 flex items-center gap-2.5 shadow-2xl hover:scale-105 active:scale-95 transition-all"
         >
-          <div className="bg-white/15 rounded-full p-2.5 mr-3">
-            <ShoppingBag size={18} />
+          <div className="bg-white/15 rounded-full p-2">
+            <ShoppingBag size={16} />
           </div>
-          <span className="text-base font-bold ">В корзину</span>
-          <div className="ml-auto flex items-center gap-2">
-            <span className="text-xl font-bold">${product.price}</span>
-            <ArrowRight size={18} />
-          </div>
+          <span className="text-sm font-bold">В корзину</span>
+          <span className="text-base font-bold">${product.price}</span>
+          <ArrowRight size={16} />
         </button>
       </motion.div>
     </div>
