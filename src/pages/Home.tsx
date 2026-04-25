@@ -1,160 +1,211 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Plus } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { products } from '../data/products';
 
-function HandDrawnCircle() {
-  return (
-    <svg
-      className="absolute -inset-3 w-[calc(100%+24px)] h-[calc(100%+24px)]"
-      viewBox="0 0 200 80"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <motion.ellipse
-        cx="100"
-        cy="40"
-        rx="90"
-        ry="34"
-        stroke="#8E392B"
-        strokeWidth="2"
-        strokeLinecap="round"
-        fill="none"
-        initial={{ pathLength: 0, opacity: 0 }}
-        animate={{ pathLength: 1, opacity: 1 }}
-        transition={{ delay: 0.8, duration: 1.2, ease: 'easeInOut' }}
-        style={{
-          strokeDasharray: 1,
-          strokeDashoffset: 0,
-          transform: 'rotate(-3deg)',
-          transformOrigin: 'center',
-        }}
-      />
-    </svg>
-  );
+const carouselItems = products.slice(0, 8);
+
+function getPositionClass(offset: number, total: number): string {
+  if (offset === 0) return 'center';
+  if (offset === 1) return 'right-1';
+  if (offset === 2) return 'right-2';
+  if (offset === total - 1) return 'left-1';
+  if (offset === total - 2) return 'left-2';
+  return 'hidden-card';
 }
 
-const phrases = [
-  'КРЕСЛО',
-  'ИНТЕРЬЕР',
-  'СТИЛЬ',
-  'КОМФОРТ',
-  'ДИЗАЙН',
-];
-
-function useTypewriter(phrases: string[], typingSpeed = 70, deletingSpeed = 40, pauseDuration = 2200) {
-  const [phraseIndex, setPhraseIndex] = useState(0);
-  const [displayText, setDisplayText] = useState('');
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  const currentPhrase = phrases[phraseIndex];
-
-  const tick = useCallback(() => {
-    if (!isDeleting) {
-      // Typing
-      if (displayText.length < currentPhrase.length) {
-        setDisplayText(currentPhrase.slice(0, displayText.length + 1));
-      } else {
-        // Pause before deleting
-        setTimeout(() => setIsDeleting(true), pauseDuration);
-        return;
-      }
-    } else {
-      // Deleting
-      if (displayText.length > 0) {
-        setDisplayText(currentPhrase.slice(0, displayText.length - 1));
-      } else {
-        setIsDeleting(false);
-        setPhraseIndex((prev) => (prev + 1) % phrases.length);
-      }
-    }
-  }, [displayText, isDeleting, currentPhrase, phrases.length, pauseDuration]);
-
-  useEffect(() => {
-    const speed = isDeleting ? deletingSpeed : typingSpeed;
-    const timer = setTimeout(tick, speed);
-    return () => clearTimeout(timer);
-  }, [tick, isDeleting, typingSpeed, deletingSpeed]);
-
-  return displayText;
+function getStyle(pos: string, mobile: boolean) {
+  const dx = mobile ? 0.6 : 1;
+  switch (pos) {
+    case 'center':
+      return { x: 0, scale: 1.08, z: 0, opacity: 1, gray: false };
+    case 'left-1':
+      return { x: -185 * dx, scale: 0.88, z: -100, opacity: 0.9, gray: true };
+    case 'left-2':
+      return { x: -345 * dx, scale: 0.73, z: -250, opacity: 0.55, gray: true };
+    case 'right-1':
+      return { x: 185 * dx, scale: 0.88, z: -100, opacity: 0.9, gray: true };
+    case 'right-2':
+      return { x: 345 * dx, scale: 0.73, z: -250, opacity: 0.55, gray: true };
+    default:
+      return { x: 0, scale: 0.5, z: -400, opacity: 0, gray: true };
+  }
 }
 
 export function Home() {
-  const heroProduct = products[0];
-  const typedText = useTypewriter(phrases, 80, 45, 2400);
+  const [current, setCurrent] = useState(0);
+  const [animating, setAnimating] = useState(false);
+  const [mobile, setMobile] = useState(false);
+  const touchX = useRef(0);
+  const total = carouselItems.length;
+
+  useEffect(() => {
+    const check = () => setMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
+  const goTo = useCallback((idx: number) => {
+    if (animating) return;
+    setAnimating(true);
+    setCurrent((idx + total) % total);
+    setTimeout(() => setAnimating(false), 700);
+  }, [animating, total]);
+
+  const next = useCallback(() => goTo(current + 1), [goTo, current]);
+  const prev = useCallback(() => goTo(current - 1), [goTo, current]);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') prev();
+      if (e.key === 'ArrowRight') next();
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [next, prev]);
+
+  const active = carouselItems[current];
+  const cardW = mobile ? 175 : 260;
+  const cardH = mobile ? 250 : 360;
 
   return (
-    <div className="flex flex-col items-center min-h-[80vh] pt-4">
-      {/* Hero text with typewriter effect */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
+    <div className="flex flex-col items-center min-h-[80vh] pt-2 overflow-hidden">
+      {/* Big gradient title — ROOOMEBEL */}
+      <motion.h1
+        initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="text-left w-full max-w-md mb-8"
+        className="text-[3.5rem] md:text-[7rem] font-black tracking-tight !uppercase text-center pointer-events-none select-none leading-none mb-2"
+        style={{
+          background: 'linear-gradient(to bottom, rgb(var(--color-primary) / 0.35) 30%, rgb(var(--color-primary) / 0) 76%)',
+          WebkitBackgroundClip: 'text',
+          backgroundClip: 'text',
+          color: 'transparent',
+          fontFamily: '"Arial Black", "Arial Bold", Arial, sans-serif',
+          letterSpacing: '-0.02em',
+        }}
       >
-        <h2 className="!uppercase text-5xl md:text-7xl font-bold tracking-tight leading-[1.1]">
-          {/* Typed rotating word */}
-          <span className="whitespace-nowrap">
-            {typedText}
-          </span>
-          {/* Blinking cursor */}
-          <motion.span
-            animate={{ opacity: [1, 0] }}
-            transition={{ duration: 0.6, repeat: Infinity, repeatType: 'reverse' }}
-            className="inline-block w-[3px] md:w-[4px] h-[0.85em] bg-terracotta ml-1 align-middle translate-y-[2px]"
-          />
-          <br />
-          {/* Static "для вас" with hand-drawn circle */}
-          <span>
-            для{' '}
-            <span className="relative inline-block">
-              вас
-              <HandDrawnCircle />
-            </span>
-          </span>
-        </h2>
-      </motion.div>
+        Rooomebel
+      </motion.h1>
 
-      {/* Hero product image with floating badge */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.4 }}
-        className="relative w-full max-w-md aspect-[4/5] mb-8 bg-surface rounded-[2rem] overflow-hidden shadow-sm"
+      {/* 3D Carousel */}
+      <div
+        className="relative w-full max-w-[1200px] mx-auto"
+        style={{ height: mobile ? 290 : 400, perspective: '1000px' }}
+        onTouchStart={(e) => { touchX.current = e.changedTouches[0].screenX; }}
+        onTouchEnd={(e) => {
+          const diff = touchX.current - e.changedTouches[0].screenX;
+          if (Math.abs(diff) > 50) { diff > 0 ? next() : prev(); }
+        }}
       >
-        <img
-          src={heroProduct.image}
-          alt={heroProduct.name}
-          className="w-full h-full object-cover"
-        />
+        <div className="relative w-full h-full flex items-center justify-center" style={{ transformStyle: 'preserve-3d' }}>
+          {carouselItems.map((p, i) => {
+            const offset = (i - current + total) % total;
+            const pos = getPositionClass(offset, total);
+            const s = getStyle(pos, mobile);
+            const isHidden = pos === 'hidden-card';
 
-        {/* Floating "new arrivals" badge */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.8 }}
-          className="absolute bottom-6 left-4 bg-primary/90 backdrop-blur-sm text-primary-inv px-5 py-3 rounded-full flex items-center gap-3 shadow-lg"
+            return (
+              <div
+                key={p.id}
+                onClick={() => pos !== 'center' ? goTo(i) : undefined}
+                className="absolute rounded-[20px] overflow-hidden shadow-xl"
+                style={{
+                  width: cardW,
+                  height: cardH,
+                  transform: `translateX(${s.x}px) scale(${s.scale}) translateZ(${s.z}px)`,
+                  zIndex: pos === 'center' ? 10 : pos.includes('1') ? 5 : 1,
+                  opacity: s.opacity,
+                  transition: 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                  cursor: pos === 'center' ? 'default' : 'pointer',
+                  pointerEvents: isHidden ? 'none' : 'auto',
+                  background: 'rgb(var(--color-surface))',
+                }}
+              >
+                <img
+                  src={p.image}
+                  alt={p.name}
+                  className="w-full h-full object-cover"
+                  style={{
+                    filter: s.gray ? 'grayscale(100%)' : 'none',
+                    transition: 'filter 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                  }}
+                  draggable={false}
+                />
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Arrows */}
+        <button
+          onClick={prev}
+          className="absolute left-2 md:left-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-primary/50 text-primary-inv flex items-center justify-center hover:bg-primary/80 hover:scale-110 active:scale-95 transition-all backdrop-blur-sm"
         >
-          <div className="bg-white/20 rounded-full p-1">
-            <Plus size={14} className="text-primary-inv" />
-          </div>
-          <span className="text-sm font-bold italic">6 новинок</span>
-        </motion.div>
-      </motion.div>
+          <ChevronLeft size={20} />
+        </button>
+        <button
+          onClick={next}
+          className="absolute right-2 md:right-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-primary/50 text-primary-inv flex items-center justify-center hover:bg-primary/80 hover:scale-110 active:scale-95 transition-all backdrop-blur-sm"
+        >
+          <ChevronRight size={20} />
+        </button>
+      </div>
 
-      {/* CTA button */}
+      {/* Product name + category */}
+      <div className="text-center mt-5 mb-4 px-4">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={current}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+          >
+            <h3 className="text-xl md:text-3xl font-bold mb-1 relative inline-block px-8">
+              <span className="absolute top-1/2 left-0 md:-left-10 w-6 md:w-16 h-[2px] bg-primary/20 -translate-y-1/2" />
+              {active.name}
+              <span className="absolute top-1/2 right-0 md:-right-10 w-6 md:w-16 h-[2px] bg-primary/20 -translate-y-1/2" />
+            </h3>
+            <p className="text-primary/40 text-xs md:text-sm uppercase tracking-[0.15em] mt-1">
+              {active.category} — {active.price.toLocaleString()} ₽
+            </p>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+
+      {/* Dots */}
+      <div className="flex justify-center gap-2 mb-5">
+        {carouselItems.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => goTo(i)}
+            className="rounded-full transition-all duration-300"
+            style={{
+              width: i === current ? 12 : 10,
+              height: i === current ? 12 : 10,
+              backgroundColor: i === current
+                ? 'rgb(var(--color-primary))'
+                : 'rgb(var(--color-primary) / 0.2)',
+              transform: i === current ? 'scale(1.2)' : 'scale(1)',
+            }}
+          />
+        ))}
+      </div>
+
+      {/* CTA */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6 }}
-        className="w-full max-w-md"
+        transition={{ delay: 0.3 }}
+        className="w-full max-w-md px-4"
       >
         <Link
-          to="/catalog"
-          className="w-full bg-primary text-primary-inv rounded-full px-10 py-5 flex items-center justify-center gap-3 text-lg font-bold hover:scale-[1.02] active:scale-[0.98] transition-transform shadow-md"
+          to={`/product/${active.id}`}
+          className="w-full bg-primary text-primary-inv rounded-full px-10 py-4 flex items-center justify-center gap-3 text-base font-bold hover:scale-[1.02] active:scale-[0.98] transition-transform shadow-md"
         >
-          Узнать больше
+          Подробнее
         </Link>
       </motion.div>
     </div>
