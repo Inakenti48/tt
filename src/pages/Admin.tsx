@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Package, CheckCircle, Bell, MessageCircle, Send, ArrowLeft, Plus, Trash2, Edit3, X, ImagePlus, Save } from 'lucide-react';
+import { Package, CheckCircle, Bell, MessageCircle, Send, ArrowLeft, Plus, Trash2, Edit3, X, ImagePlus, Save, Copy, Check, KeyRound, UserPlus, LogIn, Settings } from 'lucide-react';
 import { useStore, Order } from '../store/useStore';
 import { Product } from '../data/products';
 import { categories as allCategories } from '../data/products';
@@ -216,31 +216,80 @@ function ProductForm({
 
 export function Admin() {
   const navigate = useNavigate();
-  const { orders, allProducts, addProduct, removeProduct, updateProduct } = useStore();
+  const { orders, allProducts, addProduct, removeProduct, updateProduct, adminCredentials, registerAdmin, loginAdmin, updateAdminCredentials } = useStore();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [login, setLogin] = useState('');
-  const [password, setPassword] = useState('');
+  const [nameField, setNameField] = useState('');
+  const [passwordField, setPasswordField] = useState('');
   const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState<'orders' | 'products'>('orders');
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [registered, setRegistered] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [newName, setNewName] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [settingsSaved, setSettingsSaved] = useState(false);
+
+  const isRegistered = !!adminCredentials;
+
+  const handleRegister = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!nameField.trim() || !passwordField.trim()) {
+      setError('Заполните все поля');
+      return;
+    }
+    if (passwordField.length < 4) {
+      setError('Пароль должен быть не менее 4 символов');
+      return;
+    }
+    registerAdmin(nameField.trim(), passwordField.trim());
+    setRegistered(true);
+    setError('');
+  };
+
+  const handleCopyCredentials = () => {
+    const text = `ROOOMEBEL Админ\nИмя: ${nameField.trim()}\nПароль: ${passwordField.trim()}`;
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2500);
+  };
+
+  const handleEnterPanel = () => {
+    setIsLoggedIn(true);
+    setRegistered(false);
+  };
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (login === 'admin' && password === 'admin') {
-      setIsLoggedIn(true);
-      setError(false);
-    } else {
-      setError(true);
+    if (!nameField.trim() || !passwordField.trim()) {
+      setError('Заполните все поля');
+      return;
     }
+    if (loginAdmin(nameField.trim(), passwordField.trim())) {
+      setIsLoggedIn(true);
+      setError('');
+    } else {
+      setError('Неверное имя или пароль');
+    }
+  };
+
+  const handleSaveSettings = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newName.trim() || !newPassword.trim()) return;
+    if (newPassword.length < 4) return;
+    updateAdminCredentials(newName.trim(), newPassword.trim());
+    setSettingsSaved(true);
+    setTimeout(() => setSettingsSaved(false), 2500);
   };
 
   const activeOrder = orders.find((o) => o.id === selectedOrder);
 
+  /* ── Not logged in ── */
   if (!isLoggedIn) {
     return (
-      <div className="max-w-md mx-auto py-12">
+      <div className="max-w-md mx-auto py-12 px-4">
         <div className="mb-6">
           <button
             onClick={() => navigate(-1)}
@@ -249,35 +298,109 @@ export function Admin() {
             <ArrowLeft size={20} />
           </button>
         </div>
-        <h2 className="text-3xl font-bold mb-8 text-center">Панель администратора</h2>
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div className="space-y-2">
-            <label className="text-sm font-bold px-1">Логин</label>
-            <input
-              type="text"
-              value={login}
-              onChange={(e) => { setLogin(e.target.value); setError(false); }}
-              placeholder="Логин"
-              className="w-full bg-white pill px-6 py-4 border-none shadow-sm focus:ring-2 focus:ring-primary outline-none"
-            />
+
+        <div className="text-center mb-8">
+          <div className="inline-flex bg-primary/5 rounded-full p-4 mb-4">
+            <KeyRound size={32} className="opacity-60" />
           </div>
-          <div className="space-y-2">
-            <label className="text-sm font-bold px-1">Пароль</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => { setPassword(e.target.value); setError(false); }}
-              placeholder="Пароль"
-              className="w-full bg-white pill px-6 py-4 border-none shadow-sm focus:ring-2 focus:ring-primary outline-none"
-            />
-          </div>
-          {error && (
-            <p className="text-sm text-terracotta text-center">Неверный логин или пароль</p>
-          )}
-          <button className="w-full bg-primary text-white pill py-4 font-bold">
-            Войти
-          </button>
-        </form>
+          <h2 className="text-3xl font-bold">Панель администратора</h2>
+          <p className="text-sm opacity-40 mt-2">ROOOMEBEL</p>
+        </div>
+
+        {/* ── Registration success: save credentials ── */}
+        {registered && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white rounded-3xl shadow-sm p-6 mb-6 text-center"
+          >
+            <div className="inline-flex bg-green-50 rounded-full p-3 mb-4">
+              <Check size={24} className="text-green-600" />
+            </div>
+            <h3 className="text-lg font-bold mb-2">Регистрация успешна!</h3>
+            <p className="text-sm opacity-50 mb-5 leading-relaxed">
+              Сохраните ваши учётные данные, чтобы вы могли зайти и пользоваться прекрасным веб-сервисом интернет-магазина ROOOMEBEL
+            </p>
+
+            <div className="bg-[#F9F7F2] rounded-2xl p-4 mb-4 text-left">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs opacity-40 uppercase tracking-wider">Ваши данные</span>
+              </div>
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs opacity-50 w-16">Имя:</span>
+                  <span className="text-sm font-bold">{nameField}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs opacity-50 w-16">Пароль:</span>
+                  <span className="text-sm font-bold">{passwordField}</span>
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={handleCopyCredentials}
+              className={cn(
+                "w-full rounded-full py-3.5 font-bold flex items-center justify-center gap-2 transition-all mb-3",
+                copied
+                  ? "bg-green-600 text-white"
+                  : "bg-white border border-primary/15 hover:bg-primary/5"
+              )}
+            >
+              {copied ? <Check size={18} /> : <Copy size={18} />}
+              {copied ? 'Скопировано!' : 'Скопировать имя и пароль'}
+            </button>
+
+            <button
+              onClick={handleEnterPanel}
+              className="w-full bg-primary text-white rounded-full py-3.5 font-bold hover:scale-[1.02] active:scale-[0.98] transition-transform"
+            >
+              Войти в панель
+            </button>
+          </motion.div>
+        )}
+
+        {/* ── Register or Login form ── */}
+        {!registered && (
+          <form onSubmit={isRegistered ? handleLogin : handleRegister} className="space-y-4">
+            <div className="bg-white rounded-3xl shadow-sm p-6 space-y-4">
+              <div className="flex items-center gap-2 mb-2">
+                {isRegistered ? <LogIn size={18} className="opacity-40" /> : <UserPlus size={18} className="opacity-40" />}
+                <h3 className="font-bold">{isRegistered ? 'Вход' : 'Регистрация'}</h3>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold opacity-50 px-1 block">Имя</label>
+                <input
+                  type="text"
+                  value={nameField}
+                  onChange={(e) => { setNameField(e.target.value); setError(''); }}
+                  placeholder="Введите ваше имя"
+                  className="w-full bg-[#F9F7F2] rounded-2xl px-5 py-4 border border-primary/5 focus:ring-2 focus:ring-primary outline-none text-sm"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-bold opacity-50 px-1 block">Пароль</label>
+                <input
+                  type="password"
+                  value={passwordField}
+                  onChange={(e) => { setPasswordField(e.target.value); setError(''); }}
+                  placeholder="Придумайте пароль"
+                  className="w-full bg-[#F9F7F2] rounded-2xl px-5 py-4 border border-primary/5 focus:ring-2 focus:ring-primary outline-none text-sm"
+                />
+              </div>
+
+              {error && (
+                <p className="text-sm text-terracotta text-center">{error}</p>
+              )}
+            </div>
+
+            <button className="w-full bg-primary text-white rounded-full py-4 font-bold flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-transform">
+              {isRegistered ? <LogIn size={18} /> : <UserPlus size={18} />}
+              {isRegistered ? 'Войти' : 'Зарегистрироваться'}
+            </button>
+          </form>
+        )}
       </div>
     );
   }
@@ -307,12 +430,93 @@ export function Admin() {
         </button>
       </div>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold">Панель администратора</h2>
-        <div className="flex items-center gap-2 bg-primary/5 px-4 py-2 pill text-sm">
-          <Bell size={16} />
-          <span>{orders.length} заказов</span>
+        <div>
+          <h2 className="text-2xl font-bold">Панель администратора</h2>
+          {adminCredentials && (
+            <p className="text-xs opacity-40 mt-0.5">Привет, {adminCredentials.name}</p>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowSettings(!showSettings)}
+            className={cn(
+              "p-2.5 rounded-full transition-all",
+              showSettings ? "bg-primary text-white" : "bg-primary/5 hover:bg-primary/10"
+            )}
+          >
+            <Settings size={18} />
+          </button>
+          <div className="flex items-center gap-2 bg-primary/5 px-4 py-2 pill text-sm">
+            <Bell size={16} />
+            <span>{orders.length}</span>
+          </div>
         </div>
       </div>
+
+      {/* Settings panel */}
+      <AnimatePresence>
+        {showSettings && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden mb-6"
+          >
+            <div className="bg-white rounded-3xl shadow-sm p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <KeyRound size={18} className="opacity-40" />
+                <h3 className="font-bold">Сменить учётные данные</h3>
+              </div>
+              <form onSubmit={handleSaveSettings} className="space-y-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-bold opacity-50 mb-1 block px-1">Новое имя</label>
+                    <input
+                      type="text"
+                      value={newName}
+                      onChange={(e) => setNewName(e.target.value)}
+                      placeholder={adminCredentials?.name || 'Имя'}
+                      className="w-full bg-[#F9F7F2] rounded-2xl px-5 py-3 border border-primary/5 focus:ring-2 focus:ring-primary outline-none text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold opacity-50 mb-1 block px-1">Новый пароль</label>
+                    <input
+                      type="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="Новый пароль"
+                      className="w-full bg-[#F9F7F2] rounded-2xl px-5 py-3 border border-primary/5 focus:ring-2 focus:ring-primary outline-none text-sm"
+                    />
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    type="submit"
+                    disabled={!newName.trim() || !newPassword.trim() || newPassword.length < 4}
+                    className={cn(
+                      "flex-1 rounded-full py-3 font-bold text-sm flex items-center justify-center gap-2 transition-all",
+                      settingsSaved
+                        ? "bg-green-600 text-white"
+                        : "bg-primary text-white hover:scale-[1.02] active:scale-[0.98] disabled:opacity-30 disabled:scale-100"
+                    )}
+                  >
+                    {settingsSaved ? <><Check size={16} /> Сохранено!</> : <><Save size={16} /> Сохранить</>}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowSettings(false)}
+                    className="px-4 py-3 rounded-full border border-primary/10 text-sm hover:bg-primary/5 transition-all"
+                  >
+                    Отмена
+                  </button>
+                </div>
+              </form>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">

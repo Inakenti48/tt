@@ -24,6 +24,11 @@ export interface Order {
   createdAt: string;
 }
 
+export interface AdminCredentials {
+  name: string;
+  password: string;
+}
+
 interface StoreContextType {
   cart: CartItem[];
   addToCart: (product: Product, colorIndex?: number) => void;
@@ -40,6 +45,10 @@ interface StoreContextType {
   addProduct: (product: Product) => void;
   removeProduct: (productId: string) => void;
   updateProduct: (productId: string, updates: Partial<Product>) => void;
+  adminCredentials: AdminCredentials | null;
+  registerAdmin: (name: string, password: string) => void;
+  loginAdmin: (name: string, password: string) => boolean;
+  updateAdminCredentials: (name: string, password: string) => void;
 }
 
 const StoreContext = createContext<StoreContextType | null>(null);
@@ -50,6 +59,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [orders, setOrders] = useState<Order[]>([]);
   const [activeOrderId, setActiveOrderId] = useState<string | null>(null);
   const [allProducts, setAllProducts] = useState<Product[]>(defaultProducts);
+  const [adminCredentials, setAdminCredentials] = useState<AdminCredentials | null>(() => {
+    try {
+      const saved = localStorage.getItem('rooomebel_admin');
+      return saved ? JSON.parse(saved) : null;
+    } catch { return null; }
+  });
 
   const addToCart = (product: Product, colorIndex = 0) => {
     setCart((prev) => {
@@ -114,6 +129,23 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     );
   };
 
+  const registerAdmin = (name: string, password: string) => {
+    const creds = { name, password };
+    setAdminCredentials(creds);
+    localStorage.setItem('rooomebel_admin', JSON.stringify(creds));
+  };
+
+  const loginAdmin = (name: string, password: string): boolean => {
+    if (!adminCredentials) return false;
+    return adminCredentials.name === name && adminCredentials.password === password;
+  };
+
+  const updateAdminCredentials = (name: string, password: string) => {
+    const creds = { name, password };
+    setAdminCredentials(creds);
+    localStorage.setItem('rooomebel_admin', JSON.stringify(creds));
+  };
+
   const sendMessage = (orderId: string, from: 'client' | 'admin', text: string) => {
     const now = new Date();
     const timeStr = now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
@@ -148,6 +180,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         addProduct,
         removeProduct,
         updateProduct,
+        adminCredentials,
+        registerAdmin,
+        loginAdmin,
+        updateAdminCredentials,
       }}
     >
       {children}
