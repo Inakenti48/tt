@@ -78,7 +78,7 @@ export function Home() {
         animate={{ opacity: 1, y: 0 }}
         className="text-[3.5rem] md:text-[7rem] font-black tracking-tight !uppercase text-center pointer-events-none select-none leading-none mb-2"
         style={{
-          background: 'linear-gradient(to top, rgba(142,57,43,0.9) 0%, rgba(142,57,43,0.3) 50%, rgba(142,57,43,0) 80%)',
+          background: 'linear-gradient(to bottom, rgb(var(--color-primary)) 0%, rgb(var(--color-primary) / 0.6) 40%, rgba(200,30,30,1) 100%)',
           WebkitBackgroundClip: 'text',
           backgroundClip: 'text',
           color: 'transparent',
