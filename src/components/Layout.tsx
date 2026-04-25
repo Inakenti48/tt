@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { Navbar } from './Navbar';
 import { BellToggle } from './BellToggle';
+import { useTheme } from '../context/ThemeContext';
 
 interface LayoutProps {
   children: ReactNode;
@@ -26,9 +27,20 @@ function LogoUnderline() {
 }
 
 export function Layout({ children }: LayoutProps) {
+  const { theme } = useTheme();
+  const isLight = theme === 'light';
+
   return (
-    <div className="min-h-screen pb-32">
-      <header className="p-8 flex justify-between items-center">
+    <div className="min-h-screen pb-32 relative">
+      {/* Waves — light mode only */}
+      {isLight && (
+        <>
+          <div className="wave" />
+          <div className="wave" />
+          <div className="wave" />
+        </>
+      )}
+      <header className="p-8 flex justify-between items-center relative z-10">
         <h1 className="text-2xl tracking-tight font-bold !uppercase relative inline-block">
           Rooomebel
           <LogoUnderline />
@@ -39,7 +51,7 @@ export function Layout({ children }: LayoutProps) {
         </div>
       </header>
 
-      <main className="px-6 md:px-12 lg:px-24">
+      <main className="px-6 md:px-12 lg:px-24 relative z-10">
         {children}
       </main>
 
