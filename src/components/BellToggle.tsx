@@ -27,12 +27,12 @@ export function BellToggle() {
       onHoverEnd={() => setIsHovered(false)}
       className="relative flex flex-col items-center cursor-pointer"
       aria-label="Переключить тему"
-      style={{ width: 36, height: 64 }}
+      style={{ width: 36, height: 76 }}
     >
       {/* Wire / cord */}
       <motion.div
         animate={{
-          height: isPulled ? 28 : 16,
+          height: isPulled ? 38 : 26,
           rotate: isHovered && !isPulled ? [0, -3, 3, -2, 1, 0] : 0,
         }}
         transition={{
