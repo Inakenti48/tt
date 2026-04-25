@@ -25,7 +25,7 @@ export function ProductDetail() {
         <h2 className="text-3xl font-bold mb-4">Товар не найден</h2>
         <button
           onClick={() => navigate('/catalog')}
-          className="bg-primary text-white pill px-8 py-3 font-bold"
+          className="bg-primary text-primary-inv pill px-8 py-3 font-bold"
         >
           Вернуться в каталог
         </button>
@@ -64,7 +64,7 @@ export function ProductDetail() {
             initial={{ opacity: 0, y: -100 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -100 }}
-            className="fixed top-8 left-1/2 -translate-x-1/2 z-[100] bg-primary text-white pill px-6 py-3 flex items-center gap-3 shadow-xl"
+            className="fixed top-8 left-1/2 -translate-x-1/2 z-[100] bg-primary text-primary-inv pill px-6 py-3 flex items-center gap-3 shadow-xl"
           >
             <Check size={18} />
             <span className="text-sm font-bold">Добавлено в корзину</span>
@@ -101,7 +101,7 @@ export function ProductDetail() {
             onClick={() => setView3D(false)}
             className={cn(
               "flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all",
-              !view3D ? "bg-primary text-white shadow-md" : "opacity-50 hover:opacity-100"
+              !view3D ? "bg-primary text-primary-inv shadow-md" : "opacity-50 hover:opacity-100"
             )}
           >
             <Image size={14} />
@@ -111,7 +111,7 @@ export function ProductDetail() {
             onClick={() => setView3D(true)}
             className={cn(
               "flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all",
-              view3D ? "bg-primary text-white shadow-md" : "opacity-50 hover:opacity-100"
+              view3D ? "bg-primary text-primary-inv shadow-md" : "opacity-50 hover:opacity-100"
             )}
           >
             <Box size={14} />
@@ -311,7 +311,7 @@ export function ProductDetail() {
       >
         <button
           onClick={handleOrder}
-          className="bg-primary text-white rounded-full pl-4 pr-5 py-3 flex items-center gap-2.5 shadow-2xl hover:scale-105 active:scale-95 transition-all"
+          className="bg-primary text-primary-inv rounded-full pl-4 pr-5 py-3 flex items-center gap-2.5 shadow-2xl hover:scale-105 active:scale-95 transition-all"
         >
           <div className="bg-white/15 rounded-full p-2">
             <ShoppingBag size={16} />

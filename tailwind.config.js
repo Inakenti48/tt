@@ -8,9 +8,10 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: "var(--color-bg)",
-        surface: "var(--color-surface)",
-        primary: "#000000",
+        background: "rgb(var(--color-bg) / <alpha-value>)",
+        surface: "rgb(var(--color-surface) / <alpha-value>)",
+        primary: "rgb(var(--color-primary) / <alpha-value>)",
+        "primary-inv": "rgb(var(--color-primary-inv) / <alpha-value>)",
         terracotta: "#8E392B",
         mustard: "#D18D3D",
       },

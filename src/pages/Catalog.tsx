@@ -180,7 +180,7 @@ function TumblerCard({ product, index, onOrder }: { product: Product; index: num
                 <span className="text-lg font-bold">{product.price} ₽</span>
                 <button
                   onClick={(e) => onOrder(e, product)}
-                  className="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center hover:scale-110 active:scale-95 transition-transform shadow-md"
+                  className="w-10 h-10 bg-primary text-primary-inv rounded-full flex items-center justify-center hover:scale-110 active:scale-95 transition-transform shadow-md"
                 >
                   <ShoppingBag size={16} />
                 </button>
@@ -241,7 +241,7 @@ function CustomOrderForm() {
         <p className="text-sm opacity-50 mb-6">Администратор получил ваш индивидуальный заказ и скоро ответит в чате</p>
         <button
           onClick={() => navigate('/chat')}
-          className="bg-primary text-white rounded-full px-6 py-3 font-bold flex items-center justify-center gap-2 mx-auto hover:scale-105 active:scale-95 transition-transform"
+          className="bg-primary text-primary-inv rounded-full px-6 py-3 font-bold flex items-center justify-center gap-2 mx-auto hover:scale-105 active:scale-95 transition-transform"
         >
           <MessageCircle size={18} />
           Открыть чат
@@ -301,7 +301,7 @@ function CustomOrderForm() {
 
       <button
         type="submit"
-        className="w-full bg-primary text-white rounded-full py-4 font-bold flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-transform"
+        className="w-full bg-primary text-primary-inv rounded-full py-4 font-bold flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-transform"
       >
         <Send size={18} />
         Отправить заявку
@@ -356,7 +356,7 @@ export function Catalog() {
             initial={{ opacity: 0, y: -100 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -100 }}
-            className="fixed top-8 left-1/2 -translate-x-1/2 z-[100] bg-primary text-white pill px-6 py-3 flex items-center gap-3 shadow-xl"
+            className="fixed top-8 left-1/2 -translate-x-1/2 z-[100] bg-primary text-primary-inv pill px-6 py-3 flex items-center gap-3 shadow-xl"
           >
             <Check size={18} />
             <span className="text-sm font-bold">Добавлено в корзину</span>
@@ -375,7 +375,7 @@ export function Catalog() {
           alt="интерьер"
           className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom, color-mix(in srgb, var(--color-bg) 60%, transparent), color-mix(in srgb, var(--color-bg) 30%, transparent), color-mix(in srgb, var(--color-bg) 70%, transparent))` }} />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/30 to-background/70" />
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-6">
           <h2 className="text-5xl md:text-7xl font-bold tracking-tight mb-2">исследуй</h2>
           <p className="opacity-60 text-sm md:text-base mb-5 max-w-xs">
@@ -387,7 +387,7 @@ export function Catalog() {
               e.preventDefault();
               document.getElementById('catalog-grid')?.scrollIntoView({ behavior: 'smooth' });
             }}
-            className="bg-primary text-white rounded-full px-6 py-3 flex items-center gap-2 text-sm font-bold shadow-lg hover:scale-105 transition-transform"
+            className="bg-primary text-primary-inv rounded-full px-6 py-3 flex items-center gap-2 text-sm font-bold shadow-lg hover:scale-105 transition-transform"
           >
             <Compass size={16} />
             Узнать больше
@@ -460,7 +460,7 @@ export function Catalog() {
             onClick={() => setSearchOpen(!searchOpen)}
             className={cn(
               "w-10 h-10 rounded-full border flex items-center justify-center transition-all shrink-0",
-              searchOpen ? "bg-primary text-white border-primary" : "border-primary/15 hover:bg-primary/5"
+              searchOpen ? "bg-primary text-primary-inv border-primary" : "border-primary/15 hover:bg-primary/5"
             )}
           >
             <Search size={17} className={searchOpen ? "" : "opacity-60"} />
@@ -470,7 +470,7 @@ export function Catalog() {
             onClick={() => setActiveCategory(activeCategory === 'Все' ? 'Тумбочки' : 'Все')}
             className={cn(
               "w-10 h-10 rounded-full border flex items-center justify-center transition-all shrink-0",
-              activeCategory !== 'Все' ? "bg-primary text-white border-primary" : "border-primary/15 hover:bg-primary/5"
+              activeCategory !== 'Все' ? "bg-primary text-primary-inv border-primary" : "border-primary/15 hover:bg-primary/5"
             )}
           >
             <Filter size={17} className={activeCategory !== 'Все' ? "" : "opacity-60"} />
@@ -480,7 +480,7 @@ export function Catalog() {
             onClick={toggleSort}
             className={cn(
               "w-10 h-10 rounded-full border flex items-center justify-center transition-all shrink-0",
-              sortOrder !== 'none' ? "bg-primary text-white border-primary" : "border-primary/15 hover:bg-primary/5"
+              sortOrder !== 'none' ? "bg-primary text-primary-inv border-primary" : "border-primary/15 hover:bg-primary/5"
             )}
           >
             <SlidersHorizontal size={17} className={sortOrder !== 'none' ? "" : "opacity-60"} />
@@ -512,7 +512,7 @@ export function Catalog() {
               onClick={() => setActiveCategory(cat.key)}
               className={cn(
                 "px-4 py-2 pill border border-primary/10 text-sm whitespace-nowrap transition-all flex-shrink-0",
-                activeCategory === cat.key ? "bg-primary text-white" : "hover:bg-primary/5"
+                activeCategory === cat.key ? "bg-primary text-primary-inv" : "hover:bg-primary/5"
               )}
             >
               {cat.label}

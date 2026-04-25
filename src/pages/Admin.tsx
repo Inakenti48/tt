@@ -43,14 +43,14 @@ function AdminChat({ order, onBack }: { order: Order; onBack: () => void }) {
             className={cn(
               "max-w-[80%] rounded-2xl px-4 py-3",
               msg.from === 'admin'
-                ? "ml-auto bg-primary text-white rounded-br-md"
+                ? "ml-auto bg-primary text-primary-inv rounded-br-md"
                 : "mr-auto bg-surface shadow-sm rounded-bl-md"
             )}
           >
             <p className="text-sm">{msg.text}</p>
             <p className={cn(
               "text-[10px] mt-1",
-              msg.from === 'admin' ? "text-white/50 text-right" : "text-primary/30"
+              msg.from === 'admin' ? "text-primary-inv/50 text-right" : "text-primary/30"
             )}>
               {msg.time}
             </p>
@@ -73,7 +73,7 @@ function AdminChat({ order, onBack }: { order: Order; onBack: () => void }) {
           className={cn(
             "w-12 h-12 rounded-full flex items-center justify-center transition-all",
             text.trim()
-              ? "bg-primary text-white hover:scale-105 active:scale-95"
+              ? "bg-primary text-primary-inv hover:scale-105 active:scale-95"
               : "bg-primary/10 text-primary/30"
           )}
         >
@@ -225,7 +225,7 @@ function ProductForm({
             <div key={i} className="relative w-20 h-20 rounded-xl overflow-hidden border border-primary/10 shadow-sm group">
               <img src={img} alt="" className="w-full h-full object-cover" />
               {i === 0 && (
-                <span className="absolute top-0.5 left-0.5 bg-primary text-white text-[8px] px-1.5 py-0.5 rounded-full">Главное</span>
+                <span className="absolute top-0.5 left-0.5 bg-primary text-primary-inv text-[8px] px-1.5 py-0.5 rounded-full">Главное</span>
               )}
               <button
                 type="button"
@@ -320,7 +320,7 @@ function ProductForm({
 
       <button
         type="submit"
-        className="w-full bg-primary text-white rounded-full py-4 font-bold flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-transform"
+        className="w-full bg-primary text-primary-inv rounded-full py-4 font-bold flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-transform"
       >
         <Save size={18} />
         {initial ? 'Сохранить изменения' : 'Добавить товар'}
@@ -468,7 +468,7 @@ export function Admin() {
 
             <button
               onClick={handleEnterPanel}
-              className="w-full bg-primary text-white rounded-full py-3.5 font-bold hover:scale-[1.02] active:scale-[0.98] transition-transform"
+              className="w-full bg-primary text-primary-inv rounded-full py-3.5 font-bold hover:scale-[1.02] active:scale-[0.98] transition-transform"
             >
               Войти в панель
             </button>
@@ -486,7 +486,7 @@ export function Admin() {
                   onClick={() => { setAuthMode('login'); setError(''); }}
                   className={cn(
                     "flex-1 py-2 rounded-full text-sm font-bold transition-all flex items-center justify-center gap-1.5",
-                    authMode === 'login' ? "bg-primary text-white shadow-sm" : "opacity-50"
+                    authMode === 'login' ? "bg-primary text-primary-inv shadow-sm" : "opacity-50"
                   )}
                 >
                   <LogIn size={15} /> Вход
@@ -496,7 +496,7 @@ export function Admin() {
                   onClick={() => { setAuthMode('register'); setError(''); }}
                   className={cn(
                     "flex-1 py-2 rounded-full text-sm font-bold transition-all flex items-center justify-center gap-1.5",
-                    authMode === 'register' ? "bg-primary text-white shadow-sm" : "opacity-50"
+                    authMode === 'register' ? "bg-primary text-primary-inv shadow-sm" : "opacity-50"
                   )}
                 >
                   <UserPlus size={15} /> Регистрация
@@ -529,7 +529,7 @@ export function Admin() {
               )}
             </div>
 
-            <button className="w-full bg-primary text-white rounded-full py-4 font-bold flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-transform">
+            <button className="w-full bg-primary text-primary-inv rounded-full py-4 font-bold flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-transform">
               {authMode === 'login' ? <><LogIn size={18} /> Войти</> : <><UserPlus size={18} /> Зарегистрироваться</>}
             </button>
           </form>
@@ -574,7 +574,7 @@ export function Admin() {
             onClick={() => setShowSettings(!showSettings)}
             className={cn(
               "p-2.5 rounded-full transition-all",
-              showSettings ? "bg-primary text-white" : "bg-primary/5 hover:bg-primary/10"
+              showSettings ? "bg-primary text-primary-inv" : "bg-primary/5 hover:bg-primary/10"
             )}
           >
             <Settings size={18} />
@@ -632,7 +632,7 @@ export function Admin() {
                       "flex-1 rounded-full py-3 font-bold text-sm flex items-center justify-center gap-2 transition-all",
                       settingsSaved
                         ? "bg-green-600 text-white"
-                        : "bg-primary text-white hover:scale-[1.02] active:scale-[0.98] disabled:opacity-30 disabled:scale-100"
+                        : "bg-primary text-primary-inv hover:scale-[1.02] active:scale-[0.98] disabled:opacity-30 disabled:scale-100"
                     )}
                   >
                     {settingsSaved ? <><Check size={16} /> Сохранено!</> : <><Save size={16} /> Сохранить</>}
@@ -678,7 +678,7 @@ export function Admin() {
           onClick={() => { setActiveTab('orders'); setShowAddForm(false); setEditingProduct(null); }}
           className={cn(
             "px-5 py-2.5 rounded-full text-sm font-bold transition-all",
-            activeTab === 'orders' ? "bg-primary text-white shadow-md" : "bg-surface border border-primary/10 hover:bg-primary/5"
+            activeTab === 'orders' ? "bg-primary text-primary-inv shadow-md" : "bg-surface border border-primary/10 hover:bg-primary/5"
           )}
         >
           Заказы ({orders.length})
@@ -687,7 +687,7 @@ export function Admin() {
           onClick={() => { setActiveTab('products'); setSelectedOrder(null); }}
           className={cn(
             "px-5 py-2.5 rounded-full text-sm font-bold transition-all",
-            activeTab === 'products' ? "bg-primary text-white shadow-md" : "bg-surface border border-primary/10 hover:bg-primary/5"
+            activeTab === 'products' ? "bg-primary text-primary-inv shadow-md" : "bg-surface border border-primary/10 hover:bg-primary/5"
           )}
         >
           Товары ({allProducts.length})
@@ -777,7 +777,7 @@ export function Admin() {
                 onClick={() => setShowAddForm(true)}
                 className="w-full bg-surface rounded-3xl shadow-sm p-5 flex items-center justify-center gap-3 mb-6 border-2 border-dashed border-primary/15 hover:border-primary/30 hover:bg-primary/5 transition-all group"
               >
-                <div className="bg-primary/10 rounded-full p-2 group-hover:bg-primary group-hover:text-white transition-all">
+                <div className="bg-primary/10 rounded-full p-2 group-hover:bg-primary group-hover:text-primary-inv transition-all">
                   <Plus size={20} />
                 </div>
                 <span className="font-bold opacity-60 group-hover:opacity-100 transition-opacity">Добавить товар</span>

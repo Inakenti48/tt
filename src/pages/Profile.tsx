@@ -18,7 +18,7 @@ export function Profile() {
           onClick={() => setIsLogin(true)}
           className={cn(
             "px-6 py-2 pill transition-all",
-            isLogin ? "bg-primary text-white" : "opacity-50 hover:opacity-100"
+            isLogin ? "bg-primary text-primary-inv" : "opacity-50 hover:opacity-100"
           )}
         >
           Вход
@@ -27,7 +27,7 @@ export function Profile() {
           onClick={() => setIsLogin(false)}
           className={cn(
             "px-6 py-2 pill transition-all",
-            !isLogin ? "bg-primary text-white" : "opacity-50 hover:opacity-100"
+            !isLogin ? "bg-primary text-primary-inv" : "opacity-50 hover:opacity-100"
           )}
         >
           Регистрация
@@ -71,7 +71,7 @@ export function Profile() {
           </div>
         )}
 
-        <button className="w-full bg-primary text-white pill py-5 text-lg font-bold hover:scale-[1.02] active:scale-[0.98] transition-all">
+        <button className="w-full bg-primary text-primary-inv pill py-5 text-lg font-bold hover:scale-[1.02] active:scale-[0.98] transition-all">
           {isLogin ? 'Войти' : 'Создать аккаунт'}
         </button>
       </motion.div>
@@ -90,14 +90,14 @@ export function Profile() {
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="relative bg-primary text-white pill px-8 py-6 max-w-sm text-center shadow-2xl"
+              className="relative bg-primary text-primary-inv pill px-8 py-6 max-w-sm text-center shadow-2xl"
             >
               <p className="text-sm leading-relaxed  mb-4">
                 Пожалуйста, убедитесь, что фон удален и изображение сохранено в формате png для лучшего результата
               </p>
               <button
                 onClick={() => setShowModal(false)}
-                className="bg-white text-primary pill px-6 py-2 text-sm font-bold hover:bg-white/90"
+                className="bg-primary-inv text-primary pill px-6 py-2 text-sm font-bold hover:opacity-90"
               >
                 Понятно
               </button>

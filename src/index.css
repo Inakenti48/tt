@@ -3,24 +3,26 @@
 @tailwind utilities;
 
 :root {
-  --color-bg: #F9F7F2;
-  --color-surface: #FFFFFF;
-  --color-text: #000000;
-  --color-text-inv: #FFFFFF;
+  --color-bg: 249 247 242;
+  --color-surface: 255 255 255;
+  --color-primary: 0 0 0;
+  --color-primary-inv: 255 255 255;
+  --color-text: 0 0 0;
 }
 
 .dark {
-  --color-bg: #111111;
-  --color-surface: #1C1C1E;
-  --color-text: #F5F5F5;
-  --color-text-inv: #111111;
+  --color-bg: 17 17 17;
+  --color-surface: 28 28 30;
+  --color-primary: 255 255 255;
+  --color-primary-inv: 17 17 17;
+  --color-text: 245 245 245;
 }
 
 @layer base {
   body {
     @apply antialiased;
-    background-color: var(--color-bg);
-    color: var(--color-text);
+    background-color: rgb(var(--color-bg));
+    color: rgb(var(--color-text));
     transition: background-color 0.5s ease, color 0.5s ease;
   }
 

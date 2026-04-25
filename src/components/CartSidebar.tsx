@@ -213,7 +213,7 @@ export function CartSidebar() {
                     </p>
                     <button
                       onClick={handleGoToChat}
-                      className="bg-primary text-white rounded-full px-8 py-3 font-bold hover:scale-105 active:scale-95 transition-all"
+                      className="bg-primary text-primary-inv rounded-full px-8 py-3 font-bold hover:scale-105 active:scale-95 transition-all"
                     >
                       Открыть чат
                     </button>
@@ -231,7 +231,7 @@ export function CartSidebar() {
                 </div>
                 <button
                   onClick={() => setStep('form')}
-                  className="w-full bg-primary text-white rounded-full py-4 font-bold hover:scale-[1.02] active:scale-[0.98] transition-all"
+                  className="w-full bg-primary text-primary-inv rounded-full py-4 font-bold hover:scale-[1.02] active:scale-[0.98] transition-all"
                 >
                   Оформить заказ
                 </button>
@@ -246,7 +246,7 @@ export function CartSidebar() {
                   className={cn(
                     "w-full rounded-full py-4 font-bold transition-all",
                     name.trim() && phone.trim()
-                      ? "bg-primary text-white hover:scale-[1.02] active:scale-[0.98]"
+                      ? "bg-primary text-primary-inv hover:scale-[1.02] active:scale-[0.98]"
                       : "bg-primary/20 text-primary/40 cursor-not-allowed"
                   )}
                 >

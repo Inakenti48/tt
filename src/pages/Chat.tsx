@@ -25,7 +25,7 @@ export function Chat() {
         <p className="text-sm opacity-50 mb-6">Добавьте товары в корзину и оформите заказ</p>
         <button
           onClick={() => navigate('/catalog')}
-          className="bg-primary text-white rounded-full px-8 py-3 font-bold"
+          className="bg-primary text-primary-inv rounded-full px-8 py-3 font-bold"
         >
           В каталог
         </button>
@@ -65,14 +65,14 @@ export function Chat() {
             className={cn(
               "max-w-[80%] rounded-2xl px-4 py-3",
               msg.from === 'client'
-                ? "ml-auto bg-primary text-white rounded-br-md"
+                ? "ml-auto bg-primary text-primary-inv rounded-br-md"
                 : "mr-auto bg-surface shadow-sm rounded-bl-md"
             )}
           >
             <p className="text-sm">{msg.text}</p>
             <p className={cn(
               "text-[10px] mt-1",
-              msg.from === 'client' ? "text-white/50 text-right" : "text-primary/30"
+              msg.from === 'client' ? "text-primary-inv/50 text-right" : "text-primary/30"
             )}>
               {msg.time}
             </p>
@@ -96,7 +96,7 @@ export function Chat() {
           className={cn(
             "w-12 h-12 rounded-full flex items-center justify-center transition-all",
             text.trim()
-              ? "bg-primary text-white hover:scale-105 active:scale-95"
+              ? "bg-primary text-primary-inv hover:scale-105 active:scale-95"
               : "bg-primary/10 text-primary/30"
           )}
         >

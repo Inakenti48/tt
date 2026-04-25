@@ -134,10 +134,10 @@ export function Home() {
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.8 }}
-          className="absolute bottom-6 left-4 bg-primary/90 backdrop-blur-sm text-white px-5 py-3 rounded-full flex items-center gap-3 shadow-lg"
+          className="absolute bottom-6 left-4 bg-primary/90 backdrop-blur-sm text-primary-inv px-5 py-3 rounded-full flex items-center gap-3 shadow-lg"
         >
           <div className="bg-white/20 rounded-full p-1">
-            <Plus size={14} className="text-white" />
+            <Plus size={14} className="text-primary-inv" />
           </div>
           <span className="text-sm font-bold italic">6 новинок</span>
         </motion.div>
@@ -152,7 +152,7 @@ export function Home() {
       >
         <Link
           to="/catalog"
-          className="w-full bg-primary text-white rounded-full px-10 py-5 flex items-center justify-center gap-3 text-lg font-bold hover:scale-[1.02] active:scale-[0.98] transition-transform shadow-md"
+          className="w-full bg-primary text-primary-inv rounded-full px-10 py-5 flex items-center justify-center gap-3 text-lg font-bold hover:scale-[1.02] active:scale-[0.98] transition-transform shadow-md"
         >
           Узнать больше
         </Link>
