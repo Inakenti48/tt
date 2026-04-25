@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { categories as allCategories, Product } from '../data/products';
@@ -7,6 +7,71 @@ import { ShoppingBag, Bell, Search, SlidersHorizontal, Filter, ArrowRight, Arrow
 import { useStore } from '../store/useStore';
 
 const categoryList = allCategories.map((cat) => ({ key: cat, label: cat }));
+
+/* ── Falling letters animation ── */
+const letterExitVariants = {
+  initial: { y: 0, opacity: 1, rotate: 0 },
+  exit: (i: number) => ({
+    y: [0, -8, 60 + Math.random() * 40],
+    opacity: [1, 1, 0],
+    rotate: (Math.random() - 0.5) * 90,
+    x: (Math.random() - 0.5) * 30,
+    transition: {
+      duration: 0.5,
+      delay: i * 0.03,
+      ease: [0.36, 0, 0.66, -0.56],
+    },
+  }),
+};
+
+const letterEnterVariants = {
+  initial: (i: number) => ({
+    y: -40 - Math.random() * 30,
+    opacity: 0,
+    rotate: (Math.random() - 0.5) * 45,
+  }),
+  animate: (i: number) => ({
+    y: 0,
+    opacity: 1,
+    rotate: 0,
+    transition: {
+      delay: i * 0.035,
+      type: 'spring',
+      stiffness: 300,
+      damping: 18,
+    },
+  }),
+};
+
+function FallingTitle({ text }: { text: string }) {
+  return (
+    <AnimatePresence mode="wait">
+      <motion.span
+        key={text}
+        className="inline-flex overflow-hidden"
+        initial="initial"
+        animate="animate"
+        exit="exit"
+      >
+        {text.split('').map((char, i) => (
+          <motion.span
+            key={`${text}-${i}`}
+            custom={i}
+            variants={{
+              initial: letterEnterVariants.initial(i),
+              animate: letterEnterVariants.animate(i),
+              exit: letterExitVariants.exit(i),
+            }}
+            className="inline-block"
+            style={{ whiteSpace: char === ' ' ? 'pre' : undefined }}
+          >
+            {char === ' ' ? '\u00A0' : char}
+          </motion.span>
+        ))}
+      </motion.span>
+    </AnimatePresence>
+  );
+}
 
 // Random initial tilt directions for the "tumbler" drop-in effect
 const dropVariants = [
@@ -336,6 +401,13 @@ export function Catalog() {
               {sortOrder === 'asc' ? 'Цена ↑' : 'Цена ↓'}
             </motion.span>
           )}
+        </div>
+
+        {/* Active category title with falling letters */}
+        <div className="h-10 flex items-center">
+          <h3 className="text-2xl font-bold tracking-tight">
+            <FallingTitle text={activeCategory} />
+          </h3>
         </div>
 
         {/* Category pills — separate scrollable row */}
