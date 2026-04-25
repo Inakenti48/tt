@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Package, CheckCircle, Bell, MessageCircle, Send, ArrowLeft, Plus, Trash2, Edit3, X, ImagePlus, Save, Copy, Check, KeyRound, UserPlus, LogIn, Settings } from 'lucide-react';
+import { Package, CheckCircle, Bell, MessageCircle, Send, ArrowLeft, Plus, Trash2, Edit3, X, ImagePlus, Save, Copy, Check, KeyRound, UserPlus, LogIn, Settings, Upload } from 'lucide-react';
 import { useStore, Order } from '../store/useStore';
 import { Product } from '../data/products';
 import { categories as allCategories } from '../data/products';
@@ -100,16 +100,44 @@ function ProductForm({
   const [category, setCategory] = useState(initial?.category || cats[0]);
   const [description, setDescription] = useState(initial?.description || '');
   const [image, setImage] = useState(initial?.image || '');
-  const [dimensions, setDimensions] = useState(initial?.dimensions || '');
+  const [dimWidth, setDimWidth] = useState(() => {
+    if (!initial?.dimensions) return '';
+    const parts = initial.dimensions.split('×').map(s => s.trim().replace(/[^\d.]/g, ''));
+    return parts[0] || '';
+  });
+  const [dimHeight, setDimHeight] = useState(() => {
+    if (!initial?.dimensions) return '';
+    const parts = initial.dimensions.split('×').map(s => s.trim().replace(/[^\d.]/g, ''));
+    return parts[2] || '';
+  });
+  const [dimDepth, setDimDepth] = useState(() => {
+    if (!initial?.dimensions) return '';
+    const parts = initial.dimensions.split('×').map(s => s.trim().replace(/[^\d.]/g, ''));
+    return parts[1] || '';
+  });
   const [weight, setWeight] = useState(initial?.weight || '');
   const [material, setMaterial] = useState(initial?.material || '');
   const [colorHexes, setColorHexes] = useState(
     initial?.colorVariants.map((v) => v.hex).join(', ') || '#FFFFFF'
   );
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      setImage(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !price.trim() || !image.trim()) return;
+    if (!name.trim() || !price.trim() || !image) return;
+
+    const dims = (dimWidth || dimHeight || dimDepth)
+      ? `${dimWidth || '0'} × ${dimDepth || '0'} × ${dimHeight || '0'} см`
+      : undefined;
 
     const hexArr = colorHexes.split(',').map((h) => h.trim()).filter(Boolean);
     const product: Product = {
@@ -117,13 +145,13 @@ function ProductForm({
       name: name.trim(),
       sku: initial?.sku || `RM${String(Math.floor(Math.random() * 90000) + 10000)}`,
       price: Number(price),
-      image: image.trim(),
+      image: image,
       category,
       description: description.trim(),
-      dimensions: dimensions.trim() || undefined,
+      dimensions: dims,
       weight: weight.trim() || undefined,
       material: material.trim() || undefined,
-      colorVariants: hexArr.map((hex) => ({ hex, image: image.trim() })),
+      colorVariants: hexArr.map((hex) => ({ hex, image: image })),
     };
     onSave(product);
   };
@@ -160,26 +188,49 @@ function ProductForm({
       </div>
 
       <div>
-        <label className="text-xs font-bold opacity-50 mb-1 block">Ссылка на фото *</label>
-        <input value={image} onChange={(e) => setImage(e.target.value)} placeholder="https://images.unsplash.com/..." className={fieldClass} required />
+        <label className="text-xs font-bold opacity-50 mb-1 block">Фото товара *</label>
+        <label className="flex flex-col items-center justify-center w-full h-36 bg-[#F9F7F2] border-2 border-dashed border-primary/15 rounded-2xl cursor-pointer hover:border-primary/30 hover:bg-primary/5 transition-all">
+          {image ? (
+            <img src={image} alt="Превью" className="w-full h-full object-contain rounded-2xl p-2" />
+          ) : (
+            <div className="flex flex-col items-center gap-2">
+              <Upload size={24} className="opacity-30" />
+              <span className="text-xs opacity-40">Нажмите чтобы загрузить фото</span>
+            </div>
+          )}
+          <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
+        </label>
+        {image && (
+          <button type="button" onClick={() => setImage('')} className="text-xs opacity-40 hover:opacity-100 mt-1.5 transition-opacity">
+            Удалить фото
+          </button>
+        )}
       </div>
-
-      {image && (
-        <div className="flex justify-center">
-          <img src={image} alt="Превью" className="w-32 h-32 object-cover rounded-2xl shadow-sm border border-primary/10" />
-        </div>
-      )}
 
       <div>
         <label className="text-xs font-bold opacity-50 mb-1 block">Описание</label>
         <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Описание товара..." rows={3} className={fieldClass + ' resize-none'} />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <label className="text-xs font-bold opacity-50 mb-1 block">Размеры</label>
-          <input value={dimensions} onChange={(e) => setDimensions(e.target.value)} placeholder="50 × 40 × 55 см" className={fieldClass} />
+      <div>
+        <label className="text-xs font-bold opacity-50 mb-2 block">Размеры (см)</label>
+        <div className="grid grid-cols-3 gap-3">
+          <div>
+            <span className="text-[10px] opacity-30 block mb-1 text-center">Ширина</span>
+            <input type="number" value={dimWidth} onChange={(e) => setDimWidth(e.target.value)} placeholder="50" className={fieldClass + ' text-center'} />
+          </div>
+          <div>
+            <span className="text-[10px] opacity-30 block mb-1 text-center">Глубина</span>
+            <input type="number" value={dimDepth} onChange={(e) => setDimDepth(e.target.value)} placeholder="40" className={fieldClass + ' text-center'} />
+          </div>
+          <div>
+            <span className="text-[10px] opacity-30 block mb-1 text-center">Высота</span>
+            <input type="number" value={dimHeight} onChange={(e) => setDimHeight(e.target.value)} placeholder="55" className={fieldClass + ' text-center'} />
+          </div>
         </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="text-xs font-bold opacity-50 mb-1 block">Вес</label>
           <input value={weight} onChange={(e) => setWeight(e.target.value)} placeholder="12 кг" className={fieldClass} />
@@ -408,10 +459,6 @@ export function Admin() {
                   className="w-full bg-[#F9F7F2] rounded-2xl px-5 py-4 border border-primary/5 focus:ring-2 focus:ring-primary outline-none text-sm"
                 />
               </div>
-
-              {authMode === 'login' && (
-                <p className="text-[11px] opacity-30 text-center">По умолчанию: admin / admin</p>
-              )}
 
               {error && (
                 <p className="text-sm text-terracotta text-center">{error}</p>
