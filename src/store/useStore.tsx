@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
-import { Product } from '../data/products';
+import { Product, products as defaultProducts } from '../data/products';
 
 export interface CartItem {
   product: Product;
@@ -36,6 +36,10 @@ interface StoreContextType {
   activeOrderId: string | null;
   setActiveOrderId: (id: string | null) => void;
   sendMessage: (orderId: string, from: 'client' | 'admin', text: string) => void;
+  allProducts: Product[];
+  addProduct: (product: Product) => void;
+  removeProduct: (productId: string) => void;
+  updateProduct: (productId: string, updates: Partial<Product>) => void;
 }
 
 const StoreContext = createContext<StoreContextType | null>(null);
@@ -45,6 +49,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [cartOpen, setCartOpen] = useState(false);
   const [orders, setOrders] = useState<Order[]>([]);
   const [activeOrderId, setActiveOrderId] = useState<string | null>(null);
+  const [allProducts, setAllProducts] = useState<Product[]>(defaultProducts);
 
   const addToCart = (product: Product, colorIndex = 0) => {
     setCart((prev) => {
@@ -95,6 +100,20 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     return id;
   };
 
+  const addProduct = (product: Product) => {
+    setAllProducts((prev) => [product, ...prev]);
+  };
+
+  const removeProduct = (productId: string) => {
+    setAllProducts((prev) => prev.filter((p) => p.id !== productId));
+  };
+
+  const updateProduct = (productId: string, updates: Partial<Product>) => {
+    setAllProducts((prev) =>
+      prev.map((p) => (p.id === productId ? { ...p, ...updates } : p))
+    );
+  };
+
   const sendMessage = (orderId: string, from: 'client' | 'admin', text: string) => {
     const now = new Date();
     const timeStr = now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
@@ -125,6 +144,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         activeOrderId,
         setActiveOrderId,
         sendMessage,
+        allProducts,
+        addProduct,
+        removeProduct,
+        updateProduct,
       }}
     >
       {children}

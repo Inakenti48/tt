@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Star, ShoppingBag, ArrowRight, ChevronLeft, ChevronRight, Check, Box, Image } from 'lucide-react';
-import { products } from '../data/products';
 import { cn } from '../utils/cn';
 import { useStore } from '../store/useStore';
 import { ProductConfigurator } from '../components/ProductConfigurator';
@@ -10,6 +9,7 @@ import { ProductConfigurator } from '../components/ProductConfigurator';
 export function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { allProducts: products, addToCart } = useStore();
   const [isFavorite, setIsFavorite] = useState(false);
   const [showOrderToast, setShowOrderToast] = useState(false);
   const [activeColor, setActiveColor] = useState(0);
@@ -32,8 +32,6 @@ export function ProductDetail() {
       </div>
     );
   }
-
-  const { addToCart } = useStore();
 
   const handleOrder = () => {
     addToCart(product, activeColor);

@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
-import { products, categories as allCategories, Product } from '../data/products';
+import { categories as allCategories, Product } from '../data/products';
 import { cn } from '../utils/cn';
 import { ShoppingBag, Bell, Search, SlidersHorizontal, Filter, ArrowRight, ArrowLeft, Compass, Check, X } from 'lucide-react';
 import { useStore } from '../store/useStore';
@@ -143,7 +143,7 @@ function TumblerCard({ product, index, onOrder }: { product: Product; index: num
 
 export function Catalog() {
   const navigate = useNavigate();
-  const { addToCart } = useStore();
+  const { addToCart, allProducts: products } = useStore();
   const [showOrderToast, setShowOrderToast] = useState(false);
   const [activeCategory, setActiveCategory] = useState('Все');
   const [searchOpen, setSearchOpen] = useState(false);
