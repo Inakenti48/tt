@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Star, ShoppingBag, ArrowRight, ChevronLeft, ChevronRight, Check, Box, Image } from 'lucide-react';
+import { ArrowLeft, Star, ShoppingBag, ArrowRight, ChevronLeft, ChevronRight, Check } from 'lucide-react';
 import { cn } from '../utils/cn';
 import { useStore } from '../store/useStore';
-import { ProductConfigurator } from '../components/ProductConfigurator';
 
 export function ProductDetail() {
   const { id } = useParams<{ id: string }>();
@@ -15,7 +14,6 @@ export function ProductDetail() {
   const [activeColor, setActiveColor] = useState(0);
   const [activeThumb, setActiveThumb] = useState(0);
   const [expanded, setExpanded] = useState(false);
-  const [view3D, setView3D] = useState(false);
 
   const product = products.find((p) => p.id === id);
 
@@ -94,56 +92,8 @@ export function ProductDetail() {
         </button>
       </div>
 
-      {/* 2D/3D toggle button */}
-      <div className="flex justify-center mb-4">
-        <div className="inline-flex bg-surface rounded-full p-1 shadow-sm border border-primary/10">
-          <button
-            onClick={() => setView3D(false)}
-            className={cn(
-              "flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all",
-              !view3D ? "bg-primary text-primary-inv shadow-md" : "opacity-50 hover:opacity-100"
-            )}
-          >
-            <Image size={14} />
-            Фото
-          </button>
-          <button
-            onClick={() => setView3D(true)}
-            className={cn(
-              "flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all",
-              view3D ? "bg-primary text-primary-inv shadow-md" : "opacity-50 hover:opacity-100"
-            )}
-          >
-            <Box size={14} />
-            3D
-          </button>
-        </div>
-      </div>
-
-      <AnimatePresence mode="wait">
-        {view3D ? (
-          <motion.div
-            key="3d-view"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.3 }}
-          >
-            <ProductConfigurator
-              product={product}
-              activeColor={activeColor}
-              onColorChange={handleColorChange}
-            />
-          </motion.div>
-        ) : (
-          <motion.div
-            key="2d-view"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.3 }}
-          >
-            {/* Product image with rotated price sticker */}
+      {/* Product image with rotated price sticker */}
+      <div>
             <div className="relative aspect-square max-w-lg mx-auto mb-4 bg-background rounded-[2rem] overflow-visible">
               <div className="w-full h-full rounded-[2rem] overflow-hidden shadow-sm">
                 <AnimatePresence mode="wait">
@@ -226,9 +176,7 @@ export function ProductDetail() {
                 </div>
               </div>
             )}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      </div>
 
       {/* Product info */}
       <motion.div
