@@ -76,13 +76,13 @@ export function ProductDetail() {
       <div className="flex justify-between items-center mb-6">
         <button
           onClick={() => navigate(-1)}
-          className="bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-sm hover:shadow-md transition-shadow"
+          className="bg-surface/80 backdrop-blur-sm p-3 rounded-full shadow-sm hover:shadow-md transition-shadow"
         >
           <ArrowLeft size={20} />
         </button>
         <button
           onClick={() => setIsFavorite(!isFavorite)}
-          className="bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-sm hover:shadow-md transition-shadow"
+          className="bg-surface/80 backdrop-blur-sm p-3 rounded-full shadow-sm hover:shadow-md transition-shadow"
         >
           <Star
             size={20}
@@ -96,7 +96,7 @@ export function ProductDetail() {
 
       {/* 2D/3D toggle button */}
       <div className="flex justify-center mb-4">
-        <div className="inline-flex bg-white rounded-full p-1 shadow-sm border border-primary/10">
+        <div className="inline-flex bg-surface rounded-full p-1 shadow-sm border border-primary/10">
           <button
             onClick={() => setView3D(false)}
             className={cn(
@@ -262,7 +262,7 @@ export function ProductDetail() {
 
         {/* Specs table with thumbnail */}
         <div className="flex gap-5 mb-4">
-          <div className="w-20 h-20 rounded-xl overflow-hidden shadow-sm flex-shrink-0 bg-white">
+          <div className="w-20 h-20 rounded-xl overflow-hidden shadow-sm flex-shrink-0 bg-surface">
             <img
               src={currentImage}
               alt={product.name}

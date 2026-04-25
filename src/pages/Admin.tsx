@@ -25,7 +25,7 @@ function AdminChat({ order, onBack }: { order: Order; onBack: () => void }) {
   return (
     <div className="flex flex-col h-[60vh]">
       <div className="flex items-center gap-3 mb-4">
-        <button onClick={onBack} className="bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-sm hover:shadow-md transition-shadow">
+        <button onClick={onBack} className="bg-surface/80 backdrop-blur-sm p-3 rounded-full shadow-sm hover:shadow-md transition-shadow">
           <ArrowLeft size={20} />
         </button>
         <div>
@@ -44,7 +44,7 @@ function AdminChat({ order, onBack }: { order: Order; onBack: () => void }) {
               "max-w-[80%] rounded-2xl px-4 py-3",
               msg.from === 'admin'
                 ? "ml-auto bg-primary text-white rounded-br-md"
-                : "mr-auto bg-white shadow-sm rounded-bl-md"
+                : "mr-auto bg-surface shadow-sm rounded-bl-md"
             )}
           >
             <p className="text-sm">{msg.text}</p>
@@ -65,7 +65,7 @@ function AdminChat({ order, onBack }: { order: Order; onBack: () => void }) {
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSend()}
           placeholder="Ответить клиенту..."
-          className="flex-1 bg-white rounded-full px-5 py-3 border-none shadow-sm focus:ring-2 focus:ring-primary outline-none text-sm"
+          className="flex-1 bg-surface rounded-full px-5 py-3 border-none shadow-sm focus:ring-2 focus:ring-primary outline-none text-sm"
         />
         <button
           onClick={handleSend}
@@ -186,7 +186,7 @@ function ProductForm({
     onSave(product);
   };
 
-  const fieldClass = 'w-full bg-white rounded-2xl px-5 py-3 border border-primary/10 shadow-sm focus:ring-2 focus:ring-primary outline-none text-sm';
+  const fieldClass = 'w-full bg-surface rounded-2xl px-5 py-3 border border-primary/10 shadow-sm focus:ring-2 focus:ring-primary outline-none text-sm';
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -288,7 +288,7 @@ function ProductForm({
         </div>
         <div className="flex flex-wrap gap-3">
           {colors.map((hex, i) => (
-            <div key={i} className="flex items-center gap-1.5 bg-[#F9F7F2] rounded-xl px-2 py-1.5">
+            <div key={i} className="flex items-center gap-1.5 bg-background rounded-xl px-2 py-1.5">
               <input
                 type="color"
                 value={hex}
@@ -408,7 +408,7 @@ export function Admin() {
         <div className="mb-6">
           <button
             onClick={() => navigate(-1)}
-            className="bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-sm hover:shadow-md transition-shadow"
+            className="bg-surface/80 backdrop-blur-sm p-3 rounded-full shadow-sm hover:shadow-md transition-shadow"
           >
             <ArrowLeft size={20} />
           </button>
@@ -427,7 +427,7 @@ export function Admin() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-3xl shadow-sm p-6 mb-6 text-center"
+            className="bg-surface rounded-3xl shadow-sm p-6 mb-6 text-center"
           >
             <div className="inline-flex bg-green-50 rounded-full p-3 mb-4">
               <Check size={24} className="text-green-600" />
@@ -437,7 +437,7 @@ export function Admin() {
               Сохраните ваши учётные данные, чтобы вы могли зайти и пользоваться прекрасным веб-сервисом интернет-магазина ROOOMEBEL
             </p>
 
-            <div className="bg-[#F9F7F2] rounded-2xl p-4 mb-4 text-left">
+            <div className="bg-background rounded-2xl p-4 mb-4 text-left">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs opacity-40 uppercase tracking-wider">Ваши данные</span>
               </div>
@@ -459,7 +459,7 @@ export function Admin() {
                 "w-full rounded-full py-3.5 font-bold flex items-center justify-center gap-2 transition-all mb-3",
                 copied
                   ? "bg-green-600 text-white"
-                  : "bg-white border border-primary/15 hover:bg-primary/5"
+                  : "bg-surface border border-primary/15 hover:bg-primary/5"
               )}
             >
               {copied ? <Check size={18} /> : <Copy size={18} />}
@@ -478,9 +478,9 @@ export function Admin() {
         {/* ── Login / Register form ── */}
         {!registered && (
           <form onSubmit={authMode === 'login' ? handleLogin : handleRegister} className="space-y-4">
-            <div className="bg-white rounded-3xl shadow-sm p-6 space-y-4">
+            <div className="bg-surface rounded-3xl shadow-sm p-6 space-y-4">
               {/* Toggle login / register */}
-              <div className="flex bg-[#F9F7F2] rounded-full p-1 mb-2">
+              <div className="flex bg-background rounded-full p-1 mb-2">
                 <button
                   type="button"
                   onClick={() => { setAuthMode('login'); setError(''); }}
@@ -510,7 +510,7 @@ export function Admin() {
                   value={nameField}
                   onChange={(e) => { setNameField(e.target.value); setError(''); }}
                   placeholder="Введите ваше имя"
-                  className="w-full bg-[#F9F7F2] rounded-2xl px-5 py-4 border border-primary/5 focus:ring-2 focus:ring-primary outline-none text-sm"
+                  className="w-full bg-background rounded-2xl px-5 py-4 border border-primary/5 focus:ring-2 focus:ring-primary outline-none text-sm"
                 />
               </div>
               <div className="space-y-2">
@@ -520,7 +520,7 @@ export function Admin() {
                   value={passwordField}
                   onChange={(e) => { setPasswordField(e.target.value); setError(''); }}
                   placeholder={authMode === 'register' ? 'Придумайте пароль' : 'Введите пароль'}
-                  className="w-full bg-[#F9F7F2] rounded-2xl px-5 py-4 border border-primary/5 focus:ring-2 focus:ring-primary outline-none text-sm"
+                  className="w-full bg-background rounded-2xl px-5 py-4 border border-primary/5 focus:ring-2 focus:ring-primary outline-none text-sm"
                 />
               </div>
 
@@ -557,7 +557,7 @@ export function Admin() {
       <div className="mb-4">
         <button
           onClick={() => navigate(-1)}
-          className="bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-sm hover:shadow-md transition-shadow"
+          className="bg-surface/80 backdrop-blur-sm p-3 rounded-full shadow-sm hover:shadow-md transition-shadow"
         >
           <ArrowLeft size={20} />
         </button>
@@ -596,7 +596,7 @@ export function Admin() {
             transition={{ duration: 0.2 }}
             className="overflow-hidden mb-6"
           >
-            <div className="bg-white rounded-3xl shadow-sm p-6">
+            <div className="bg-surface rounded-3xl shadow-sm p-6">
               <div className="flex items-center gap-2 mb-4">
                 <KeyRound size={18} className="opacity-40" />
                 <h3 className="font-bold">Сменить учётные данные</h3>
@@ -610,7 +610,7 @@ export function Admin() {
                       value={newName}
                       onChange={(e) => setNewName(e.target.value)}
                       placeholder={adminCredentials?.name || 'Имя'}
-                      className="w-full bg-[#F9F7F2] rounded-2xl px-5 py-3 border border-primary/5 focus:ring-2 focus:ring-primary outline-none text-sm"
+                      className="w-full bg-background rounded-2xl px-5 py-3 border border-primary/5 focus:ring-2 focus:ring-primary outline-none text-sm"
                     />
                   </div>
                   <div>
@@ -620,7 +620,7 @@ export function Admin() {
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                       placeholder="Новый пароль"
-                      className="w-full bg-[#F9F7F2] rounded-2xl px-5 py-3 border border-primary/5 focus:ring-2 focus:ring-primary outline-none text-sm"
+                      className="w-full bg-background rounded-2xl px-5 py-3 border border-primary/5 focus:ring-2 focus:ring-primary outline-none text-sm"
                     />
                   </div>
                 </div>
@@ -658,7 +658,7 @@ export function Admin() {
           { label: 'Товаров', value: String(allProducts.length), icon: CheckCircle },
           { label: 'Сумма', value: `${orders.reduce((s, o) => s + o.total, 0)} ₽`, icon: MessageCircle },
         ].map((stat) => (
-          <div key={stat.label} className="bg-white p-5 pill shadow-sm">
+          <div key={stat.label} className="bg-surface p-5 pill shadow-sm">
             <div className="flex items-center gap-4">
               <div className="p-3 bg-primary/5 pill">
                 <stat.icon size={20} />
@@ -678,7 +678,7 @@ export function Admin() {
           onClick={() => { setActiveTab('orders'); setShowAddForm(false); setEditingProduct(null); }}
           className={cn(
             "px-5 py-2.5 rounded-full text-sm font-bold transition-all",
-            activeTab === 'orders' ? "bg-primary text-white shadow-md" : "bg-white border border-primary/10 hover:bg-primary/5"
+            activeTab === 'orders' ? "bg-primary text-white shadow-md" : "bg-surface border border-primary/10 hover:bg-primary/5"
           )}
         >
           Заказы ({orders.length})
@@ -687,7 +687,7 @@ export function Admin() {
           onClick={() => { setActiveTab('products'); setSelectedOrder(null); }}
           className={cn(
             "px-5 py-2.5 rounded-full text-sm font-bold transition-all",
-            activeTab === 'products' ? "bg-primary text-white shadow-md" : "bg-white border border-primary/10 hover:bg-primary/5"
+            activeTab === 'products' ? "bg-primary text-white shadow-md" : "bg-surface border border-primary/10 hover:bg-primary/5"
           )}
         >
           Товары ({allProducts.length})
@@ -703,7 +703,7 @@ export function Admin() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              className="bg-white pill shadow-sm p-6"
+              className="bg-surface pill shadow-sm p-6"
             >
               <AdminChat order={activeOrder} onBack={() => setSelectedOrder(null)} />
             </motion.div>
@@ -715,7 +715,7 @@ export function Admin() {
               exit={{ opacity: 0, x: 20 }}
             >
               {orders.length === 0 ? (
-                <div className="bg-white pill shadow-sm p-12 text-center">
+                <div className="bg-surface pill shadow-sm p-12 text-center">
                   <Package size={40} className="mx-auto opacity-15 mb-4" />
                   <p className="opacity-40">Заказов пока нет</p>
                 </div>
@@ -725,7 +725,7 @@ export function Admin() {
                     <motion.button
                       key={order.id}
                       onClick={() => setSelectedOrder(order.id)}
-                      className="w-full bg-white pill shadow-sm p-5 flex items-center gap-4 text-left hover:shadow-md transition-shadow"
+                      className="w-full bg-surface pill shadow-sm p-5 flex items-center gap-4 text-left hover:shadow-md transition-shadow"
                       whileHover={{ scale: 1.01 }}
                       whileTap={{ scale: 0.99 }}
                     >
@@ -765,7 +765,7 @@ export function Admin() {
           >
             {/* Add / Edit Form */}
             {(showAddForm || editingProduct) ? (
-              <div className="bg-white rounded-3xl shadow-sm p-6 mb-6">
+              <div className="bg-surface rounded-3xl shadow-sm p-6 mb-6">
                 <ProductForm
                   initial={editingProduct || undefined}
                   onSave={handleSaveProduct}
@@ -775,7 +775,7 @@ export function Admin() {
             ) : (
               <button
                 onClick={() => setShowAddForm(true)}
-                className="w-full bg-white rounded-3xl shadow-sm p-5 flex items-center justify-center gap-3 mb-6 border-2 border-dashed border-primary/15 hover:border-primary/30 hover:bg-primary/5 transition-all group"
+                className="w-full bg-surface rounded-3xl shadow-sm p-5 flex items-center justify-center gap-3 mb-6 border-2 border-dashed border-primary/15 hover:border-primary/30 hover:bg-primary/5 transition-all group"
               >
                 <div className="bg-primary/10 rounded-full p-2 group-hover:bg-primary group-hover:text-white transition-all">
                   <Plus size={20} />
@@ -790,7 +790,7 @@ export function Admin() {
                 <motion.div
                   key={product.id}
                   layout
-                  className="bg-white rounded-2xl shadow-sm p-4 flex items-center gap-4"
+                  className="bg-surface rounded-2xl shadow-sm p-4 flex items-center gap-4"
                 >
                   <img
                     src={product.image}

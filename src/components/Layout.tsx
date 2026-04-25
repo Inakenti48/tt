@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import { Navbar } from './Navbar';
+import { BellToggle } from './BellToggle';
 
 interface LayoutProps {
   children: ReactNode;
@@ -32,7 +33,10 @@ export function Layout({ children }: LayoutProps) {
           Rooomebel
           <LogoUnderline />
         </h1>
-        <div className="text-sm opacity-50">Обретите покой</div>
+        <div className="flex items-center gap-5">
+          <div className="text-sm opacity-50">Обретите покой</div>
+          <BellToggle />
+        </div>
       </header>
 
       <main className="px-6 md:px-12 lg:px-24">

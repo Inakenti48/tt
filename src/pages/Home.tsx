@@ -121,7 +121,7 @@ export function Home() {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.4 }}
-        className="relative w-full max-w-md aspect-[4/5] mb-8 bg-white rounded-[2rem] overflow-hidden shadow-sm"
+        className="relative w-full max-w-md aspect-[4/5] mb-8 bg-surface rounded-[2rem] overflow-hidden shadow-sm"
       >
         <img
           src={heroProduct.image}

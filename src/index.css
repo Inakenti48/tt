@@ -2,9 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --color-bg: #F9F7F2;
+  --color-surface: #FFFFFF;
+  --color-text: #000000;
+  --color-text-inv: #FFFFFF;
+}
+
+.dark {
+  --color-bg: #111111;
+  --color-surface: #1C1C1E;
+  --color-text: #F5F5F5;
+  --color-text-inv: #111111;
+}
+
 @layer base {
   body {
     @apply antialiased;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    transition: background-color 0.5s ease, color 0.5s ease;
   }
 
   h1, h2, h3, h4, h5, h6 {

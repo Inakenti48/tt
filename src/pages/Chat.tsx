@@ -45,7 +45,7 @@ export function Chat() {
       <div className="flex items-center gap-3 mb-4">
         <button
           onClick={() => navigate(-1)}
-          className="bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-sm hover:shadow-md transition-shadow"
+          className="bg-surface/80 backdrop-blur-sm p-3 rounded-full shadow-sm hover:shadow-md transition-shadow"
         >
           <ArrowLeft size={20} />
         </button>
@@ -66,7 +66,7 @@ export function Chat() {
               "max-w-[80%] rounded-2xl px-4 py-3",
               msg.from === 'client'
                 ? "ml-auto bg-primary text-white rounded-br-md"
-                : "mr-auto bg-white shadow-sm rounded-bl-md"
+                : "mr-auto bg-surface shadow-sm rounded-bl-md"
             )}
           >
             <p className="text-sm">{msg.text}</p>
@@ -88,7 +88,7 @@ export function Chat() {
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSend()}
           placeholder="Написать сообщение..."
-          className="flex-1 bg-white rounded-full px-5 py-3 border-none shadow-sm focus:ring-2 focus:ring-primary outline-none text-sm"
+          className="flex-1 bg-surface rounded-full px-5 py-3 border-none shadow-sm focus:ring-2 focus:ring-primary outline-none text-sm"
         />
         <button
           onClick={handleSend}

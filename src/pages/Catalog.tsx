@@ -151,7 +151,7 @@ function TumblerCard({ product, index, onOrder }: { product: Product; index: num
       >
         <Link to={`/product/${product.id}`}>
           <div
-            className="relative aspect-square mb-4 bg-white rounded-2xl overflow-hidden transition-shadow duration-300"
+            className="relative aspect-square mb-4 bg-surface rounded-2xl overflow-hidden transition-shadow duration-300"
             style={{
               boxShadow: '0 8px 30px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04)',
             }}
@@ -218,7 +218,7 @@ function CustomOrderForm() {
   const [desc, setDesc] = useState('');
   const [sent, setSent] = useState(false);
 
-  const fc = 'w-full bg-white rounded-2xl px-5 py-3 border border-primary/10 shadow-sm focus:ring-2 focus:ring-primary outline-none text-sm';
+  const fc = 'w-full bg-surface rounded-2xl px-5 py-3 border border-primary/10 shadow-sm focus:ring-2 focus:ring-primary outline-none text-sm';
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -232,7 +232,7 @@ function CustomOrderForm() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-3xl shadow-sm p-8 text-center max-w-md mx-auto"
+        className="bg-surface rounded-3xl shadow-sm p-8 text-center max-w-md mx-auto"
       >
         <div className="inline-flex bg-green-50 rounded-full p-4 mb-4">
           <Check size={28} className="text-green-600" />
@@ -255,7 +255,7 @@ function CustomOrderForm() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       onSubmit={handleSubmit}
-      className="bg-white rounded-3xl shadow-sm p-6 max-w-md mx-auto space-y-4"
+      className="bg-surface rounded-3xl shadow-sm p-6 max-w-md mx-auto space-y-4"
     >
       <div className="text-center mb-2">
         <div className="inline-flex bg-primary/5 rounded-full p-3 mb-3">
@@ -375,7 +375,7 @@ export function Catalog() {
           alt="интерьер"
           className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-white/60 via-white/30 to-white/70" />
+        <div className="absolute inset-0" style={{ background: `linear-gradient(to bottom, color-mix(in srgb, var(--color-bg) 60%, transparent), color-mix(in srgb, var(--color-bg) 30%, transparent), color-mix(in srgb, var(--color-bg) 70%, transparent))` }} />
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-6">
           <h2 className="text-5xl md:text-7xl font-bold tracking-tight mb-2">исследуй</h2>
           <p className="opacity-60 text-sm md:text-base mb-5 max-w-xs">
@@ -427,7 +427,7 @@ export function Catalog() {
               to={`/product/${product.id}`}
               className="flex-shrink-0 w-44 snap-start group"
             >
-              <div className="aspect-square bg-white rounded-2xl overflow-hidden shadow-sm mb-3 group-hover:shadow-md transition-shadow">
+              <div className="aspect-square bg-surface rounded-2xl overflow-hidden shadow-sm mb-3 group-hover:shadow-md transition-shadow">
                 <img
                   src={product.image}
                   alt={product.name}
@@ -537,7 +537,7 @@ export function Catalog() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Поиск по названию..."
-                  className="w-full bg-white rounded-2xl pl-11 pr-5 py-3 shadow-sm focus:ring-2 focus:ring-primary outline-none text-sm border border-primary/5"
+                  className="w-full bg-surface rounded-2xl pl-11 pr-5 py-3 shadow-sm focus:ring-2 focus:ring-primary outline-none text-sm border border-primary/5"
                 />
                 {searchQuery && (
                   <button

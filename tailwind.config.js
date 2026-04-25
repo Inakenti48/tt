@@ -4,10 +4,12 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,tsx,jsx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        background: "#F9F7F2",
+        background: "var(--color-bg)",
+        surface: "var(--color-surface)",
         primary: "#000000",
         terracotta: "#8E392B",
         mustard: "#D18D3D",

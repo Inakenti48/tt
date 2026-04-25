@@ -319,7 +319,7 @@ export function ProductConfigurator({ product, activeColor, onColorChange }: Pro
                     "w-7 h-7 rounded-lg border-2 transition-all hover:scale-110 text-[7px] font-bold flex items-center justify-center",
                     i === activeStyle
                       ? "border-primary bg-primary text-white shadow-md"
-                      : "border-primary/10 bg-white"
+                      : "border-primary/10 bg-surface"
                   )}
                 >
                   {label.charAt(0)}

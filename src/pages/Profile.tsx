@@ -45,7 +45,7 @@ export function Profile() {
           <input
             type="email"
             placeholder="info@rooomebel.ru"
-            className="w-full bg-white pill px-6 py-4 border-none shadow-sm focus:ring-2 focus:ring-primary outline-none "
+            className="w-full bg-surface pill px-6 py-4 border-none shadow-sm focus:ring-2 focus:ring-primary outline-none "
           />
         </div>
 
@@ -54,7 +54,7 @@ export function Profile() {
           <input
             type="password"
             placeholder="••••••••"
-            className="w-full bg-white pill px-6 py-4 border-none shadow-sm focus:ring-2 focus:ring-primary outline-none "
+            className="w-full bg-surface pill px-6 py-4 border-none shadow-sm focus:ring-2 focus:ring-primary outline-none "
           />
         </div>
 
@@ -63,7 +63,7 @@ export function Profile() {
             <label className="text-sm font-bold  px-4">Загрузить аватар</label>
             <button
               onClick={handleUploadClick}
-              className="w-full bg-white pill px-6 py-4 border-dashed border-2 border-primary/10 flex items-center justify-center gap-2 text-primary/50 hover:bg-primary/5 transition-colors"
+              className="w-full bg-surface pill px-6 py-4 border-dashed border-2 border-primary/10 flex items-center justify-center gap-2 text-primary/50 hover:bg-primary/5 transition-colors"
             >
               <Upload size={18} />
               <span>Выбрать изображение</span>

@@ -9,6 +9,7 @@ import { Profile } from './pages/Profile';
 import { Admin } from './pages/Admin';
 import { Chat } from './pages/Chat';
 import { StoreProvider } from './store/useStore';
+import { ThemeProvider } from './context/ThemeContext';
 import { CartSidebar } from './components/CartSidebar';
 
 const pageVariants = {
@@ -52,14 +53,16 @@ function AnimatedRoutes() {
 
 function App() {
   return (
-    <StoreProvider>
-      <Router>
-        <Layout>
-          <AnimatedRoutes />
-          <CartSidebar />
-        </Layout>
-      </Router>
-    </StoreProvider>
+    <ThemeProvider>
+      <StoreProvider>
+        <Router>
+          <Layout>
+            <AnimatedRoutes />
+            <CartSidebar />
+          </Layout>
+        </Router>
+      </StoreProvider>
+    </ThemeProvider>
   );
 }
 

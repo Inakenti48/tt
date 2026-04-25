@@ -61,7 +61,7 @@ export function CartSidebar() {
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: '100%', opacity: 0 }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed top-0 right-0 h-full w-full max-w-sm bg-background z-[70] shadow-2xl flex flex-col"
+            className="fixed top-0 right-0 h-full w-full max-w-sm z-[70] shadow-2xl flex flex-col" style={{ backgroundColor: 'var(--color-bg)' }}
           >
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b border-primary/5">
@@ -102,7 +102,7 @@ export function CartSidebar() {
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, x: 50 }}
-                            className="flex gap-4 bg-white rounded-2xl p-3 shadow-sm"
+                            className="flex gap-4 bg-surface rounded-2xl p-3 shadow-sm"
                           >
                             <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0">
                               <img
@@ -166,7 +166,7 @@ export function CartSidebar() {
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         placeholder="Ваше имя"
-                        className="w-full bg-white rounded-full px-5 py-3 border-none shadow-sm focus:ring-2 focus:ring-primary outline-none text-sm"
+                        className="w-full bg-surface rounded-full px-5 py-3 border-none shadow-sm focus:ring-2 focus:ring-primary outline-none text-sm"
                       />
                     </div>
                     <div className="space-y-2">
@@ -175,12 +175,12 @@ export function CartSidebar() {
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         placeholder="+7 (999) 123-45-67"
-                        className="w-full bg-white rounded-full px-5 py-3 border-none shadow-sm focus:ring-2 focus:ring-primary outline-none text-sm"
+                        className="w-full bg-surface rounded-full px-5 py-3 border-none shadow-sm focus:ring-2 focus:ring-primary outline-none text-sm"
                       />
                     </div>
 
                     {/* Order summary */}
-                    <div className="bg-white rounded-2xl p-4 shadow-sm">
+                    <div className="bg-surface rounded-2xl p-4 shadow-sm">
                       <p className="text-xs opacity-40 mb-2">Ваш заказ</p>
                       {cart.map((item) => (
                         <div key={item.product.id} className="flex justify-between text-sm py-1">
