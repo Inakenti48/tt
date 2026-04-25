@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Star, ShoppingBag, ArrowRight, ChevronLeft, ChevronRight, Check } from 'lucide-react';
+import { ArrowLeft, Star, ShoppingBag, ChevronLeft, ChevronRight, Check } from 'lucide-react';
 import { cn } from '../utils/cn';
 import { useStore } from '../store/useStore';
+import { LiquidButton } from '../components/LiquidButton';
 
 export function ProductDetail() {
   const { id } = useParams<{ id: string }>();
@@ -257,17 +258,12 @@ export function ProductDetail() {
         transition={{ delay: 0.4 }}
         className="fixed bottom-28 right-6 z-40"
       >
-        <button
-          onClick={handleOrder}
-          className="bg-primary text-primary-inv rounded-full pl-4 pr-5 py-3 flex items-center gap-2.5 shadow-2xl hover:scale-105 active:scale-95 transition-all"
-        >
-          <div className="bg-white/15 rounded-full p-2">
+        <LiquidButton onClick={handleOrder} width={220} height={52}>
+          <span className="flex items-center gap-2">
             <ShoppingBag size={16} />
-          </div>
-          <span className="text-sm font-bold">В корзину</span>
-          <span className="text-base font-bold">{product.price} ₽</span>
-          <ArrowRight size={16} />
-        </button>
+            В корзину · {product.price} ₽
+          </span>
+        </LiquidButton>
       </motion.div>
     </div>
   );

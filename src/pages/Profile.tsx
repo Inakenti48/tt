@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../utils/cn';
 import { Upload, X } from 'lucide-react';
+import { LiquidButton } from '../components/LiquidButton';
 
 export function Profile() {
   const [isLogin, setIsLogin] = useState(true);
@@ -71,9 +72,11 @@ export function Profile() {
           </div>
         )}
 
-        <button className="w-full bg-primary text-primary-inv pill py-5 text-lg font-bold hover:scale-[1.02] active:scale-[0.98] transition-all">
-          {isLogin ? 'Войти' : 'Создать аккаунт'}
-        </button>
+        <div className="flex justify-center">
+          <LiquidButton width={300} height={56}>
+            {isLogin ? 'Войти' : 'Создать аккаунт'}
+          </LiquidButton>
+        </div>
       </motion.div>
 
       <AnimatePresence>

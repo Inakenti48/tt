@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { products } from '../data/products';
+import { LiquidButton } from '../components/LiquidButton';
 
 const carouselItems = products.slice(0, 8);
 
@@ -199,13 +200,12 @@ export function Home() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="w-full max-w-md px-4"
+        className="flex justify-center"
       >
-        <Link
-          to={`/product/${active.id}`}
-          className="w-full bg-primary text-primary-inv rounded-full px-10 py-4 flex items-center justify-center gap-3 text-base font-bold hover:scale-[1.02] active:scale-[0.98] transition-transform shadow-md"
-        >
-          Подробнее
+        <Link to={`/product/${active.id}`}>
+          <LiquidButton width={260} height={56}>
+            Подробнее
+          </LiquidButton>
         </Link>
       </motion.div>
     </div>

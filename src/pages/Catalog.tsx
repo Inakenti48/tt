@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { categories as allCategories, Product } from '../data/products';
 import { cn } from '../utils/cn';
 import { ShoppingBag, Bell, Search, SlidersHorizontal, Filter, ArrowRight, Compass, Check, X, Ruler, MessageCircle, Send } from 'lucide-react';
+import { LiquidButton } from '../components/LiquidButton';
 import { useStore } from '../store/useStore';
 
 const categoryList = allCategories.map((cat) => ({ key: cat, label: cat }));
@@ -299,13 +300,11 @@ function CustomOrderForm() {
         <textarea value={desc} onChange={(e) => setDesc(e.target.value)} placeholder="Опишите что вы хотите..." rows={3} className={fc + ' resize-none'} />
       </div>
 
-      <button
-        type="submit"
-        className="w-full bg-primary text-primary-inv rounded-full py-4 font-bold flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-transform"
-      >
-        <Send size={18} />
-        Отправить заявку
-      </button>
+      <div className="flex justify-center">
+        <LiquidButton width={280} height={54}>
+          <span className="flex items-center gap-2"><Send size={18} /> Отправить заявку</span>
+        </LiquidButton>
+      </div>
     </motion.form>
   );
 }
