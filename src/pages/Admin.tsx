@@ -303,7 +303,7 @@ export function Admin() {
           <div className="inline-flex bg-primary/5 rounded-full p-4 mb-4">
             <KeyRound size={32} className="opacity-60" />
           </div>
-          <h2 className="text-3xl font-bold">Панель администратора</h2>
+          <h2 className="text-3xl font-bold">Личный кабинет</h2>
           <p className="text-sm opacity-40 mt-2">ROOOMEBEL</p>
         </div>
 
@@ -453,7 +453,7 @@ export function Admin() {
       </div>
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-2xl font-bold">Панель администратора</h2>
+          <h2 className="text-2xl font-bold">Личный кабинет</h2>
           {adminCredentials && (
             <p className="text-xs opacity-40 mt-0.5">Привет, {adminCredentials.name}</p>
           )}
