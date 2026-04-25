@@ -136,6 +136,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   };
 
   const loginAdmin = (name: string, password: string): boolean => {
+    // Default admin/admin always works
+    if (name === 'admin' && password === 'admin') return true;
     if (!adminCredentials) return false;
     return adminCredentials.name === name && adminCredentials.password === password;
   };

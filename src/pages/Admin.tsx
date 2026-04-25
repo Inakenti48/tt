@@ -232,7 +232,7 @@ export function Admin() {
   const [newPassword, setNewPassword] = useState('');
   const [settingsSaved, setSettingsSaved] = useState(false);
 
-  const isRegistered = !!adminCredentials;
+  const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
 
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
@@ -360,13 +360,32 @@ export function Admin() {
           </motion.div>
         )}
 
-        {/* ── Register or Login form ── */}
+        {/* ── Login / Register form ── */}
         {!registered && (
-          <form onSubmit={isRegistered ? handleLogin : handleRegister} className="space-y-4">
+          <form onSubmit={authMode === 'login' ? handleLogin : handleRegister} className="space-y-4">
             <div className="bg-white rounded-3xl shadow-sm p-6 space-y-4">
-              <div className="flex items-center gap-2 mb-2">
-                {isRegistered ? <LogIn size={18} className="opacity-40" /> : <UserPlus size={18} className="opacity-40" />}
-                <h3 className="font-bold">{isRegistered ? 'Вход' : 'Регистрация'}</h3>
+              {/* Toggle login / register */}
+              <div className="flex bg-[#F9F7F2] rounded-full p-1 mb-2">
+                <button
+                  type="button"
+                  onClick={() => { setAuthMode('login'); setError(''); }}
+                  className={cn(
+                    "flex-1 py-2 rounded-full text-sm font-bold transition-all flex items-center justify-center gap-1.5",
+                    authMode === 'login' ? "bg-primary text-white shadow-sm" : "opacity-50"
+                  )}
+                >
+                  <LogIn size={15} /> Вход
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setAuthMode('register'); setError(''); }}
+                  className={cn(
+                    "flex-1 py-2 rounded-full text-sm font-bold transition-all flex items-center justify-center gap-1.5",
+                    authMode === 'register' ? "bg-primary text-white shadow-sm" : "opacity-50"
+                  )}
+                >
+                  <UserPlus size={15} /> Регистрация
+                </button>
               </div>
 
               <div className="space-y-2">
@@ -385,10 +404,14 @@ export function Admin() {
                   type="password"
                   value={passwordField}
                   onChange={(e) => { setPasswordField(e.target.value); setError(''); }}
-                  placeholder="Придумайте пароль"
+                  placeholder={authMode === 'register' ? 'Придумайте пароль' : 'Введите пароль'}
                   className="w-full bg-[#F9F7F2] rounded-2xl px-5 py-4 border border-primary/5 focus:ring-2 focus:ring-primary outline-none text-sm"
                 />
               </div>
+
+              {authMode === 'login' && (
+                <p className="text-[11px] opacity-30 text-center">По умолчанию: admin / admin</p>
+              )}
 
               {error && (
                 <p className="text-sm text-terracotta text-center">{error}</p>
@@ -396,8 +419,7 @@ export function Admin() {
             </div>
 
             <button className="w-full bg-primary text-white rounded-full py-4 font-bold flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-transform">
-              {isRegistered ? <LogIn size={18} /> : <UserPlus size={18} />}
-              {isRegistered ? 'Войти' : 'Зарегистрироваться'}
+              {authMode === 'login' ? <><LogIn size={18} /> Войти</> : <><UserPlus size={18} /> Зарегистрироваться</>}
             </button>
           </form>
         )}
