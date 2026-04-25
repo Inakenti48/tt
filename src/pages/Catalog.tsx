@@ -294,42 +294,39 @@ export function Catalog() {
       </div>
 
       {/* Search / Filter / Sort icon row */}
-      <div id="catalog-grid" className="space-y-4 mb-8">
+      <div id="catalog-grid" className="space-y-3 mb-8">
+        {/* Icons row */}
         <div className="flex items-center gap-3">
-          {/* Search button */}
           <button
             onClick={() => setSearchOpen(!searchOpen)}
             className={cn(
-              "w-11 h-11 rounded-full border flex items-center justify-center transition-all",
+              "w-10 h-10 rounded-full border flex items-center justify-center transition-all shrink-0",
               searchOpen ? "bg-primary text-white border-primary" : "border-primary/15 hover:bg-primary/5"
             )}
           >
-            <Search size={18} className={searchOpen ? "" : "opacity-60"} />
+            <Search size={17} className={searchOpen ? "" : "opacity-60"} />
           </button>
 
-          {/* Filter button — toggles category pills */}
           <button
             onClick={() => setActiveCategory(activeCategory === 'Все' ? 'Тумбочки' : 'Все')}
             className={cn(
-              "w-11 h-11 rounded-full border flex items-center justify-center transition-all",
+              "w-10 h-10 rounded-full border flex items-center justify-center transition-all shrink-0",
               activeCategory !== 'Все' ? "bg-primary text-white border-primary" : "border-primary/15 hover:bg-primary/5"
             )}
           >
-            <Filter size={18} className={activeCategory !== 'Все' ? "" : "opacity-60"} />
+            <Filter size={17} className={activeCategory !== 'Все' ? "" : "opacity-60"} />
           </button>
 
-          {/* Sort button */}
           <button
             onClick={toggleSort}
             className={cn(
-              "w-11 h-11 rounded-full border flex items-center justify-center transition-all",
+              "w-10 h-10 rounded-full border flex items-center justify-center transition-all shrink-0",
               sortOrder !== 'none' ? "bg-primary text-white border-primary" : "border-primary/15 hover:bg-primary/5"
             )}
           >
-            <SlidersHorizontal size={18} className={sortOrder !== 'none' ? "" : "opacity-60"} />
+            <SlidersHorizontal size={17} className={sortOrder !== 'none' ? "" : "opacity-60"} />
           </button>
 
-          {/* Sort label */}
           {sortOrder !== 'none' && (
             <motion.span
               initial={{ opacity: 0, x: -10 }}
@@ -339,22 +336,22 @@ export function Catalog() {
               {sortOrder === 'asc' ? 'Цена ↑' : 'Цена ↓'}
             </motion.span>
           )}
+        </div>
 
-          {/* Category pills — scrollable */}
-          <div className="flex gap-2 ml-auto overflow-x-auto scrollbar-hide pb-1">
-            {categoryList.map((cat) => (
-              <button
-                key={cat.key}
-                onClick={() => setActiveCategory(cat.key)}
-                className={cn(
-                  "px-4 py-2 pill border border-primary/10 text-sm whitespace-nowrap transition-all flex-shrink-0",
-                  activeCategory === cat.key ? "bg-primary text-white" : "hover:bg-primary/5"
-                )}
-              >
-                {cat.label}
-              </button>
-            ))}
-          </div>
+        {/* Category pills — separate scrollable row */}
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1">
+          {categoryList.map((cat) => (
+            <button
+              key={cat.key}
+              onClick={() => setActiveCategory(cat.key)}
+              className={cn(
+                "px-4 py-2 pill border border-primary/10 text-sm whitespace-nowrap transition-all flex-shrink-0",
+                activeCategory === cat.key ? "bg-primary text-white" : "hover:bg-primary/5"
+              )}
+            >
+              {cat.label}
+            </button>
+          ))}
         </div>
 
         {/* Search input — expands inline when search is active */}
