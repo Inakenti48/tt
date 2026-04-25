@@ -34,7 +34,7 @@ export function Navbar() {
                 "relative flex items-center gap-2 px-4 py-2 transition-all duration-300",
                 isActive
                   ? "bg-background text-primary pill"
-                  : "nav-inactive"
+                  : "text-primary-inv opacity-70 hover:opacity-100"
               )}
             >
               <item.icon size={20} strokeWidth={isActive ? 2.5 : 1.5} />
