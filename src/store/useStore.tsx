@@ -49,6 +49,7 @@ interface StoreContextType {
   registerAdmin: (name: string, password: string) => void;
   loginAdmin: (name: string, password: string) => boolean;
   updateAdminCredentials: (name: string, password: string) => void;
+  placeCustomOrder: (name: string, phone: string, width: string, height: string, depth: string, description: string) => string;
 }
 
 const StoreContext = createContext<StoreContextType | null>(null);
@@ -148,6 +149,40 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('rooomebel_admin', JSON.stringify(creds));
   };
 
+  const placeCustomOrder = (name: string, phone: string, width: string, height: string, depth: string, description: string): string => {
+    const id = `IND-${Date.now().toString(36).toUpperCase()}`;
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+    const dims = `${width} × ${depth} × ${height} см`;
+
+    const newOrder: Order = {
+      id,
+      name,
+      phone,
+      items: [],
+      total: 0,
+      chat: [
+        {
+          id: '1',
+          from: 'client',
+          text: `🛠 Индивидуальный заказ\n\nИмя: ${name}\nТелефон: ${phone}\nРазмеры: ${dims}\n${description ? `Описание: ${description}` : ''}`,
+          time: timeStr,
+        },
+        {
+          id: '2',
+          from: 'admin',
+          text: `Здравствуйте, ${name}! Мы получили ваш индивидуальный заказ с размерами ${dims}. Скоро свяжемся с вами для уточнения деталей!`,
+          time: timeStr,
+        },
+      ],
+      createdAt: now.toLocaleDateString('ru-RU'),
+    };
+
+    setOrders((prev) => [newOrder, ...prev]);
+    setActiveOrderId(id);
+    return id;
+  };
+
   const sendMessage = (orderId: string, from: 'client' | 'admin', text: string) => {
     const now = new Date();
     const timeStr = now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
@@ -186,6 +221,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         registerAdmin,
         loginAdmin,
         updateAdminCredentials,
+        placeCustomOrder,
       }}
     >
       {children}

@@ -32,6 +32,7 @@ export const categories = [
   'Садовые столы',
   'Детские шкафчики',
   'Письменные столы',
+  'Индивидуальные заказы',
 ];
 
 export const products: Product[] = [

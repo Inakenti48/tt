@@ -3,7 +3,7 @@ import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from
 import { Link, useNavigate } from 'react-router-dom';
 import { categories as allCategories, Product } from '../data/products';
 import { cn } from '../utils/cn';
-import { ShoppingBag, Bell, Search, SlidersHorizontal, Filter, ArrowRight, Compass, Check, X } from 'lucide-react';
+import { ShoppingBag, Bell, Search, SlidersHorizontal, Filter, ArrowRight, Compass, Check, X, Ruler, MessageCircle, Send } from 'lucide-react';
 import { useStore } from '../store/useStore';
 
 const categoryList = allCategories.map((cat) => ({ key: cat, label: cat }));
@@ -203,6 +203,110 @@ function TumblerCard({ product, index, onOrder }: { product: Product; index: num
         </Link>
       </motion.div>
     </motion.div>
+  );
+}
+
+/* ── Individual Order Form ── */
+function CustomOrderForm() {
+  const navigate = useNavigate();
+  const { placeCustomOrder } = useStore();
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [width, setWidth] = useState('');
+  const [height, setHeight] = useState('');
+  const [depth, setDepth] = useState('');
+  const [desc, setDesc] = useState('');
+  const [sent, setSent] = useState(false);
+
+  const fc = 'w-full bg-white rounded-2xl px-5 py-3 border border-primary/10 shadow-sm focus:ring-2 focus:ring-primary outline-none text-sm';
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim() || !phone.trim() || !width || !height || !depth) return;
+    placeCustomOrder(name.trim(), phone.trim(), width, height, depth, desc.trim());
+    setSent(true);
+  };
+
+  if (sent) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white rounded-3xl shadow-sm p-8 text-center max-w-md mx-auto"
+      >
+        <div className="inline-flex bg-green-50 rounded-full p-4 mb-4">
+          <Check size={28} className="text-green-600" />
+        </div>
+        <h3 className="text-xl font-bold mb-2">Заявка отправлена!</h3>
+        <p className="text-sm opacity-50 mb-6">Администратор получил ваш индивидуальный заказ и скоро ответит в чате</p>
+        <button
+          onClick={() => navigate('/chat')}
+          className="bg-primary text-white rounded-full px-6 py-3 font-bold flex items-center justify-center gap-2 mx-auto hover:scale-105 active:scale-95 transition-transform"
+        >
+          <MessageCircle size={18} />
+          Открыть чат
+        </button>
+      </motion.div>
+    );
+  }
+
+  return (
+    <motion.form
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      onSubmit={handleSubmit}
+      className="bg-white rounded-3xl shadow-sm p-6 max-w-md mx-auto space-y-4"
+    >
+      <div className="text-center mb-2">
+        <div className="inline-flex bg-primary/5 rounded-full p-3 mb-3">
+          <Ruler size={24} className="opacity-50" />
+        </div>
+        <h3 className="text-lg font-bold">Индивидуальный заказ</h3>
+        <p className="text-xs opacity-40 mt-1">Укажите размеры и мы изготовим мебель для вас</p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="text-xs font-bold opacity-50 mb-1 block">Имя *</label>
+          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Ваше имя" className={fc} required />
+        </div>
+        <div>
+          <label className="text-xs font-bold opacity-50 mb-1 block">Телефон *</label>
+          <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+7 (___) ___-__-__" className={fc} required />
+        </div>
+      </div>
+
+      <div>
+        <label className="text-xs font-bold opacity-50 mb-2 block">Размеры (см) *</label>
+        <div className="grid grid-cols-3 gap-3">
+          <div>
+            <span className="text-[10px] opacity-30 block mb-1 text-center">Ширина</span>
+            <input type="number" value={width} onChange={(e) => setWidth(e.target.value)} placeholder="120" className={fc + ' text-center'} required />
+          </div>
+          <div>
+            <span className="text-[10px] opacity-30 block mb-1 text-center">Глубина</span>
+            <input type="number" value={depth} onChange={(e) => setDepth(e.target.value)} placeholder="60" className={fc + ' text-center'} required />
+          </div>
+          <div>
+            <span className="text-[10px] opacity-30 block mb-1 text-center">Высота</span>
+            <input type="number" value={height} onChange={(e) => setHeight(e.target.value)} placeholder="80" className={fc + ' text-center'} required />
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <label className="text-xs font-bold opacity-50 mb-1 block">Описание пожеланий</label>
+        <textarea value={desc} onChange={(e) => setDesc(e.target.value)} placeholder="Опишите что вы хотите..." rows={3} className={fc + ' resize-none'} />
+      </div>
+
+      <button
+        type="submit"
+        className="w-full bg-primary text-white rounded-full py-4 font-bold flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-transform"
+      >
+        <Send size={18} />
+        Отправить заявку
+      </button>
+    </motion.form>
   );
 }
 
@@ -449,17 +553,21 @@ export function Catalog() {
         </AnimatePresence>
       </div>
 
-      {/* Product grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {filtered.map((product, index) => (
-          <TumblerCard
-            key={product.id}
-            product={product}
-            index={index}
-            onOrder={handleOrder}
-          />
-        ))}
-      </div>
+      {/* Product grid or Custom Order Form */}
+      {activeCategory === 'Индивидуальные заказы' ? (
+        <CustomOrderForm />
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {filtered.map((product, index) => (
+            <TumblerCard
+              key={product.id}
+              product={product}
+              index={index}
+              onOrder={handleOrder}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

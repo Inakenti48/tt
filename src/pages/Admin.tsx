@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Package, CheckCircle, Bell, MessageCircle, Send, ArrowLeft, Plus, Trash2, Edit3, X, ImagePlus, Save, Copy, Check, KeyRound, UserPlus, LogIn, Settings, Upload } from 'lucide-react';
+import { Package, CheckCircle, Bell, MessageCircle, Send, ArrowLeft, Plus, Trash2, Edit3, X, ImagePlus, Save, Copy, Check, KeyRound, UserPlus, LogIn, Settings, Upload, Pipette, Palette } from 'lucide-react';
 import { useStore, Order } from '../store/useStore';
 import { Product } from '../data/products';
 import { categories as allCategories } from '../data/products';
@@ -99,7 +99,11 @@ function ProductForm({
   const [price, setPrice] = useState(initial?.price?.toString() || '');
   const [category, setCategory] = useState(initial?.category || cats[0]);
   const [description, setDescription] = useState(initial?.description || '');
-  const [image, setImage] = useState(initial?.image || '');
+  const [images, setImages] = useState<string[]>(() => {
+    if (!initial) return [];
+    const imgs = [initial.image, ...initial.colorVariants.map(v => v.image)];
+    return [...new Set(imgs)];
+  });
   const [dimWidth, setDimWidth] = useState(() => {
     if (!initial?.dimensions) return '';
     const parts = initial.dimensions.split('×').map(s => s.trim().replace(/[^\d.]/g, ''));
@@ -117,41 +121,67 @@ function ProductForm({
   });
   const [weight, setWeight] = useState(initial?.weight || '');
   const [material, setMaterial] = useState(initial?.material || '');
-  const [colorHexes, setColorHexes] = useState(
-    initial?.colorVariants.map((v) => v.hex).join(', ') || '#FFFFFF'
+  const [colors, setColors] = useState<string[]>(
+    initial?.colorVariants.map((v) => v.hex) || ['#FFFFFF']
   );
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      setImage(reader.result as string);
-    };
-    reader.readAsDataURL(file);
+    const files = e.target.files;
+    if (!files) return;
+    Array.from(files).forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImages((prev) => [...prev, reader.result as string]);
+      };
+      reader.readAsDataURL(file);
+    });
+    e.target.value = '';
+  };
+
+  const removeImage = (idx: number) => {
+    setImages((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  const addColor = () => setColors((prev) => [...prev, '#000000']);
+  const removeColor = (idx: number) => setColors((prev) => prev.filter((_, i) => i !== idx));
+  const updateColor = (idx: number, hex: string) => {
+    setColors((prev) => prev.map((c, i) => (i === idx ? hex : c)));
+  };
+
+  const handleEyedropper = async (idx: number) => {
+    try {
+      if ('EyeDropper' in window) {
+        const dropper = new (window as any).EyeDropper();
+        const result = await dropper.open();
+        updateColor(idx, result.sRGBHex);
+      }
+    } catch {}
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !price.trim() || !image) return;
+    if (!name.trim() || !price.trim() || images.length === 0) return;
 
     const dims = (dimWidth || dimHeight || dimDepth)
       ? `${dimWidth || '0'} × ${dimDepth || '0'} × ${dimHeight || '0'} см`
       : undefined;
 
-    const hexArr = colorHexes.split(',').map((h) => h.trim()).filter(Boolean);
+    const mainImage = images[0];
     const product: Product = {
       id: initial?.id || `P-${Date.now().toString(36).toUpperCase()}`,
       name: name.trim(),
       sku: initial?.sku || `RM${String(Math.floor(Math.random() * 90000) + 10000)}`,
       price: Number(price),
-      image: image,
+      image: mainImage,
       category,
       description: description.trim(),
       dimensions: dims,
       weight: weight.trim() || undefined,
       material: material.trim() || undefined,
-      colorVariants: hexArr.map((hex) => ({ hex, image: image })),
+      colorVariants: colors.map((hex, i) => ({
+        hex,
+        image: images[i] || mainImage,
+      })),
     };
     onSave(product);
   };
@@ -187,24 +217,31 @@ function ProductForm({
         </select>
       </div>
 
+      {/* Multiple photos */}
       <div>
-        <label className="text-xs font-bold opacity-50 mb-1 block">Фото товара *</label>
-        <label className="flex flex-col items-center justify-center w-full h-36 bg-[#F9F7F2] border-2 border-dashed border-primary/15 rounded-2xl cursor-pointer hover:border-primary/30 hover:bg-primary/5 transition-all">
-          {image ? (
-            <img src={image} alt="Превью" className="w-full h-full object-contain rounded-2xl p-2" />
-          ) : (
-            <div className="flex flex-col items-center gap-2">
-              <Upload size={24} className="opacity-30" />
-              <span className="text-xs opacity-40">Нажмите чтобы загрузить фото</span>
+        <label className="text-xs font-bold opacity-50 mb-1 block">Фото товара * (можно несколько)</label>
+        <div className="flex gap-3 flex-wrap mb-2">
+          {images.map((img, i) => (
+            <div key={i} className="relative w-20 h-20 rounded-xl overflow-hidden border border-primary/10 shadow-sm group">
+              <img src={img} alt="" className="w-full h-full object-cover" />
+              {i === 0 && (
+                <span className="absolute top-0.5 left-0.5 bg-primary text-white text-[8px] px-1.5 py-0.5 rounded-full">Главное</span>
+              )}
+              <button
+                type="button"
+                onClick={() => removeImage(i)}
+                className="absolute top-0.5 right-0.5 bg-black/50 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <X size={10} />
+              </button>
             </div>
-          )}
-          <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
-        </label>
-        {image && (
-          <button type="button" onClick={() => setImage('')} className="text-xs opacity-40 hover:opacity-100 mt-1.5 transition-opacity">
-            Удалить фото
-          </button>
-        )}
+          ))}
+          <label className="w-20 h-20 rounded-xl border-2 border-dashed border-primary/15 flex flex-col items-center justify-center cursor-pointer hover:border-primary/30 hover:bg-primary/5 transition-all">
+            <Upload size={16} className="opacity-30" />
+            <span className="text-[9px] opacity-30 mt-0.5">Добавить</span>
+            <input type="file" accept="image/*" multiple onChange={handleFileUpload} className="hidden" />
+          </label>
+        </div>
       </div>
 
       <div>
@@ -241,16 +278,43 @@ function ProductForm({
         </div>
       </div>
 
+      {/* Colors with picker + eyedropper */}
       <div>
-        <label className="text-xs font-bold opacity-50 mb-1 block">Цвета (HEX через запятую)</label>
-        <input value={colorHexes} onChange={(e) => setColorHexes(e.target.value)} placeholder="#8B6F47, #2C2C2C, #FFFFFF" className={fieldClass} />
-        <div className="flex gap-2 mt-2">
-          {colorHexes.split(',').map((h, i) => {
-            const hex = h.trim();
-            return hex ? (
-              <span key={i} className="w-6 h-6 rounded-full border border-primary/15 shadow-sm" style={{ backgroundColor: hex }} />
-            ) : null;
-          })}
+        <div className="flex items-center justify-between mb-2">
+          <label className="text-xs font-bold opacity-50">Цвета</label>
+          <button type="button" onClick={addColor} className="text-xs opacity-40 hover:opacity-100 flex items-center gap-1 transition-opacity">
+            <Plus size={12} /> Добавить цвет
+          </button>
+        </div>
+        <div className="flex flex-wrap gap-3">
+          {colors.map((hex, i) => (
+            <div key={i} className="flex items-center gap-1.5 bg-[#F9F7F2] rounded-xl px-2 py-1.5">
+              <input
+                type="color"
+                value={hex}
+                onChange={(e) => updateColor(i, e.target.value)}
+                className="w-8 h-8 rounded-full border-0 cursor-pointer bg-transparent [&::-webkit-color-swatch]:rounded-full [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:border-2 [&::-webkit-color-swatch]:border-primary/10"
+              />
+              <button
+                type="button"
+                onClick={() => handleEyedropper(i)}
+                className="p-1.5 rounded-full hover:bg-primary/10 transition-colors"
+                title="Пипетка"
+              >
+                <Pipette size={14} className="opacity-50" />
+              </button>
+              <span className="text-[10px] opacity-40 w-14 text-center font-mono">{hex}</span>
+              {colors.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => removeColor(i)}
+                  className="p-1 rounded-full hover:bg-red-50 transition-colors"
+                >
+                  <X size={12} className="opacity-30" />
+                </button>
+              )}
+            </div>
+          ))}
         </div>
       </div>
 
