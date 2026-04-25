@@ -1,11 +1,9 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
 import { cn } from '../utils/cn';
-import { Upload, X, ArrowLeft } from 'lucide-react';
+import { Upload, X } from 'lucide-react';
 
 export function Profile() {
-  const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [showModal, setShowModal] = useState(false);
 
@@ -15,14 +13,6 @@ export function Profile() {
 
   return (
     <div className="max-w-md mx-auto py-12">
-      {/* Back button */}
-      <div className="mb-4">
-        <button
-          onClick={() => navigate(-1)}
-          className="bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-sm hover:shadow-md transition-shadow"
-        >
-          <ArrowLeft size={20} />
-        </button>
       </div>
       <div className="flex gap-4 mb-12 justify-center">
         <button

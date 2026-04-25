@@ -3,7 +3,7 @@ import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from
 import { Link, useNavigate } from 'react-router-dom';
 import { categories as allCategories, Product } from '../data/products';
 import { cn } from '../utils/cn';
-import { ShoppingBag, Bell, Search, SlidersHorizontal, Filter, ArrowRight, ArrowLeft, Compass, Check, X } from 'lucide-react';
+import { ShoppingBag, Bell, Search, SlidersHorizontal, Filter, ArrowRight, Compass, Check, X } from 'lucide-react';
 import { useStore } from '../store/useStore';
 
 const categoryList = allCategories.map((cat) => ({ key: cat, label: cat }));
@@ -246,16 +246,6 @@ export function Catalog() {
 
   return (
     <div className="pb-20">
-      {/* Back button */}
-      <div className="mb-4">
-        <button
-          onClick={() => navigate(-1)}
-          className="bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-sm hover:shadow-md transition-shadow"
-        >
-          <ArrowLeft size={20} />
-        </button>
-      </div>
-
       <AnimatePresence>
         {showOrderToast && (
           <motion.div
