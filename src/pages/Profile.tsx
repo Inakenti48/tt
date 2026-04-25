@@ -13,7 +13,6 @@ export function Profile() {
 
   return (
     <div className="max-w-md mx-auto py-12">
-      </div>
       <div className="flex gap-4 mb-12 justify-center">
         <button
           onClick={() => setIsLogin(true)}
