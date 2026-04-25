@@ -110,3 +110,14 @@ h4.\!uppercase, h5.\!uppercase, h6.\!uppercase {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* Animated gradient for title text in dark mode */
+.animate-title-gradient {
+  animation: title-gradient 8s ease infinite;
+}
+
+@keyframes title-gradient {
+  0% { background-position: 0% 0%; }
+  50% { background-position: 100% 100%; }
+  100% { background-position: 0% 0%; }
+}
