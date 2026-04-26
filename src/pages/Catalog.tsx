@@ -468,7 +468,7 @@ export function Catalog() {
                 "h-10 rounded-full border-2 border-terracotta bg-transparent outline-none text-terracotta font-bold transition-all duration-500",
                 searchOpen ? "w-52 pl-5 pr-8 text-sm" : "w-10 pl-3 pr-3 text-[0px] cursor-pointer"
               )}
-              style={{ caretColor: 'transparent' }}
+              style={{ caretColor: searchOpen ? '#8E392B' : 'transparent' }}
             />
             {/* Magnifying glass SVG — circle + handle */}
             <svg
@@ -498,10 +498,10 @@ export function Catalog() {
               <circle cx="10" cy="10" r="7" />
               <line x1="15.5" y1="15.5" x2="21" y2="21" />
             </svg>
-            {/* Blinking cursor — appears when open */}
+            {/* Blinking cursor — only visible when open and empty (native caret takes over when typing) */}
             <span
               className="absolute pointer-events-none transition-all duration-500"
-              style={searchOpen ? {
+              style={(searchOpen && !searchQuery) ? {
                 left: 14,
                 top: '50%',
                 transform: 'translateY(-50%)',
