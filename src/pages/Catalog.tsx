@@ -498,31 +498,6 @@ export function Catalog() {
               <circle cx="10" cy="10" r="7" />
               <line x1="15.5" y1="15.5" x2="21" y2="21" />
             </svg>
-            {/* Blinking cursor — only visible when open and empty (native caret takes over when typing) */}
-            <span
-              className="absolute pointer-events-none transition-all duration-500"
-              style={(searchOpen && !searchQuery) ? {
-                left: 14,
-                top: '50%',
-                transform: 'translateY(-50%)',
-                width: 2,
-                height: 16,
-                borderRadius: 1,
-                backgroundColor: '#8E392B',
-                opacity: 1,
-                animation: 'blink 1s 0.5s infinite both',
-              } : {
-                left: 14,
-                top: '50%',
-                transform: 'translateY(-50%)',
-                width: 2,
-                height: 16,
-                borderRadius: 1,
-                backgroundColor: '#8E392B',
-                opacity: 0,
-                animation: 'none',
-              }}
-            />
             {searchQuery && (
               <button
                 onMouseDown={(e) => { e.preventDefault(); setSearchQuery(''); }}
