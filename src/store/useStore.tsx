@@ -295,9 +295,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     );
     if (from === 'client') {
       addNotification(`Новое сообщение от клиента в заказе ${orderId}`, orderId);
-    }
-    if (from === 'client') {
       trackEvent({ type: 'chat_open', data: { orderId } });
+    }
+    if (from === 'admin') {
+      addNotification(`Админ ответил в заказе ${orderId}`, orderId);
     }
   };
 

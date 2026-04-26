@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Send, ArrowLeft, Package } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Send, ArrowLeft, Package, MessageCircle } from 'lucide-react';
 import { useStore } from '../store/useStore';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '../utils/cn';
@@ -17,7 +17,14 @@ export function Chat() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [order?.chat.length]);
 
-  if (!order) {
+  // Auto-select first order if none active
+  useEffect(() => {
+    if (!activeOrderId && orders.length > 0) {
+      setActiveOrderId(orders[0].id);
+    }
+  }, [activeOrderId, orders, setActiveOrderId]);
+
+  if (orders.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] text-center">
         <Package size={48} className="opacity-15 mb-4" />
@@ -33,6 +40,54 @@ export function Chat() {
     );
   }
 
+  // Show order list if no active order selected yet
+  if (!order) {
+    return (
+      <div className="max-w-lg mx-auto">
+        <h2 className="text-xl font-bold mb-4">Ваши заказы</h2>
+        <div className="space-y-3">
+          {orders.map(o => {
+            const lastMsg = o.chat[o.chat.length - 1];
+            const hasAdminReply = o.chat.some(m => m.from === 'admin');
+            return (
+              <motion.button
+                key={o.id}
+                onClick={() => setActiveOrderId(o.id)}
+                className="w-full bg-surface rounded-2xl shadow-sm p-4 flex items-center gap-4 text-left hover:shadow-md transition-shadow"
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
+              >
+                <div className={cn(
+                  "rounded-full p-3",
+                  hasAdminReply ? "bg-green-500/10" : "bg-primary/5"
+                )}>
+                  <MessageCircle size={20} className={hasAdminReply ? "text-green-600" : ""} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-bold text-sm">Заказ {o.id}</h4>
+                    <span className="text-[10px] opacity-40">{o.createdAt}</span>
+                  </div>
+                  <p className="text-xs opacity-50">
+                    {o.items.length > 0 ? `${o.items.length} товаров — ${o.total} ₽` : 'Индивидуальный заказ'}
+                  </p>
+                  {lastMsg && (
+                    <p className="text-[11px] opacity-40 truncate mt-1">
+                      {lastMsg.from === 'admin' ? '↩ Админ: ' : 'Вы: '}{lastMsg.text}
+                    </p>
+                  )}
+                </div>
+                <span className="bg-primary/5 text-[10px] font-bold px-2 py-1 rounded-full flex-shrink-0">
+                  {o.chat.length}
+                </span>
+              </motion.button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
   const handleSend = () => {
     if (!text.trim()) return;
     sendMessage(order.id, 'client', text.trim());
@@ -44,15 +99,28 @@ export function Chat() {
       {/* Chat header */}
       <div className="flex items-center gap-3 mb-4">
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => {
+            if (orders.length > 1) {
+              setActiveOrderId(null);
+            } else {
+              navigate(-1);
+            }
+          }}
           className="bg-surface/80 backdrop-blur-sm p-3 rounded-full shadow-sm hover:shadow-md transition-shadow"
         >
           <ArrowLeft size={20} />
         </button>
-        <div>
+        <div className="flex-1">
           <h3 className="font-bold text-base">Заказ {order.id}</h3>
-          <p className="text-xs opacity-40">{order.items.length} товаров — {order.total} ₽</p>
+          <p className="text-xs opacity-40">
+            {order.items.length > 0 ? `${order.items.length} товаров — ${order.total} ₽` : 'Индивидуальный заказ'}
+          </p>
         </div>
+        {orders.length > 1 && (
+          <span className="text-[10px] opacity-40 bg-surface rounded-full px-2 py-1">
+            {orders.indexOf(order) + 1}/{orders.length}
+          </span>
+        )}
       </div>
 
       {/* Messages */}
@@ -69,7 +137,10 @@ export function Chat() {
                 : "mr-auto bg-surface shadow-sm rounded-bl-md"
             )}
           >
-            <p className="text-sm">{msg.text}</p>
+            {msg.from === 'admin' && (
+              <p className="text-[9px] font-bold opacity-40 mb-1">Админ</p>
+            )}
+            <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
             <p className={cn(
               "text-[10px] mt-1",
               msg.from === 'client' ? "text-primary-inv/50 text-right" : "text-primary/30"
