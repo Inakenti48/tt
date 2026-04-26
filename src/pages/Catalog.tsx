@@ -1,13 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
-import { categories as allCategories, Product } from '../data/products';
+import { Product } from '../data/products';
 import { cn } from '../utils/cn';
 import { ShoppingBag, Bell, Search, SlidersHorizontal, Filter, ArrowRight, Compass, Check, X, Ruler, MessageCircle, Send } from 'lucide-react';
 import { LiquidButton } from '../components/LiquidButton';
 import { useStore } from '../store/useStore';
 
-const categoryList = allCategories.map((cat) => ({ key: cat, label: cat }));
+// categoryList is now built dynamically inside the component
 
 /* ── Falling letters animation ── */
 const letterExitVariants = {
@@ -311,7 +311,8 @@ function CustomOrderForm() {
 
 export function Catalog() {
   const navigate = useNavigate();
-  const { addToCart, allProducts: products, recommendations } = useStore();
+  const { addToCart, allProducts: products, recommendations, allCategories: storeCats } = useStore();
+  const categoryList = storeCats.map((cat) => ({ key: cat, label: cat }));
   const [showOrderToast, setShowOrderToast] = useState(false);
   const [activeCategory, setActiveCategory] = useState('Все');
   const [searchOpen, setSearchOpen] = useState(false);

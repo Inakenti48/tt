@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
-import { Product, products as defaultProducts } from '../data/products';
+import { Product, products as defaultProducts, categories as defaultCategories } from '../data/products';
 
 /* ─── Types ─── */
 export interface CartItem {
@@ -78,6 +78,7 @@ const DB_KEYS = {
   products: 'rooomebel_products',
   notifications: 'rooomebel_notifications',
   recommendations: 'rooomebel_recommendations',
+  categories: 'rooomebel_categories',
 } as const;
 
 function dbGet<T>(key: string, fallback: T): T {
@@ -161,6 +162,12 @@ interface StoreContextType {
   addRecommendation: (name: string, productIds: string[]) => void;
   updateRecommendation: (id: string, updates: Partial<RecommendationCategory>) => void;
   removeRecommendation: (id: string) => void;
+
+  // Categories
+  customCategories: string[];
+  addCategory: (name: string) => void;
+  removeCategory: (name: string) => void;
+  allCategories: string[];
 }
 
 const StoreContext = createContext<StoreContextType | null>(null);
@@ -186,6 +193,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [recommendations, setRecommendations] = useState<RecommendationCategory[]>(
     () => dbGet(DB_KEYS.recommendations, [])
   );
+  const [customCategories, setCustomCategories] = useState<string[]>(
+    () => dbGet(DB_KEYS.categories, [])
+  );
 
   // Persist to localStorage
   useEffect(() => { dbSet(DB_KEYS.orders, orders); }, [orders]);
@@ -195,6 +205,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   useEffect(() => { dbSet(DB_KEYS.analytics, analytics); }, [analytics]);
   useEffect(() => { dbSet(DB_KEYS.notifications, notifications); }, [notifications]);
   useEffect(() => { dbSet(DB_KEYS.recommendations, recommendations); }, [recommendations]);
+  useEffect(() => { dbSet(DB_KEYS.categories, customCategories); }, [customCategories]);
 
   // Track initial visit
   useEffect(() => {
@@ -460,6 +471,19 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
+  // Categories
+  const allCategoriesList = [...new Set([...defaultCategories, ...customCategories])];
+
+  const addCategory = (name: string) => {
+    const trimmed = name.trim();
+    if (!trimmed || allCategoriesList.includes(trimmed)) return;
+    setCustomCategories(prev => [...prev, trimmed]);
+  };
+
+  const removeCategory = (name: string) => {
+    setCustomCategories(prev => prev.filter(c => c !== name));
+  };
+
   // Recommendations
   const addRecommendation = (name: string, productIds: string[]) => {
     const rec: RecommendationCategory = {
@@ -496,6 +520,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       analytics, trackEvent, getStats,
       notifications, addNotification, markNotificationRead, unreadCount,
       recommendations, addRecommendation, updateRecommendation, removeRecommendation,
+      customCategories, addCategory, removeCategory, allCategories: allCategoriesList,
     }}>
       {children}
     </StoreContext.Provider>

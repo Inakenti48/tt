@@ -9,7 +9,6 @@ import {
 } from 'lucide-react';
 import { useStore, Order, UserRole, RecommendationCategory, ALL_SECTIONS, SectionName } from '../store/useStore';
 import { Product } from '../data/products';
-import { categories as allCategories } from '../data/products';
 import { cn } from '../utils/cn';
 import { LiquidButton } from '../components/LiquidButton';
 
@@ -105,7 +104,8 @@ function ProductForm({
   onSave: (p: Product) => void;
   onCancel: () => void;
 }) {
-  const cats = allCategories.filter((c) => c !== 'Все');
+  const { allCategories: storeCats } = useStore();
+  const cats = storeCats.filter((c) => c !== 'Все');
   const [name, setName] = useState(initial?.name || '');
   const [price, setPrice] = useState(initial?.price?.toString() || '');
   const [category, setCategory] = useState(initial?.category || cats[0]);
@@ -752,8 +752,8 @@ function UserManager() {
    RecommendationsManager — manage "Рекомендуем для вас"
    ═══════════════════════════════════════════════════ */
 function RecommendationsManager() {
-  const { recommendations, addRecommendation, updateRecommendation, removeRecommendation, allProducts } = useStore();
-  const existingCats = allCategories.filter(c => c !== 'Все');
+  const { recommendations, addRecommendation, updateRecommendation, removeRecommendation, allProducts, allCategories: storeCats } = useStore();
+  const existingCats = storeCats.filter(c => c !== 'Все');
 
   const [showForm, setShowForm] = useState(false);
   const [editingRec, setEditingRec] = useState<RecommendationCategory | null>(null);
@@ -984,6 +984,7 @@ export function Admin() {
     adminCredentials, registerAdmin, loginAdmin, updateAdminCredentials,
     notifications, markNotificationRead, unreadCount, users,
     recommendations, addRecommendation, updateRecommendation, removeRecommendation,
+    allCategories: storeCats, addCategory, removeCategory, customCategories,
   } = useStore();
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -1003,6 +1004,8 @@ export function Admin() {
   const [settingsSaved, setSettingsSaved] = useState(false);
   const [showNotifs, setShowNotifs] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
+  const [showCatManager, setShowCatManager] = useState(false);
+  const [newCatName, setNewCatName] = useState('');
 
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
@@ -1423,6 +1426,89 @@ export function Admin() {
         {/* ── Products Tab ── */}
         {activeTab === 'products' && (
           <motion.div key="products" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+            {/* Category Manager */}
+            <div className="mb-4">
+              <button
+                onClick={() => setShowCatManager(!showCatManager)}
+                className={cn(
+                  "w-full flex items-center justify-between bg-surface rounded-2xl shadow-sm px-5 py-3 transition-all",
+                  showCatManager ? "ring-2 ring-primary" : "hover:shadow-md"
+                )}
+              >
+                <span className="text-sm font-bold">Категории ({storeCats.filter(c => c !== 'Все').length})</span>
+                <span className="text-xs opacity-40">{showCatManager ? 'Скрыть' : 'Управление'}</span>
+              </button>
+
+              <AnimatePresence>
+                {showCatManager && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="bg-surface rounded-2xl shadow-sm p-4 mt-2 space-y-3">
+                      {/* Add new category */}
+                      <div className="flex gap-2">
+                        <input
+                          value={newCatName}
+                          onChange={e => setNewCatName(e.target.value)}
+                          onKeyDown={e => {
+                            if (e.key === 'Enter' && newCatName.trim()) {
+                              addCategory(newCatName.trim());
+                              setNewCatName('');
+                            }
+                          }}
+                          placeholder="Новая категория..."
+                          className="flex-1 bg-background rounded-xl px-4 py-2.5 border border-primary/5 outline-none text-sm focus:ring-1 focus:ring-primary"
+                        />
+                        <button
+                          onClick={() => {
+                            if (newCatName.trim()) {
+                              addCategory(newCatName.trim());
+                              setNewCatName('');
+                            }
+                          }}
+                          disabled={!newCatName.trim()}
+                          className="bg-primary text-primary-inv rounded-xl px-4 py-2.5 text-sm font-bold hover:scale-105 active:scale-95 transition-transform disabled:opacity-30 disabled:scale-100"
+                        >
+                          <Plus size={16} />
+                        </button>
+                      </div>
+
+                      {/* Category list */}
+                      <div className="flex flex-wrap gap-2">
+                        {storeCats.filter(c => c !== 'Все').map(cat => {
+                          const isCustom = customCategories.includes(cat);
+                          const productCount = allProducts.filter(p => p.category === cat).length;
+                          return (
+                            <span
+                              key={cat}
+                              className={cn(
+                                "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all",
+                                isCustom ? "bg-primary/10 border-primary/20" : "bg-background border-primary/5"
+                              )}
+                            >
+                              {cat}
+                              <span className="opacity-30">({productCount})</span>
+                              {isCustom && (
+                                <button
+                                  onClick={() => removeCategory(cat)}
+                                  className="ml-0.5 hover:text-red-500 transition-colors"
+                                >
+                                  <X size={10} />
+                                </button>
+                              )}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
             {(showAddForm || editingProduct) ? (
               <div className="bg-surface rounded-3xl shadow-sm p-6 mb-6">
                 <ProductForm
