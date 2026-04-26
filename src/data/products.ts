@@ -1,6 +1,8 @@
 export interface ColorVariant {
   hex: string;
   image: string;
+  name?: string;
+  photos?: string[];
 }
 
 export interface Product {

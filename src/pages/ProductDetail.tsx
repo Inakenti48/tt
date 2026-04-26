@@ -9,14 +9,14 @@ import { LiquidButton } from '../components/LiquidButton';
 export function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { allProducts: products, addToCart } = useStore();
-  const [isFavorite, setIsFavorite] = useState(false);
+  const { allProducts: products, addToCart, toggleFavorite, isFavorite: isFav } = useStore();
   const [showOrderToast, setShowOrderToast] = useState(false);
   const [activeColor, setActiveColor] = useState(0);
   const [activeThumb, setActiveThumb] = useState(0);
   const [expanded, setExpanded] = useState(false);
 
   const product = products.find((p) => p.id === id);
+  const isFavorite = product ? isFav(product.id) : false;
 
   if (!product) {
     return (
@@ -38,17 +38,21 @@ export function ProductDetail() {
     setTimeout(() => setShowOrderToast(false), 2000);
   };
 
-  // Current color variant image
-  const currentImage = product.colorVariants[activeColor]?.image || product.image;
+  // Current color variant
+  const currentVariant = product.colorVariants[activeColor];
+  const currentImage = currentVariant?.image || product.image;
 
-  // Thumbnails based on current color variant
-  const thumbs = [
-    `${currentImage}&fit=crop&crop=center`,
-    `${currentImage}&fit=crop&crop=top`,
-    `${currentImage}&fit=crop&crop=left`,
-    `${currentImage}&fit=crop&crop=bottom`,
-    `${currentImage}&fit=crop&crop=right`,
-  ];
+  // Thumbnails: use per-color photos if available, else generate crops
+  const variantPhotos = (currentVariant as any)?.photos as string[] | undefined;
+  const thumbs = (variantPhotos && variantPhotos.length > 1)
+    ? variantPhotos
+    : [
+        `${currentImage}&fit=crop&crop=center`,
+        `${currentImage}&fit=crop&crop=top`,
+        `${currentImage}&fit=crop&crop=left`,
+        `${currentImage}&fit=crop&crop=bottom`,
+        `${currentImage}&fit=crop&crop=right`,
+      ];
 
   const handleColorChange = (index: number) => {
     setActiveColor(index);
@@ -80,7 +84,7 @@ export function ProductDetail() {
           <ArrowLeft size={20} />
         </button>
         <button
-          onClick={() => setIsFavorite(!isFavorite)}
+          onClick={() => product && toggleFavorite(product.id)}
           className="bg-surface/80 backdrop-blur-sm p-3 rounded-full shadow-sm hover:shadow-md transition-shadow"
         >
           <Star
@@ -156,23 +160,28 @@ export function ProductDetail() {
               </button>
             </div>
 
-            {/* Color variant selector */}
+            {/* Color variant selector with names */}
             {product.colorVariants.length > 1 && (
-              <div className="max-w-lg mx-auto flex items-center gap-3 mb-8 px-2">
-                <span className="text-xs opacity-40 uppercase tracking-wider">цвет</span>
-                <div className="flex gap-2">
+              <div className="max-w-lg mx-auto mb-8 px-2">
+                <span className="text-xs opacity-40 uppercase tracking-wider mb-2 block">цвет</span>
+                <div className="flex gap-2 flex-wrap">
                   {product.colorVariants.map((variant, i) => (
                     <button
                       key={i}
                       onClick={() => handleColorChange(i)}
                       className={cn(
-                        "w-8 h-8 rounded-full border-2 transition-all hover:scale-110",
+                        "flex items-center gap-2 px-3 py-1.5 rounded-full border-2 transition-all hover:scale-105",
                         i === activeColor
-                          ? "border-primary scale-110 shadow-md ring-2 ring-primary/20 ring-offset-2"
+                          ? "border-primary shadow-md ring-2 ring-primary/20 ring-offset-1"
                           : "border-primary/10"
                       )}
-                      style={{ backgroundColor: variant.hex }}
-                    />
+                    >
+                      <span className="w-6 h-6 rounded-full border border-primary/10 flex-shrink-0" style={{ backgroundColor: variant.hex }} />
+                      {(variant as any).name && (
+                        <span className="text-xs font-medium">{(variant as any).name}</span>
+                      )}
+                      <span className="text-[9px] opacity-30 font-mono">{variant.hex}</span>
+                    </button>
                   ))}
                 </div>
               </div>

@@ -14,10 +14,11 @@ const navItems = [
 
 export function Navbar() {
   const location = useLocation();
-  const { cart, setCartOpen, orders } = useStore();
+  const { cart, setCartOpen, orders, favorites, unreadCount } = useStore();
 
   const cartCount = cart.reduce((s, i) => s + i.qty, 0);
   const hasOrders = orders.length > 0;
+  const favCount = favorites.length;
 
   return (
     <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50">
@@ -40,8 +41,15 @@ export function Navbar() {
               <item.icon size={20} strokeWidth={isActive ? 2.5 : 1.5} />
 
               {/* Chat badge */}
-              {item.id === 'chat' && hasOrders && !isActive && (
+              {item.id === 'chat' && (hasOrders || unreadCount > 0) && !isActive && (
                 <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-terracotta rounded-full" />
+              )}
+
+              {/* Favorites count badge */}
+              {item.id === 'favorites' && favCount > 0 && !isActive && (
+                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center px-1">
+                  {favCount > 9 ? '9+' : favCount}
+                </span>
               )}
 
               {isActive && (
