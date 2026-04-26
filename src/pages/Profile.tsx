@@ -72,10 +72,25 @@ export function Profile() {
     authMode === 'login' ? handleLogin() : handleRegister();
   };
 
+  const neuBg = '#e0e5ec';
+  const neuCard: React.CSSProperties = {
+    background: neuBg,
+    borderRadius: '24px',
+    boxShadow: '8px 8px 16px #b8bec7, -8px -8px 16px #ffffff',
+    border: 'none',
+    padding: '32px',
+  };
+  const neuInset: React.CSSProperties = {
+    background: neuBg,
+    borderRadius: '50px',
+    boxShadow: 'inset 4px 4px 8px #b8bec7, inset -4px -4px 8px #ffffff',
+    border: 'none',
+  };
+
   return (
-    <div className="max-w-md mx-auto py-12 px-4">
+    <div className="max-w-md mx-auto py-12 px-4" style={{ background: neuBg, minHeight: '100vh' }}>
       <div className="text-center mb-8">
-        <div className="inline-flex bg-primary/5 rounded-full p-4 mb-4">
+        <div className="inline-flex rounded-full p-4 mb-4" style={{ background: neuBg, boxShadow: '4px 4px 10px #b8bec7, -4px -4px 10px #ffffff' }}>
           <KeyRound size={32} className="opacity-60" />
         </div>
         <h2 className="text-3xl font-bold">
@@ -96,15 +111,15 @@ export function Profile() {
 
       {/* Registration success */}
       {registered && (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-surface rounded-3xl shadow-sm p-6 mb-6 text-center">
-          <div className="inline-flex bg-green-50 rounded-full p-3 mb-4">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-6 text-center" style={neuCard}>
+          <div className="inline-flex rounded-full p-3 mb-4" style={{ background: neuBg, boxShadow: '3px 3px 6px #b8bec7, -3px -3px 6px #ffffff' }}>
             <Check size={24} className="text-green-600" />
           </div>
           <h3 className="text-lg font-bold mb-2">Регистрация успешна!</h3>
           <p className="text-sm opacity-50 mb-5 leading-relaxed">
             Сохраните ваши учётные данные, чтобы вы могли зайти и пользоваться прекрасным веб-сервисом интернет-магазина ROOOMEBEL
           </p>
-          <div className="bg-background rounded-2xl p-4 mb-4 text-left">
+          <div className="rounded-2xl p-4 mb-4 text-left" style={{ background: neuBg, boxShadow: 'inset 3px 3px 6px #b8bec7, inset -3px -3px 6px #ffffff', borderRadius: '16px' }}>
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs opacity-40 uppercase tracking-wider">Ваши данные</span>
             </div>
@@ -121,8 +136,8 @@ export function Profile() {
           </div>
           <button onClick={handleCopyCredentials} className={cn(
             "w-full rounded-full py-3.5 font-bold flex items-center justify-center gap-2 transition-all mb-3",
-            copied ? "bg-green-600 text-white" : "bg-surface border border-primary/15 hover:bg-primary/5"
-          )}>
+            copied ? "bg-green-600 text-white" : ""
+          )} style={copied ? {} : { background: neuBg, boxShadow: '4px 4px 8px #b8bec7, -4px -4px 8px #ffffff' }}>
             {copied ? <Check size={18} /> : <Copy size={18} />}
             {copied ? 'Скопировано!' : 'Скопировать имя и пароль'}
           </button>
@@ -134,9 +149,9 @@ export function Profile() {
 
       {/* Login / Register form */}
       {!registered && (
-        <div className="space-y-4">
-          <div className="bg-surface rounded-3xl shadow-sm p-6 space-y-4">
-            {/* Tab switcher */}
+        <div className="space-y-6">
+          <div className="space-y-5" style={neuCard}>
+            {/* Tab switcher — kept as-is with gradient */}
             <div className="flex gap-3 justify-center mb-2">
               {[
                 { label: 'Вход', mode: 'login' as const, icon: LogIn },
@@ -147,13 +162,14 @@ export function Profile() {
                   onClick={() => { setAuthMode(tab.mode); setError(''); }}
                   className={cn(
                     "relative px-6 py-2.5 pill font-bold text-sm transition-all overflow-hidden flex items-center gap-1.5",
-                    authMode === tab.mode ? "text-white shadow-lg scale-105" : "opacity-50 hover:opacity-80"
+                    authMode === tab.mode ? "text-white scale-105" : "opacity-50 hover:opacity-80"
                   )}
                   style={authMode === tab.mode ? {
                     background: 'linear-gradient(315deg, rgba(101,0,94,1) 3%, rgba(60,132,206,1) 38%, rgba(48,238,226,1) 68%, rgba(255,25,25,1) 98%)',
                     backgroundSize: '400% 400%',
                     animation: 'gradient 6s ease infinite',
-                  } : {}}
+                    boxShadow: '4px 4px 8px #b8bec7, -4px -4px 8px #ffffff',
+                  } : { background: neuBg, boxShadow: '3px 3px 6px #b8bec7, -3px -3px 6px #ffffff' }}
                 >
                   <tab.icon size={15} />
                   {tab.label}
@@ -168,7 +184,8 @@ export function Profile() {
                 value={nameField}
                 onChange={(e) => { setNameField(e.target.value); setError(''); }}
                 placeholder="Введите ваше имя"
-                className="w-full bg-background rounded-2xl px-5 py-4 border border-primary/5 focus:ring-2 focus:ring-primary outline-none text-sm"
+                className="w-full px-5 py-4 outline-none text-sm"
+                style={neuInset}
               />
             </div>
             <div className="space-y-2">
@@ -179,7 +196,8 @@ export function Profile() {
                 onChange={(e) => { setPasswordField(e.target.value); setError(''); }}
                 onKeyDown={(e) => { if (e.key === 'Enter') handleSubmit(); }}
                 placeholder={authMode === 'register' ? 'Придумайте пароль' : 'Введите пароль'}
-                className="w-full bg-background rounded-2xl px-5 py-4 border border-primary/5 focus:ring-2 focus:ring-primary outline-none text-sm"
+                className="w-full px-5 py-4 outline-none text-sm"
+                style={neuInset}
               />
             </div>
             {error && <p className="text-sm text-terracotta text-center">{error}</p>}
