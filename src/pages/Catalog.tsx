@@ -176,6 +176,11 @@ function TumblerCard({ product, index, onOrder }: { product: Product; index: num
               <div>
                 <h3 className="text-base font-bold leading-tight">{product.name}</h3>
                 <p className="text-xs opacity-40 tracking-wider uppercase mt-0.5">{product.sku}</p>
+                {product.inStock === false ? (
+                  <span className="text-[10px] text-red-500 font-bold">Нет в наличии</span>
+                ) : product.quantity !== undefined && product.quantity > 0 ? (
+                  <span className="text-[10px] text-green-600 font-bold">В наличии: {product.quantity} шт.</span>
+                ) : null}
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-lg font-bold">{product.price} ₽</span>
@@ -319,6 +324,8 @@ export function Catalog() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOrder, setSortOrder] = useState<'none' | 'asc' | 'desc'>('none');
   const [activeRecCat, setActiveRecCat] = useState(0);
+  const [priceFilterOpen, setPriceFilterOpen] = useState(false);
+  const [maxPrice, setMaxPrice] = useState('');
 
   const handleOrder = (e: React.MouseEvent, product: Product) => {
     e.preventDefault();
@@ -341,6 +348,13 @@ export function Catalog() {
     filtered = filtered.filter((p) =>
       p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q)
     );
+  }
+
+  if (maxPrice.trim()) {
+    const maxP = Number(maxPrice);
+    if (!isNaN(maxP) && maxP > 0) {
+      filtered = filtered.filter((p) => p.price <= maxP);
+    }
   }
 
   if (sortOrder === 'asc') filtered.sort((a, b) => a.price - b.price);
@@ -520,15 +534,40 @@ export function Catalog() {
             )}
           </div>
 
-          <button
-            onClick={() => setActiveCategory(activeCategory === 'Все' ? 'Тумбочки' : 'Все')}
-            className={cn(
-              "w-10 h-10 rounded-full border flex items-center justify-center transition-all shrink-0",
-              activeCategory !== 'Все' ? "bg-primary text-primary-inv border-primary" : "border-primary/15 hover:bg-primary/5"
+          {/* Price filter — expanding field */}
+          <div className="relative flex items-center shrink-0" style={{ height: 40 }}>
+            <input
+              type="number"
+              value={maxPrice}
+              onChange={(e) => setMaxPrice(e.target.value)}
+              onFocus={() => setPriceFilterOpen(true)}
+              onBlur={() => { if (!maxPrice) setPriceFilterOpen(false); }}
+              placeholder={priceFilterOpen ? 'Цена до ₽' : ''}
+              className={cn(
+                "h-10 rounded-full border-2 bg-transparent outline-none font-bold transition-all duration-500",
+                maxPrice ? "border-primary text-primary" : "border-primary/15 text-primary",
+                priceFilterOpen ? "w-36 pl-5 pr-8 text-sm" : "w-10 pl-3 pr-3 text-[0px] cursor-pointer"
+              )}
+              style={{ caretColor: priceFilterOpen ? 'var(--primary)' : 'transparent' }}
+              onClick={() => !priceFilterOpen && setPriceFilterOpen(true)}
+            />
+            {!priceFilterOpen && (
+              <button
+                onClick={() => setPriceFilterOpen(true)}
+                className="absolute inset-0 flex items-center justify-center"
+              >
+                <Filter size={17} className={maxPrice ? "text-primary" : "opacity-60"} />
+              </button>
             )}
-          >
-            <Filter size={17} className={activeCategory !== 'Все' ? "" : "opacity-60"} />
-          </button>
+            {maxPrice && (
+              <button
+                onMouseDown={(e) => { e.preventDefault(); setMaxPrice(''); }}
+                className="absolute right-3 top-1/2 -translate-y-1/2 opacity-40 hover:opacity-100 transition-colors"
+              >
+                <X size={14} />
+              </button>
+            )}
+          </div>
 
           <button
             onClick={toggleSort}
@@ -547,6 +586,16 @@ export function Catalog() {
               className="text-xs opacity-50"
             >
               {sortOrder === 'asc' ? 'Цена ↑' : 'Цена ↓'}
+            </motion.span>
+          )}
+
+          {maxPrice && (
+            <motion.span
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="text-xs opacity-50"
+            >
+              до {Number(maxPrice).toLocaleString('ru-RU')} ₽
             </motion.span>
           )}
         </div>

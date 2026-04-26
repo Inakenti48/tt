@@ -18,6 +18,8 @@ export interface Product {
   material?: string;
   color?: 'terracotta' | 'mustard' | 'primary';
   colorVariants: ColorVariant[];
+  inStock?: boolean;
+  quantity?: number;
 }
 
 export const categories = [

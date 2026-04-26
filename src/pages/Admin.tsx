@@ -131,6 +131,8 @@ function ProductForm({
   });
   const [weight, setWeight] = useState(initial?.weight || '');
   const [material, setMaterial] = useState(initial?.material || '');
+  const [inStock, setInStock] = useState(initial?.inStock !== false);
+  const [quantity, setQuantity] = useState(initial?.quantity?.toString() || '');
   const [colors, setColors] = useState<{ hex: string; name: string; photos: string[] }[]>(() => {
     if (!initial) return [{ hex: '#FFFFFF', name: '', photos: [] }];
     return initial.colorVariants.map(v => ({
@@ -227,6 +229,8 @@ function ProductForm({
         image: c.photos[0] || images[i] || mainImage,
         photos: c.photos.length > 0 ? c.photos : (images[i] ? [images[i]] : [mainImage]),
       })),
+      inStock,
+      quantity: quantity ? Number(quantity) : undefined,
     };
     onSave(product);
   };
@@ -315,6 +319,39 @@ function ProductForm({
           <label className="text-xs font-bold opacity-50 mb-1 block">Материал</label>
           <input value={material} onChange={(e) => setMaterial(e.target.value)} placeholder="Дуб, МДФ" className={fieldClass} />
         </div>
+      </div>
+
+      {/* Stock / Quantity */}
+      <div className="bg-background rounded-2xl p-4 space-y-3">
+        <div className="flex items-center justify-between">
+          <label className="text-xs font-bold opacity-50">В наличии</label>
+          <button
+            type="button"
+            onClick={() => setInStock(!inStock)}
+            className={cn(
+              "relative w-12 h-6 rounded-full transition-all",
+              inStock ? "bg-green-500" : "bg-gray-300 dark:bg-gray-600"
+            )}
+          >
+            <span className={cn(
+              "absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-all",
+              inStock ? "left-[26px]" : "left-0.5"
+            )} />
+          </button>
+        </div>
+        {inStock && (
+          <div>
+            <label className="text-xs font-bold opacity-50 mb-1 block">Количество (шт.)</label>
+            <input
+              type="number"
+              min="0"
+              value={quantity}
+              onChange={(e) => setQuantity(e.target.value)}
+              placeholder="Без ограничений"
+              className={fieldClass}
+            />
+          </div>
+        )}
       </div>
 
       {/* Colors with picker + eyedropper + name + per-color photos */}
