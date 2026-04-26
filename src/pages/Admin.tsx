@@ -1054,8 +1054,13 @@ export function Admin() {
   };
 
   /* ── Not logged in — redirect to profile/login ── */
+  useEffect(() => {
+    if (!adminSession) {
+      navigate('/profile', { replace: true });
+    }
+  }, [adminSession, navigate]);
+
   if (!adminSession) {
-    navigate('/profile', { replace: true });
     return null;
   }
 

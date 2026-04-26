@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { LogIn, UserPlus, KeyRound, Copy, Check } from 'lucide-react';
@@ -9,7 +9,7 @@ import { useStore, ALL_SECTIONS } from '../store/useStore';
 export function Profile() {
   const navigate = useNavigate();
   const {
-    adminCredentials, registerAdmin, loginAdmin, users, adminSession, setAdminSession,
+    registerAdmin, loginAdmin, users, adminSession, setAdminSession,
   } = useStore();
 
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
@@ -19,9 +19,15 @@ export function Profile() {
   const [registered, setRegistered] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  // Already logged in — redirect to admin
+  // Navigate to admin AFTER adminSession is set in context
+  useEffect(() => {
+    if (adminSession) {
+      navigate('/admin', { replace: true });
+    }
+  }, [adminSession, navigate]);
+
+  // Already logged in — show nothing while redirecting
   if (adminSession) {
-    navigate('/admin', { replace: true });
     return null;
   }
 
@@ -43,7 +49,7 @@ export function Profile() {
         setAdminSession({ name: nameField.trim(), role: 'admin', sections: [...ALL_SECTIONS] });
       }
       setError('');
-      navigate('/admin');
+      // Navigation happens via useEffect when adminSession updates
     } else {
       setError('Неверное имя или пароль');
     }
@@ -59,7 +65,7 @@ export function Profile() {
   const handleEnterPanel = () => {
     setAdminSession({ name: nameField.trim(), role: 'admin', sections: [...ALL_SECTIONS] });
     setRegistered(false);
-    navigate('/admin');
+    // Navigation happens via useEffect when adminSession updates
   };
 
   const handleSubmit = () => {
