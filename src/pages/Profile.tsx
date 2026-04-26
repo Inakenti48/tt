@@ -88,24 +88,11 @@ export function Profile() {
   };
 
   return (
-    <div className="max-w-md mx-auto py-12 px-4" style={{ background: neuBg, minHeight: '100vh' }}>
+    <div className="max-w-md mx-auto py-12 px-4">
       <div className="text-center mb-8">
         <div className="inline-flex rounded-full p-4 mb-4" style={{ background: neuBg, boxShadow: '4px 4px 10px #b8bec7, -4px -4px 10px #ffffff' }}>
           <KeyRound size={32} className="opacity-60" />
         </div>
-        <h2 className="text-3xl font-bold">
-          <span className="text-red-500">Л</span>
-          <span
-            className="animate-title-gradient"
-            style={{
-              background: 'linear-gradient(315deg, rgba(180,220,255,1) 0%, rgba(255,255,255,1) 25%, rgba(200,230,255,1) 50%, rgba(180,200,255,1) 75%, rgba(255,240,245,1) 100%)',
-              backgroundSize: '400% 400%',
-              WebkitBackgroundClip: 'text',
-              backgroundClip: 'text',
-              color: 'transparent',
-            }}
-          >ичный кабинет</span>
-        </h2>
         <p className="text-sm opacity-40 mt-2">ROOOMEBEL</p>
       </div>
 
