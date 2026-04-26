@@ -168,6 +168,11 @@ interface StoreContextType {
   addCategory: (name: string) => void;
   removeCategory: (name: string) => void;
   allCategories: string[];
+
+  // Admin session (global)
+  adminSession: { name: string; role: 'admin' | 'manager' | 'viewer'; sections: string[] } | null;
+  setAdminSession: (session: { name: string; role: 'admin' | 'manager' | 'viewer'; sections: string[] } | null) => void;
+  logoutAdmin: () => void;
 }
 
 const StoreContext = createContext<StoreContextType | null>(null);
@@ -196,6 +201,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [customCategories, setCustomCategories] = useState<string[]>(
     () => dbGet(DB_KEYS.categories, [])
   );
+  const [adminSession, setAdminSession] = useState<{ name: string; role: 'admin' | 'manager' | 'viewer'; sections: string[] } | null>(null);
+  const logoutAdmin = () => setAdminSession(null);
 
   // Persist to localStorage
   useEffect(() => { dbSet(DB_KEYS.orders, orders); }, [orders]);
@@ -521,6 +528,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       notifications, addNotification, markNotificationRead, unreadCount,
       recommendations, addRecommendation, updateRecommendation, removeRecommendation,
       customCategories, addCategory, removeCategory, allCategories: allCategoriesList,
+      adminSession, setAdminSession, logoutAdmin,
     }}>
       {children}
     </StoreContext.Provider>
