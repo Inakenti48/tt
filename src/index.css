@@ -127,3 +127,7 @@ h4.\!uppercase, h5.\!uppercase, h6.\!uppercase {
   0%, 50%, 100% { opacity: 1; }
   25%, 75% { opacity: 0; }
 }
+
+.animate-blink-cursor {
+  animation: blink 0.8s step-end infinite;
+}

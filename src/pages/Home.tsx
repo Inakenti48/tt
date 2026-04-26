@@ -43,6 +43,22 @@ export function Home() {
   const total = carouselItems.length;
   const { theme } = useTheme();
   const isDark = theme === 'dark';
+  const titleText = 'Rooomebel';
+  const [typedCount, setTypedCount] = useState(0);
+
+  useEffect(() => {
+    setTypedCount(0);
+    const interval = setInterval(() => {
+      setTypedCount(prev => {
+        if (prev >= titleText.length) {
+          clearInterval(interval);
+          return prev;
+        }
+        return prev + 1;
+      });
+    }, 120);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const check = () => setMobile(window.innerWidth < 768);
@@ -112,7 +128,7 @@ export function Home() {
         </defs>
       </svg>
 
-      {/* Big liquid gradient title — ROOOMEBEL */}
+      {/* Big liquid gradient title — ROOOMEBEL with typing effect */}
       <motion.h1
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -130,7 +146,13 @@ export function Home() {
           filter: 'url(#liquid-filter)',
         }}
       >
-        Rooomebel
+        {titleText.slice(0, typedCount)}
+        {typedCount < titleText.length && (
+          <span className="inline-block w-[3px] md:w-[5px] h-[3rem] md:h-[6rem] align-middle ml-1 animate-blink-cursor" style={{
+            background: isDark ? '#FFD700' : '#c0392b',
+          }} />
+        )}
+        <span className="invisible">{titleText.slice(typedCount)}</span>
       </motion.h1>
 
       {/* 3D Carousel */}
