@@ -311,12 +311,13 @@ function CustomOrderForm() {
 
 export function Catalog() {
   const navigate = useNavigate();
-  const { addToCart, allProducts: products } = useStore();
+  const { addToCart, allProducts: products, recommendations } = useStore();
   const [showOrderToast, setShowOrderToast] = useState(false);
   const [activeCategory, setActiveCategory] = useState('Все');
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOrder, setSortOrder] = useState<'none' | 'asc' | 'desc'>('none');
+  const [activeRecCat, setActiveRecCat] = useState(0);
 
   const handleOrder = (e: React.MouseEvent, product: Product) => {
     e.preventDefault();
@@ -344,8 +345,13 @@ export function Catalog() {
   if (sortOrder === 'asc') filtered.sort((a, b) => a.price - b.price);
   if (sortOrder === 'desc') filtered.sort((a, b) => b.price - a.price);
 
-  // Pick 4 recommended products
-  const recommended = [products[3], products[2], products[4], products[7]];
+  // Recommendations: use admin-configured categories, fallback to default
+  const defaultRecs = [
+    { id: '_default', name: 'Кровати', productIds: products.filter(p => p.category === 'Кровати').map(p => p.id) },
+    { id: '_default2', name: 'Комоды', productIds: products.filter(p => p.category === 'Комоды').map(p => p.id) },
+    { id: '_default3', name: 'Консоли', productIds: products.filter(p => p.category === 'Консоли').map(p => p.id) },
+  ];
+  const recCategories = recommendations.length > 0 ? recommendations : defaultRecs;
 
   return (
     <div className="pb-20">
@@ -405,49 +411,54 @@ export function Catalog() {
 
         {/* Category pills for recommendations */}
         <div className="flex gap-2 mb-5 overflow-x-auto scrollbar-hide pb-1">
-          {['Кровати', 'Комоды', 'Консоли'].map((cat, i) => (
-            <span
-              key={cat}
+          {recCategories.map((rec, i) => (
+            <button
+              key={rec.id}
+              onClick={() => setActiveRecCat(i)}
               className={cn(
                 "px-4 py-2 rounded-full border text-sm whitespace-nowrap transition-all cursor-pointer",
-                i === 0 ? "border-primary bg-primary/5 font-bold" : "border-primary/10 hover:bg-primary/5"
+                i === activeRecCat ? "border-primary bg-primary/5 font-bold" : "border-primary/10 hover:bg-primary/5"
               )}
             >
-              {cat}
-            </span>
+              {rec.name}
+            </button>
           ))}
         </div>
 
         {/* Horizontal scroll cards */}
         <div className="flex gap-5 overflow-x-auto pb-4 -mx-2 px-2 snap-x snap-mandatory scrollbar-hide">
-          {recommended.map((product) => (
-            <Link
-              key={product.id}
-              to={`/product/${product.id}`}
-              className="flex-shrink-0 w-44 snap-start group"
-            >
-              <div className="aspect-square bg-surface rounded-2xl overflow-hidden shadow-sm mb-3 group-hover:shadow-md transition-shadow">
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-              </div>
-              <h4 className="text-sm font-bold leading-tight">{product.name}</h4>
-              <div className="flex items-center justify-between mt-1.5">
-                <span className="text-base font-bold">{product.price} ₽</span>
-                <div className="flex items-center gap-1">
-                  {product.colorVariants.map((variant, i) => (
-                    <span
-                      key={i}
-                      className="w-2.5 h-2.5 rounded-full border border-primary/10"
-                      style={{ backgroundColor: variant.hex }}
-                    />
-                  ))}
+          {(recCategories[activeRecCat]?.productIds || []).map(pid => {
+            const product = products.find(p => p.id === pid);
+            if (!product) return null;
+            return (
+              <Link
+                key={product.id}
+                to={`/product/${product.id}`}
+                className="flex-shrink-0 w-44 snap-start group"
+              >
+                <div className="aspect-square bg-surface rounded-2xl overflow-hidden shadow-sm mb-3 group-hover:shadow-md transition-shadow">
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
                 </div>
-              </div>
-            </Link>
-          ))}
+                <h4 className="text-sm font-bold leading-tight">{product.name}</h4>
+                <div className="flex items-center justify-between mt-1.5">
+                  <span className="text-base font-bold">{product.price} ₽</span>
+                  <div className="flex items-center gap-1">
+                    {product.colorVariants.map((variant, vi) => (
+                      <span
+                        key={vi}
+                        className="w-2.5 h-2.5 rounded-full border border-primary/10"
+                        style={{ backgroundColor: variant.hex }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </div>
 

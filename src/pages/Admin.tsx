@@ -5,9 +5,9 @@ import {
   Package, CheckCircle, Bell, MessageCircle, Send, ArrowLeft, Plus, Trash2,
   Edit3, X, Save, Copy, Check, KeyRound, UserPlus, LogIn, Settings, Upload,
   Pipette, BarChart3, Users, ShoppingCart, Heart, Eye, Calendar,
-  Shield, ChevronDown, ChevronUp, TrendingUp, Star, AlertCircle
+  Shield, TrendingUp, Star, AlertCircle
 } from 'lucide-react';
-import { useStore, Order, UserRole, ALL_SECTIONS, SectionName } from '../store/useStore';
+import { useStore, Order, UserRole, RecommendationCategory, ALL_SECTIONS, SectionName } from '../store/useStore';
 import { Product } from '../data/products';
 import { categories as allCategories } from '../data/products';
 import { cn } from '../utils/cn';
@@ -567,6 +567,7 @@ function UserManager() {
     dashboard: 'Дашборд',
     orders: 'Заказы',
     products: 'Товары',
+    recommendations: 'Рекомендации',
     users: 'Пользователи',
     settings: 'Настройки',
   };
@@ -747,6 +748,232 @@ function UserManager() {
 }
 
 /* ═══════════════════════════════════════════════════
+   RecommendationsManager — manage "Рекомендуем для вас"
+   ═══════════════════════════════════════════════════ */
+function RecommendationsManager() {
+  const { recommendations, addRecommendation, updateRecommendation, removeRecommendation, allProducts } = useStore();
+  const existingCats = allCategories.filter(c => c !== 'Все');
+
+  const [showForm, setShowForm] = useState(false);
+  const [editingRec, setEditingRec] = useState<RecommendationCategory | null>(null);
+  const [catName, setCatName] = useState('');
+  const [customName, setCustomName] = useState('');
+  const [useExisting, setUseExisting] = useState(true);
+  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
+  const [productSearch, setProductSearch] = useState('');
+
+  const resetForm = () => {
+    setCatName(''); setCustomName(''); setSelectedProducts([]); setProductSearch('');
+    setShowForm(false); setEditingRec(null); setUseExisting(true);
+  };
+
+  const handleEdit = (rec: RecommendationCategory) => {
+    setEditingRec(rec);
+    setCatName(rec.name);
+    setCustomName(rec.name);
+    setSelectedProducts([...rec.productIds]);
+    setUseExisting(existingCats.includes(rec.name));
+    setShowForm(true);
+  };
+
+  const handleSave = (e: React.FormEvent) => {
+    e.preventDefault();
+    const name = useExisting ? catName : customName.trim();
+    if (!name || selectedProducts.length === 0) return;
+
+    if (editingRec) {
+      updateRecommendation(editingRec.id, { name, productIds: selectedProducts });
+    } else {
+      addRecommendation(name, selectedProducts);
+    }
+    resetForm();
+  };
+
+  const toggleProduct = (pid: string) => {
+    setSelectedProducts(prev =>
+      prev.includes(pid) ? prev.filter(id => id !== pid) : [...prev, pid]
+    );
+  };
+
+  const filteredProducts = allProducts.filter(p =>
+    !productSearch || p.name.toLowerCase().includes(productSearch.toLowerCase()) || p.category.toLowerCase().includes(productSearch.toLowerCase())
+  );
+
+  return (
+    <div className="space-y-4">
+      {showForm ? (
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="bg-surface rounded-3xl shadow-sm p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-bold flex items-center gap-2">
+              <Star size={18} className="opacity-40" />
+              {editingRec ? 'Редактировать рекомендацию' : 'Новая категория рекомендаций'}
+            </h3>
+            <button onClick={resetForm} className="p-2 hover:bg-primary/5 rounded-full"><X size={18} /></button>
+          </div>
+
+          <form onSubmit={handleSave} className="space-y-4">
+            {/* Choose existing or custom category */}
+            <div>
+              <label className="text-xs font-bold opacity-50 mb-2 block">Тип категории</label>
+              <div className="flex gap-2 mb-3">
+                <button type="button" onClick={() => setUseExisting(true)} className={cn(
+                  "flex-1 py-2 rounded-xl text-xs font-bold border transition-all",
+                  useExisting ? "bg-primary text-primary-inv border-primary" : "bg-background border-primary/10"
+                )}>
+                  Существующая
+                </button>
+                <button type="button" onClick={() => setUseExisting(false)} className={cn(
+                  "flex-1 py-2 rounded-xl text-xs font-bold border transition-all",
+                  !useExisting ? "bg-primary text-primary-inv border-primary" : "bg-background border-primary/10"
+                )}>
+                  Своя название
+                </button>
+              </div>
+
+              {useExisting ? (
+                <select value={catName} onChange={e => setCatName(e.target.value)} className="w-full bg-background rounded-2xl px-5 py-3 border border-primary/5 outline-none text-sm focus:ring-2 focus:ring-primary">
+                  <option value="">Выберите категорию...</option>
+                  {existingCats.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+              ) : (
+                <input
+                  value={customName}
+                  onChange={e => setCustomName(e.target.value)}
+                  placeholder="Название категории (напр. Хиты продаж)"
+                  className="w-full bg-background rounded-2xl px-5 py-3 border border-primary/5 outline-none text-sm focus:ring-2 focus:ring-primary"
+                />
+              )}
+            </div>
+
+            {/* Product selection */}
+            <div>
+              <label className="text-xs font-bold opacity-50 mb-2 block">
+                Товары ({selectedProducts.length} выбрано)
+              </label>
+              <input
+                value={productSearch}
+                onChange={e => setProductSearch(e.target.value)}
+                placeholder="Поиск товаров..."
+                className="w-full bg-background rounded-2xl px-5 py-2.5 border border-primary/5 outline-none text-sm focus:ring-1 focus:ring-primary mb-2"
+              />
+
+              {/* Selected products */}
+              {selectedProducts.length > 0 && (
+                <div className="flex gap-2 flex-wrap mb-3">
+                  {selectedProducts.map(pid => {
+                    const p = allProducts.find(pr => pr.id === pid);
+                    if (!p) return null;
+                    return (
+                      <span key={pid} className="flex items-center gap-1.5 bg-primary/10 rounded-full px-2.5 py-1 text-xs">
+                        <img src={p.image} alt="" className="w-4 h-4 rounded-full object-cover" />
+                        <span className="font-medium truncate max-w-[100px]">{p.name}</span>
+                        <button type="button" onClick={() => toggleProduct(pid)} className="hover:text-red-500">
+                          <X size={10} />
+                        </button>
+                      </span>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Product list to select from */}
+              <div className="max-h-48 overflow-y-auto space-y-1 border border-primary/5 rounded-2xl p-2">
+                {filteredProducts.map(p => (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => toggleProduct(p.id)}
+                    className={cn(
+                      "w-full flex items-center gap-3 p-2 rounded-xl text-left transition-all text-sm",
+                      selectedProducts.includes(p.id) ? "bg-primary/10" : "hover:bg-primary/5"
+                    )}
+                  >
+                    <img src={p.image} alt="" className="w-8 h-8 rounded-lg object-cover flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-bold truncate">{p.name}</p>
+                      <p className="text-[10px] opacity-40">{p.category} · {p.price} ₽</p>
+                    </div>
+                    <div className={cn(
+                      "w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all",
+                      selectedProducts.includes(p.id) ? "bg-primary border-primary" : "border-primary/20"
+                    )}>
+                      {selectedProducts.includes(p.id) && <Check size={10} className="text-primary-inv" />}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={(!useExisting ? !customName.trim() : !catName) || selectedProducts.length === 0}
+              className="w-full bg-primary text-primary-inv rounded-full py-3.5 font-bold hover:scale-[1.02] active:scale-[0.98] transition-transform disabled:opacity-30 disabled:scale-100"
+            >
+              {editingRec ? 'Сохранить' : 'Создать категорию'}
+            </button>
+          </form>
+        </motion.div>
+      ) : (
+        <button
+          onClick={() => setShowForm(true)}
+          className="w-full bg-surface rounded-3xl shadow-sm p-5 flex items-center justify-center gap-3 border-2 border-dashed border-primary/15 hover:border-primary/30 hover:bg-primary/5 transition-all group"
+        >
+          <div className="bg-primary/10 rounded-full p-2 group-hover:bg-primary group-hover:text-primary-inv transition-all">
+            <Plus size={20} />
+          </div>
+          <span className="font-bold opacity-60 group-hover:opacity-100 transition-opacity">Добавить категорию рекомендаций</span>
+        </button>
+      )}
+
+      {/* List of recommendation categories */}
+      {recommendations.length === 0 && !showForm ? (
+        <div className="bg-surface rounded-3xl shadow-sm p-12 text-center">
+          <Star size={40} className="mx-auto opacity-15 mb-4" />
+          <p className="opacity-40">Рекомендаций пока нет</p>
+          <p className="text-xs opacity-30 mt-1">Добавьте категории и выберите товары для секции "Рекомендуем для вас"</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {recommendations.map(rec => {
+            const products = rec.productIds.map(id => allProducts.find(p => p.id === id)).filter(Boolean) as typeof allProducts;
+            return (
+              <motion.div key={rec.id} layout className="bg-surface rounded-2xl shadow-sm p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="bg-primary/5 rounded-full p-2"><Star size={16} /></div>
+                    <div>
+                      <h4 className="font-bold text-sm">{rec.name}</h4>
+                      <p className="text-[10px] opacity-40">{products.length} товаров</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-1">
+                    <button onClick={() => handleEdit(rec)} className="p-2 rounded-full hover:bg-primary/5 transition-colors">
+                      <Edit3 size={14} className="opacity-40" />
+                    </button>
+                    <button onClick={() => removeRecommendation(rec.id)} className="p-2 rounded-full hover:bg-red-50 transition-colors">
+                      <Trash2 size={14} className="opacity-40" />
+                    </button>
+                  </div>
+                </div>
+                {/* Product thumbnails */}
+                <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+                  {products.map(p => (
+                    <div key={p.id} className="flex-shrink-0 w-14">
+                      <img src={p.image} alt={p.name} className="w-14 h-14 rounded-xl object-cover border border-primary/5" />
+                      <p className="text-[8px] opacity-40 truncate mt-0.5 text-center">{p.name}</p>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════
    Main Admin Component
    ═══════════════════════════════════════════════════ */
 export function Admin() {
@@ -755,6 +982,7 @@ export function Admin() {
     orders, allProducts, addProduct, removeProduct, updateProduct,
     adminCredentials, registerAdmin, loginAdmin, updateAdminCredentials,
     notifications, markNotificationRead, unreadCount, users,
+    recommendations, addRecommendation, updateRecommendation, removeRecommendation,
   } = useStore();
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -940,6 +1168,7 @@ export function Admin() {
     { key: 'dashboard', label: 'Дашборд', icon: BarChart3, section: 'dashboard' },
     { key: 'orders', label: 'Заказы', icon: Package, section: 'orders', count: orders.length },
     { key: 'products', label: 'Товары', icon: CheckCircle, section: 'products', count: allProducts.length },
+    { key: 'recommendations', label: 'Рекомендации', icon: Star, section: 'recommendations', count: recommendations.length },
     { key: 'users', label: 'Пользователи', icon: Users, section: 'users', count: users.length },
   ].filter(t => canAccess(t.section));
 
@@ -1210,6 +1439,13 @@ export function Admin() {
                 </motion.div>
               ))}
             </div>
+          </motion.div>
+        )}
+
+        {/* ── Recommendations Tab ── */}
+        {activeTab === 'recommendations' && (
+          <motion.div key="recommendations" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
+            <RecommendationsManager />
           </motion.div>
         )}
 

@@ -55,6 +55,12 @@ export interface AnalyticsEvent {
   data?: Record<string, any>;
 }
 
+export interface RecommendationCategory {
+  id: string;
+  name: string;
+  productIds: string[];
+}
+
 export interface ProductColorEntry {
   hex: string;
   name: string;
@@ -71,6 +77,7 @@ const DB_KEYS = {
   orders: 'rooomebel_orders',
   products: 'rooomebel_products',
   notifications: 'rooomebel_notifications',
+  recommendations: 'rooomebel_recommendations',
 } as const;
 
 function dbGet<T>(key: string, fallback: T): T {
@@ -85,7 +92,7 @@ function dbSet(key: string, value: any) {
 }
 
 /* ─── All admin sections ─── */
-export const ALL_SECTIONS = ['dashboard', 'orders', 'products', 'users', 'settings'] as const;
+export const ALL_SECTIONS = ['dashboard', 'orders', 'products', 'recommendations', 'users', 'settings'] as const;
 export type SectionName = typeof ALL_SECTIONS[number];
 
 /* ─── Context type ─── */
@@ -148,6 +155,12 @@ interface StoreContextType {
   addNotification: (text: string, orderId?: string) => void;
   markNotificationRead: (id: string) => void;
   unreadCount: number;
+
+  // Recommendations
+  recommendations: RecommendationCategory[];
+  addRecommendation: (name: string, productIds: string[]) => void;
+  updateRecommendation: (id: string, updates: Partial<RecommendationCategory>) => void;
+  removeRecommendation: (id: string) => void;
 }
 
 const StoreContext = createContext<StoreContextType | null>(null);
@@ -170,6 +183,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [notifications, setNotifications] = useState<{ id: string; text: string; time: string; read: boolean; orderId?: string }[]>(
     () => dbGet(DB_KEYS.notifications, [])
   );
+  const [recommendations, setRecommendations] = useState<RecommendationCategory[]>(
+    () => dbGet(DB_KEYS.recommendations, [])
+  );
 
   // Persist to localStorage
   useEffect(() => { dbSet(DB_KEYS.orders, orders); }, [orders]);
@@ -178,6 +194,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   useEffect(() => { dbSet(DB_KEYS.favorites, favorites); }, [favorites]);
   useEffect(() => { dbSet(DB_KEYS.analytics, analytics); }, [analytics]);
   useEffect(() => { dbSet(DB_KEYS.notifications, notifications); }, [notifications]);
+  useEffect(() => { dbSet(DB_KEYS.recommendations, recommendations); }, [recommendations]);
 
   // Track initial visit
   useEffect(() => {
@@ -442,6 +459,24 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
+  // Recommendations
+  const addRecommendation = (name: string, productIds: string[]) => {
+    const rec: RecommendationCategory = {
+      id: `REC-${Date.now().toString(36).toUpperCase()}`,
+      name,
+      productIds,
+    };
+    setRecommendations(prev => [...prev, rec]);
+  };
+
+  const updateRecommendation = (id: string, updates: Partial<RecommendationCategory>) => {
+    setRecommendations(prev => prev.map(r => r.id === id ? { ...r, ...updates } : r));
+  };
+
+  const removeRecommendation = (id: string) => {
+    setRecommendations(prev => prev.filter(r => r.id !== id));
+  };
+
   // Request notification permission on mount
   useEffect(() => {
     if ('Notification' in window && Notification.permission === 'default') {
@@ -459,6 +494,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       favorites, toggleFavorite, isFavorite: isFavoriteCheck,
       analytics, trackEvent, getStats,
       notifications, addNotification, markNotificationRead, unreadCount,
+      recommendations, addRecommendation, updateRecommendation, removeRecommendation,
     }}>
       {children}
     </StoreContext.Provider>
