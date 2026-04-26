@@ -453,17 +453,41 @@ export function Catalog() {
 
       {/* Search / Filter / Sort icon row */}
       <div id="catalog-grid" className="space-y-3 mb-8">
-        {/* Icons row */}
+        {/* Icons row with animated search */}
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => setSearchOpen(!searchOpen)}
-            className={cn(
-              "w-10 h-10 rounded-full border flex items-center justify-center transition-all shrink-0",
-              searchOpen ? "bg-primary text-primary-inv border-primary" : "border-primary/15 hover:bg-primary/5"
+          {/* Animated search toggle */}
+          <div className="relative flex items-center">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => setSearchOpen(true)}
+              onBlur={() => { if (!searchQuery) setSearchOpen(false); }}
+              placeholder={searchOpen ? 'Поиск...' : ''}
+              className={cn(
+                "h-10 rounded-full border-2 border-terracotta bg-transparent outline-none text-terracotta font-bold px-3.5 transition-all duration-500 ease-[cubic-bezier(0.77,0,0.175,1)]",
+                searchOpen ? "w-48 md:w-56 text-sm" : "w-10 text-[0px] cursor-pointer"
+              )}
+              style={{ caretColor: '#ff3628' }}
+            />
+            {/* Animated cursor/handle line */}
+            <span
+              className={cn(
+                "inline-block h-[25px] w-[2px] bg-terracotta rounded-sm absolute transition-all duration-500 ease-[cubic-bezier(0.77,0,0.175,1)]",
+                searchOpen
+                  ? "left-3 top-1/2 -translate-y-1/2 rotate-0 animate-[blink_3s_0.7s_infinite_both]"
+                  : "left-[19px] top-[34px] -rotate-45"
+              )}
+            />
+            {searchQuery && (
+              <button
+                onMouseDown={(e) => { e.preventDefault(); setSearchQuery(''); }}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-terracotta/50 hover:text-terracotta transition-colors"
+              >
+                <X size={14} />
+              </button>
             )}
-          >
-            <Search size={17} className={searchOpen ? "" : "opacity-60"} />
-          </button>
+          </div>
 
           <button
             onClick={() => setActiveCategory(activeCategory === 'Все' ? 'Тумбочки' : 'Все')}
@@ -519,37 +543,7 @@ export function Catalog() {
           ))}
         </div>
 
-        {/* Search input — expands inline when search is active */}
-        <AnimatePresence>
-          {searchOpen && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="overflow-hidden"
-            >
-              <div className="relative max-w-sm">
-                <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 opacity-30" />
-                <input
-                  autoFocus
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Поиск по названию..."
-                  className="w-full bg-surface rounded-2xl pl-11 pr-5 py-3 shadow-sm focus:ring-2 focus:ring-primary outline-none text-sm border border-primary/5"
-                />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery('')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 opacity-30 hover:opacity-60 transition-opacity"
-                  >
-                    <X size={16} />
-                  </button>
-                )}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* Old search removed — now inline in icon row */}
       </div>
 
       {/* Product grid or Custom Order Form */}

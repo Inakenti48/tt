@@ -121,3 +121,9 @@ h4.\!uppercase, h5.\!uppercase, h6.\!uppercase {
   50% { background-position: 100% 100%; }
   100% { background-position: 0% 0%; }
 }
+
+/* Blinking cursor for search */
+@keyframes blink {
+  0%, 50%, 100% { opacity: 1; }
+  25%, 75% { opacity: 0; }
+}
