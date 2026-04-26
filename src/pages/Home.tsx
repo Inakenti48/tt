@@ -80,12 +80,12 @@ export function Home() {
       <motion.h1
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className={`text-[3.5rem] md:text-[7rem] font-black tracking-tight !uppercase text-center pointer-events-none select-none leading-none mb-2 ${isDark ? 'animate-title-gradient' : ''}`}
+        className="text-[3.5rem] md:text-[7rem] font-black tracking-tight !uppercase text-center pointer-events-none select-none leading-none mb-2 animate-title-gradient"
         style={{
           background: isDark
-            ? 'linear-gradient(315deg, rgba(101,0,94,1) 3%, rgba(60,132,206,1) 38%, rgba(48,238,226,1) 68%, rgba(255,25,25,1) 98%)'
-            : 'linear-gradient(to bottom, rgb(var(--color-primary)) 0%, rgb(var(--color-primary) / 0.6) 40%, rgba(200,30,30,1) 100%)',
-          backgroundSize: isDark ? '400% 400%' : 'auto',
+            ? 'linear-gradient(315deg, #FFD700 0%, #FFFFFF 20%, #FF6B6B 40%, #FFD700 60%, #FFFFFF 80%, #FF6B6B 100%)'
+            : 'linear-gradient(315deg, #1a1a2e 0%, #c0392b 20%, #2c3e50 40%, #c0392b 60%, #1a1a2e 80%, #8e44ad 100%)',
+          backgroundSize: '400% 400%',
           WebkitBackgroundClip: 'text',
           backgroundClip: 'text',
           color: 'transparent',
