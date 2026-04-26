@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Star, ShoppingBag, ChevronLeft, ChevronRight, Check } from 'lucide-react';
+import { ArrowLeft, Star, ShoppingBag, ChevronLeft, ChevronRight, Check, X, Pipette } from 'lucide-react';
 import { cn } from '../utils/cn';
 import { useStore } from '../store/useStore';
 import { LiquidButton } from '../components/LiquidButton';
@@ -14,6 +14,8 @@ export function ProductDetail() {
   const [activeColor, setActiveColor] = useState(0);
   const [activeThumb, setActiveThumb] = useState(0);
   const [expanded, setExpanded] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [pickedColor, setPickedColor] = useState<string | null>(null);
 
   const product = products.find((p) => p.id === id);
   const isFavorite = product ? isFav(product.id) : false;
@@ -57,6 +59,16 @@ export function ProductDetail() {
   const handleColorChange = (index: number) => {
     setActiveColor(index);
     setActiveThumb(0);
+  };
+
+  const handleEyedropper = async () => {
+    try {
+      if ('EyeDropper' in window) {
+        const dropper = new (window as any).EyeDropper();
+        const result = await dropper.open();
+        setPickedColor(result.sRGBHex);
+      }
+    } catch { /* user cancelled */ }
   };
 
   return (
