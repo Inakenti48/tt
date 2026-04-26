@@ -11,6 +11,7 @@ import { useStore, Order, UserRole, RecommendationCategory, ALL_SECTIONS, Sectio
 import { Product } from '../data/products';
 import { categories as allCategories } from '../data/products';
 import { cn } from '../utils/cn';
+import { LiquidButton } from '../components/LiquidButton';
 
 /* ═══════════════════════════════════════════════════
    AdminChat — order-specific chat
@@ -1119,7 +1120,7 @@ export function Admin() {
 
         {/* Login / Register form */}
         {!registered && (
-          <form onSubmit={authMode === 'login' ? handleLogin : handleRegister} className="space-y-4">
+          <div className="space-y-4">
             <div className="bg-surface rounded-3xl shadow-sm p-6 space-y-4">
               <div className="flex bg-background rounded-full p-1 mb-2">
                 <button type="button" onClick={() => { setAuthMode('login'); setError(''); }} className={cn(
@@ -1141,14 +1142,23 @@ export function Admin() {
               </div>
               <div className="space-y-2">
                 <label className="text-xs font-bold opacity-50 px-1 block">Пароль</label>
-                <input type="password" value={passwordField} onChange={(e) => { setPasswordField(e.target.value); setError(''); }} placeholder={authMode === 'register' ? 'Придумайте пароль' : 'Введите пароль'} className="w-full bg-background rounded-2xl px-5 py-4 border border-primary/5 focus:ring-2 focus:ring-primary outline-none text-sm" />
+                <input
+                  type="password"
+                  value={passwordField}
+                  onChange={(e) => { setPasswordField(e.target.value); setError(''); }}
+                  onKeyDown={(e) => { if (e.key === 'Enter') { authMode === 'login' ? handleLogin(e as any) : handleRegister(e as any); } }}
+                  placeholder={authMode === 'register' ? 'Придумайте пароль' : 'Введите пароль'}
+                  className="w-full bg-background rounded-2xl px-5 py-4 border border-primary/5 focus:ring-2 focus:ring-primary outline-none text-sm"
+                />
               </div>
               {error && <p className="text-sm text-terracotta text-center">{error}</p>}
             </div>
-            <button className="w-full bg-primary text-primary-inv rounded-full py-4 font-bold flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-transform">
-              {authMode === 'login' ? <><LogIn size={18} /> Войти</> : <><UserPlus size={18} /> Зарегистрироваться</>}
-            </button>
-          </form>
+            <div className="flex justify-center">
+              <LiquidButton width={320} height={56} onClick={() => { const fakeEvent = { preventDefault: () => {} } as React.FormEvent; authMode === 'login' ? handleLogin(fakeEvent) : handleRegister(fakeEvent); }}>
+                {authMode === 'login' ? <><LogIn size={18} /> Войти</> : <><UserPlus size={18} /> Зарегистрироваться</>}
+              </LiquidButton>
+            </div>
+          </div>
         )}
       </div>
     );
