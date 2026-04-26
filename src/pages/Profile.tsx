@@ -5,6 +5,7 @@ import { LogIn, UserPlus, KeyRound, Copy, Check } from 'lucide-react';
 import { cn } from '../utils/cn';
 import { LiquidButton } from '../components/LiquidButton';
 import { useStore, ALL_SECTIONS } from '../store/useStore';
+import { useTheme } from '../context/ThemeContext';
 
 export function Profile() {
   const navigate = useNavigate();
@@ -72,26 +73,49 @@ export function Profile() {
     authMode === 'login' ? handleLogin() : handleRegister();
   };
 
-  const neuBg = '#e0e5ec';
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+
+  const neuBg = isDark ? '#2a2a2e' : '#e0e5ec';
+  const neuShadow = isDark
+    ? '8px 8px 16px #1a1a1d, -8px -8px 16px #3a3a3f'
+    : '8px 8px 16px #b8bec7, -8px -8px 16px #ffffff';
+  const neuShadowSm = isDark
+    ? '3px 3px 6px #1a1a1d, -3px -3px 6px #3a3a3f'
+    : '3px 3px 6px #b8bec7, -3px -3px 6px #ffffff';
+  const neuShadowMd = isDark
+    ? '4px 4px 8px #1a1a1d, -4px -4px 8px #3a3a3f'
+    : '4px 4px 8px #b8bec7, -4px -4px 8px #ffffff';
+  const neuInsetShadow = isDark
+    ? 'inset 4px 4px 8px #1a1a1d, inset -4px -4px 8px #3a3a3f'
+    : 'inset 4px 4px 8px #b8bec7, inset -4px -4px 8px #ffffff';
+  const neuInsetShadowSm = isDark
+    ? 'inset 3px 3px 6px #1a1a1d, inset -3px -3px 6px #3a3a3f'
+    : 'inset 3px 3px 6px #b8bec7, inset -3px -3px 6px #ffffff';
+  const neuTextColor = isDark ? '#e0e0e0' : '#333';
+  const neuLabelColor = isDark ? '#ccc' : '#000';
+
   const neuCard: React.CSSProperties = {
     background: neuBg,
     borderRadius: '24px',
-    boxShadow: '8px 8px 16px #b8bec7, -8px -8px 16px #ffffff',
+    boxShadow: neuShadow,
     border: 'none',
     padding: '32px',
+    color: neuTextColor,
   };
   const neuInset: React.CSSProperties = {
     background: neuBg,
     borderRadius: '50px',
-    boxShadow: 'inset 4px 4px 8px #b8bec7, inset -4px -4px 8px #ffffff',
+    boxShadow: neuInsetShadow,
     border: 'none',
+    color: neuTextColor,
   };
 
   return (
     <div className="max-w-md mx-auto py-12 px-4">
       <div className="text-center mb-8">
-        <div className="inline-flex rounded-full p-4 mb-4" style={{ background: neuBg, boxShadow: '4px 4px 10px #b8bec7, -4px -4px 10px #ffffff' }}>
-          <KeyRound size={32} className="opacity-60" />
+        <div className="inline-flex rounded-full p-4 mb-4" style={{ background: neuBg, boxShadow: neuShadowMd }}>
+          <KeyRound size={32} style={{ opacity: 0.6, color: neuTextColor }} />
         </div>
         <p className="text-sm opacity-40 mt-2">ROOOMEBEL</p>
       </div>
@@ -99,14 +123,14 @@ export function Profile() {
       {/* Registration success */}
       {registered && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-6 text-center" style={neuCard}>
-          <div className="inline-flex rounded-full p-3 mb-4" style={{ background: neuBg, boxShadow: '3px 3px 6px #b8bec7, -3px -3px 6px #ffffff' }}>
+          <div className="inline-flex rounded-full p-3 mb-4" style={{ background: neuBg, boxShadow: neuShadowSm }}>
             <Check size={24} className="text-green-600" />
           </div>
           <h3 className="text-lg font-bold mb-2">Регистрация успешна!</h3>
           <p className="text-sm opacity-50 mb-5 leading-relaxed">
             Сохраните ваши учётные данные, чтобы вы могли зайти и пользоваться прекрасным веб-сервисом интернет-магазина ROOOMEBEL
           </p>
-          <div className="rounded-2xl p-4 mb-4 text-left" style={{ background: neuBg, boxShadow: 'inset 3px 3px 6px #b8bec7, inset -3px -3px 6px #ffffff', borderRadius: '16px' }}>
+          <div className="rounded-2xl p-4 mb-4 text-left" style={{ background: neuBg, boxShadow: neuInsetShadowSm, borderRadius: '16px' }}>
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs opacity-40 uppercase tracking-wider">Ваши данные</span>
             </div>
@@ -124,7 +148,7 @@ export function Profile() {
           <button onClick={handleCopyCredentials} className={cn(
             "w-full rounded-full py-3.5 font-bold flex items-center justify-center gap-2 transition-all mb-3",
             copied ? "bg-green-600 text-white" : ""
-          )} style={copied ? {} : { background: neuBg, boxShadow: '4px 4px 8px #b8bec7, -4px -4px 8px #ffffff' }}>
+          )} style={copied ? {} : { background: neuBg, boxShadow: neuShadowMd }}>
             {copied ? <Check size={18} /> : <Copy size={18} />}
             {copied ? 'Скопировано!' : 'Скопировать имя и пароль'}
           </button>
@@ -155,8 +179,8 @@ export function Profile() {
                     background: 'linear-gradient(315deg, rgba(101,0,94,1) 3%, rgba(60,132,206,1) 38%, rgba(48,238,226,1) 68%, rgba(255,25,25,1) 98%)',
                     backgroundSize: '400% 400%',
                     animation: 'gradient 6s ease infinite',
-                    boxShadow: '4px 4px 8px #b8bec7, -4px -4px 8px #ffffff',
-                  } : { background: neuBg, boxShadow: '3px 3px 6px #b8bec7, -3px -3px 6px #ffffff' }}
+                    boxShadow: neuShadowMd,
+                  } : { background: neuBg, boxShadow: neuShadowSm, color: neuTextColor }}
                 >
                   <tab.icon size={15} />
                   {tab.label}
@@ -165,7 +189,7 @@ export function Profile() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-bold opacity-50 px-1 block">Имя</label>
+              <label className="text-xs font-bold px-1 block" style={{ color: neuLabelColor }}>Имя</label>
               <input
                 type="text"
                 value={nameField}
@@ -176,7 +200,7 @@ export function Profile() {
               />
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-bold opacity-50 px-1 block">Пароль</label>
+              <label className="text-xs font-bold px-1 block" style={{ color: neuLabelColor }}>Пароль</label>
               <input
                 type="password"
                 value={passwordField}
