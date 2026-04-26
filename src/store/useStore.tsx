@@ -79,6 +79,7 @@ const DB_KEYS = {
   notifications: 'rooomebel_notifications',
   recommendations: 'rooomebel_recommendations',
   categories: 'rooomebel_categories',
+  session: 'rooomebel_session',
 } as const;
 
 function dbGet<T>(key: string, fallback: T): T {
@@ -201,7 +202,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [customCategories, setCustomCategories] = useState<string[]>(
     () => dbGet(DB_KEYS.categories, [])
   );
-  const [adminSession, setAdminSession] = useState<{ name: string; role: 'admin' | 'manager' | 'viewer'; sections: string[] } | null>(null);
+  const [adminSession, setAdminSession] = useState<{ name: string; role: 'admin' | 'manager' | 'viewer'; sections: string[] } | null>(
+    () => dbGet(DB_KEYS.session, null)
+  );
   const logoutAdmin = () => setAdminSession(null);
 
   // Persist to localStorage
@@ -213,6 +216,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   useEffect(() => { dbSet(DB_KEYS.notifications, notifications); }, [notifications]);
   useEffect(() => { dbSet(DB_KEYS.recommendations, recommendations); }, [recommendations]);
   useEffect(() => { dbSet(DB_KEYS.categories, customCategories); }, [customCategories]);
+  useEffect(() => { dbSet(DB_KEYS.session, adminSession); }, [adminSession]);
 
   // Track initial visit
   useEffect(() => {
