@@ -76,7 +76,43 @@ export function Home() {
 
   return (
     <div className="flex flex-col items-center min-h-[80vh] pt-2 overflow-hidden">
-      {/* Big gradient title — ROOOMEBEL */}
+      {/* SVG liquid filter */}
+      <svg className="absolute w-0 h-0" aria-hidden="true">
+        <defs>
+          <filter id="liquid-filter">
+            <feTurbulence
+              type="fractalNoise"
+              baseFrequency="0.015"
+              numOctaves="3"
+              seed="2"
+              result="turbulence"
+            >
+              <animate
+                attributeName="baseFrequency"
+                values="0.015;0.025;0.015"
+                dur="4s"
+                repeatCount="indefinite"
+              />
+            </feTurbulence>
+            <feDisplacementMap
+              in="SourceGraphic"
+              in2="turbulence"
+              scale="12"
+              xChannelSelector="R"
+              yChannelSelector="G"
+            >
+              <animate
+                attributeName="scale"
+                values="8;14;8"
+                dur="3s"
+                repeatCount="indefinite"
+              />
+            </feDisplacementMap>
+          </filter>
+        </defs>
+      </svg>
+
+      {/* Big liquid gradient title — ROOOMEBEL */}
       <motion.h1
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -91,6 +127,7 @@ export function Home() {
           color: 'transparent',
           fontFamily: '"Arial Black", "Arial Bold", Arial, sans-serif',
           letterSpacing: '-0.02em',
+          filter: 'url(#liquid-filter)',
         }}
       >
         Rooomebel
