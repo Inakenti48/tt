@@ -140,6 +140,9 @@ export function Chat() {
             {msg.from === 'admin' && (
               <p className="text-[9px] font-bold opacity-40 mb-1">Админ</p>
             )}
+            {msg.from === 'client' && (
+              <p className="text-[9px] font-bold text-primary-inv/50 mb-1">{order.name}</p>
+            )}
             <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
             <p className={cn(
               "text-[10px] mt-1",

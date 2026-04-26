@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { LogIn, UserPlus, KeyRound, Copy, Check } from 'lucide-react';
+import { LogIn, UserPlus, KeyRound, Copy, Check, LogOut, User } from 'lucide-react';
 import { cn } from '../utils/cn';
 import { LiquidButton } from '../components/LiquidButton';
 import { useStore, ALL_SECTIONS } from '../store/useStore';
@@ -10,7 +10,8 @@ import { useTheme } from '../context/ThemeContext';
 export function Profile() {
   const navigate = useNavigate();
   const {
-    registerAdmin, loginAdmin, users, adminSession, setAdminSession,
+    loginAdmin, users, adminSession, setAdminSession,
+    userSession, setUserSession, logoutUser, registerUser, loginUser,
   } = useStore();
 
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
@@ -27,7 +28,7 @@ export function Profile() {
     }
   }, [adminSession, navigate]);
 
-  // Already logged in — show nothing while redirecting
+  // Already logged in as admin — show nothing while redirecting
   if (adminSession) {
     return null;
   }
@@ -35,38 +36,51 @@ export function Profile() {
   const handleRegister = () => {
     if (!nameField.trim() || !passwordField.trim()) { setError('Заполните все поля'); return; }
     if (passwordField.length < 4) { setError('Пароль должен быть не менее 4 символов'); return; }
-    registerAdmin(nameField.trim(), passwordField.trim());
+    const ok = registerUser(nameField.trim(), passwordField.trim());
+    if (!ok) { setError('Имя уже занято'); return; }
     setRegistered(true);
     setError('');
   };
 
   const handleLogin = () => {
     if (!nameField.trim() || !passwordField.trim()) { setError('Заполните все поля'); return; }
-    if (loginAdmin(nameField.trim(), passwordField.trim())) {
-      const userRole = users.find(u => u.name === nameField.trim() && u.password === passwordField.trim());
+    const name = nameField.trim();
+    const pass = passwordField.trim();
+
+    // Check admin first (admin/admin or sub-users created by admin)
+    if (loginAdmin(name, pass)) {
+      const userRole = users.find(u => u.name === name && u.password === pass);
       if (userRole) {
         setAdminSession({ name: userRole.name, role: userRole.role, sections: userRole.sections });
       } else {
-        setAdminSession({ name: nameField.trim(), role: 'admin', sections: [...ALL_SECTIONS] });
+        setAdminSession({ name, role: 'admin', sections: [...ALL_SECTIONS] });
       }
       setError('');
-      // Navigation happens via useEffect when adminSession updates
-    } else {
-      setError('Неверное имя или пароль');
+      return;
     }
+
+    // Check regular user
+    if (loginUser(name, pass)) {
+      setUserSession({ name });
+      setError('');
+      navigate('/', { replace: true });
+      return;
+    }
+
+    setError('Неверное имя или пароль');
   };
 
   const handleCopyCredentials = () => {
-    const text = `ROOOMEBEL Админ\nИмя: ${nameField.trim()}\nПароль: ${passwordField.trim()}`;
+    const text = `ROOOMEBEL\nИмя: ${nameField.trim()}\nПароль: ${passwordField.trim()}`;
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
   };
 
-  const handleEnterPanel = () => {
-    setAdminSession({ name: nameField.trim(), role: 'admin', sections: [...ALL_SECTIONS] });
+  const handleEnterShop = () => {
+    setUserSession({ name: nameField.trim() });
     setRegistered(false);
-    // Navigation happens via useEffect when adminSession updates
+    navigate('/', { replace: true });
   };
 
   const handleSubmit = () => {
@@ -120,6 +134,27 @@ export function Profile() {
         <p className="text-sm opacity-40 mt-2">ROOOMEBEL</p>
       </div>
 
+      {/* Logged in as regular user — profile card */}
+      {userSession && !registered && (
+        <div className="space-y-5" style={neuCard}>
+          <div className="flex flex-col items-center gap-3">
+            <div className="rounded-full p-4" style={{ background: neuBg, boxShadow: neuShadowSm }}>
+              <User size={28} style={{ color: neuTextColor }} />
+            </div>
+            <h3 className="text-lg font-bold">{userSession.name}</h3>
+            <p className="text-xs opacity-50">Покупатель</p>
+          </div>
+          <div className="flex gap-3">
+            <button onClick={() => navigate('/catalog')} className="flex-1 bg-primary text-primary-inv rounded-full py-3 font-bold text-sm hover:scale-[1.02] active:scale-[0.98] transition-transform">
+              В каталог
+            </button>
+            <button onClick={() => { logoutUser(); }} className="flex-1 rounded-full py-3 font-bold text-sm flex items-center justify-center gap-1.5" style={{ background: neuBg, boxShadow: neuShadowSm, color: neuTextColor }}>
+              <LogOut size={15} /> Выйти
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Registration success */}
       {registered && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-6 text-center" style={neuCard}>
@@ -152,14 +187,14 @@ export function Profile() {
             {copied ? <Check size={18} /> : <Copy size={18} />}
             {copied ? 'Скопировано!' : 'Скопировать имя и пароль'}
           </button>
-          <button onClick={handleEnterPanel} className="w-full bg-primary text-primary-inv rounded-full py-3.5 font-bold hover:scale-[1.02] active:scale-[0.98] transition-transform">
-            Войти в панель
+          <button onClick={handleEnterShop} className="w-full bg-primary text-primary-inv rounded-full py-3.5 font-bold hover:scale-[1.02] active:scale-[0.98] transition-transform">
+            Перейти в магазин
           </button>
         </motion.div>
       )}
 
       {/* Login / Register form */}
-      {!registered && (
+      {!registered && !userSession && (
         <div className="space-y-6">
           <div className="space-y-5" style={neuCard}>
             {/* Tab switcher — kept as-is with gradient */}

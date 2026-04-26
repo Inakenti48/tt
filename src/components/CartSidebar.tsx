@@ -6,10 +6,10 @@ import { cn } from '../utils/cn';
 import { useNavigate } from 'react-router-dom';
 
 export function CartSidebar() {
-  const { cart, cartOpen, setCartOpen, removeFromCart, addToCart, placeOrder, setActiveOrderId } = useStore();
+  const { cart, cartOpen, setCartOpen, removeFromCart, addToCart, placeOrder, setActiveOrderId, userSession } = useStore();
   const navigate = useNavigate();
   const [step, setStep] = useState<'cart' | 'form' | 'done'>('cart');
-  const [name, setName] = useState('');
+  const [name, setName] = useState(userSession?.name || '');
   const [phone, setPhone] = useState('');
   const [orderId, setOrderId] = useState('');
 

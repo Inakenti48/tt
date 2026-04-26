@@ -41,6 +41,13 @@ export interface UserRole {
   createdAt: string;
 }
 
+export interface RegisteredUser {
+  id: string;
+  name: string;
+  password: string;
+  createdAt: string;
+}
+
 export interface FavoriteItem {
   productId: string;
   addedAt: number;
@@ -80,6 +87,8 @@ const DB_KEYS = {
   recommendations: 'rooomebel_recommendations',
   categories: 'rooomebel_categories',
   session: 'rooomebel_session',
+  registeredUsers: 'rooomebel_registered_users',
+  userSession: 'rooomebel_user_session',
 } as const;
 
 function dbGet<T>(key: string, fallback: T): T {
@@ -174,6 +183,14 @@ interface StoreContextType {
   adminSession: { name: string; role: 'admin' | 'manager' | 'viewer'; sections: string[] } | null;
   setAdminSession: (session: { name: string; role: 'admin' | 'manager' | 'viewer'; sections: string[] } | null) => void;
   logoutAdmin: () => void;
+
+  // User session (regular users)
+  userSession: { name: string } | null;
+  setUserSession: (session: { name: string } | null) => void;
+  logoutUser: () => void;
+  registeredUsers: RegisteredUser[];
+  registerUser: (name: string, password: string) => boolean;
+  loginUser: (name: string, password: string) => boolean;
 }
 
 const StoreContext = createContext<StoreContextType | null>(null);
@@ -207,6 +224,15 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   );
   const logoutAdmin = () => setAdminSession(null);
 
+  const [userSession, setUserSession] = useState<{ name: string } | null>(
+    () => dbGet(DB_KEYS.userSession, null)
+  );
+  const logoutUser = () => setUserSession(null);
+
+  const [registeredUsers, setRegisteredUsers] = useState<RegisteredUser[]>(
+    () => dbGet(DB_KEYS.registeredUsers, [])
+  );
+
   // Persist to localStorage
   useEffect(() => { dbSet(DB_KEYS.orders, orders); }, [orders]);
   useEffect(() => { dbSet(DB_KEYS.products, allProducts); }, [allProducts]);
@@ -217,6 +243,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   useEffect(() => { dbSet(DB_KEYS.recommendations, recommendations); }, [recommendations]);
   useEffect(() => { dbSet(DB_KEYS.categories, customCategories); }, [customCategories]);
   useEffect(() => { dbSet(DB_KEYS.session, adminSession); }, [adminSession]);
+  useEffect(() => { dbSet(DB_KEYS.userSession, userSession); }, [userSession]);
+  useEffect(() => { dbSet(DB_KEYS.registeredUsers, registeredUsers); }, [registeredUsers]);
 
   // Track initial visit
   useEffect(() => {
@@ -351,6 +379,23 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     const creds = { name, password };
     setAdminCredentials(creds);
     dbSet(DB_KEYS.admin, creds);
+  };
+
+  // Regular user auth
+  const registerUser = (name: string, password: string): boolean => {
+    if (registeredUsers.some(u => u.name === name)) return false;
+    const user: RegisteredUser = {
+      id: `RU-${Date.now().toString(36).toUpperCase()}`,
+      name,
+      password,
+      createdAt: new Date().toLocaleDateString('ru-RU'),
+    };
+    setRegisteredUsers(prev => [...prev, user]);
+    return true;
+  };
+
+  const loginUser = (name: string, password: string): boolean => {
+    return registeredUsers.some(u => u.name === name && u.password === password);
   };
 
   // User roles
@@ -533,6 +578,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       recommendations, addRecommendation, updateRecommendation, removeRecommendation,
       customCategories, addCategory, removeCategory, allCategories: allCategoriesList,
       adminSession, setAdminSession, logoutAdmin,
+      userSession, setUserSession, logoutUser, registeredUsers, registerUser, loginUser,
     }}>
       {children}
     </StoreContext.Provider>

@@ -1094,21 +1094,8 @@ export function Admin() {
 
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-2xl font-bold">
-            <span className="text-red-500">Л</span>
-            <span
-              className="animate-title-gradient"
-              style={{
-                background: 'linear-gradient(315deg, rgba(180,220,255,1) 0%, rgba(255,255,255,1) 25%, rgba(200,230,255,1) 50%, rgba(180,200,255,1) 75%, rgba(255,240,245,1) 100%)',
-                backgroundSize: '400% 400%',
-                WebkitBackgroundClip: 'text',
-                backgroundClip: 'text',
-                color: 'transparent',
-              }}
-            >ичный кабинет</span>
-          </h2>
           {loggedInUser && (
-            <p className="text-xs opacity-40 mt-0.5">
+            <p className="text-sm font-bold opacity-70">
               {loggedInUser.name} · {loggedInUser.role === 'admin' ? 'Администратор' : loggedInUser.role === 'manager' ? 'Менеджер' : 'Наблюдатель'}
             </p>
           )}
