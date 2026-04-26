@@ -456,7 +456,7 @@ export function Catalog() {
         {/* Icons row with animated search */}
         <div className="flex items-center gap-3">
           {/* Animated search toggle */}
-          <div className="relative flex items-center">
+          <div className="relative flex items-center shrink-0" style={{ height: 40 }}>
             <input
               type="text"
               value={searchQuery}
@@ -465,19 +465,34 @@ export function Catalog() {
               onBlur={() => { if (!searchQuery) setSearchOpen(false); }}
               placeholder={searchOpen ? 'Поиск...' : ''}
               className={cn(
-                "h-10 rounded-full border-2 border-terracotta bg-transparent outline-none text-terracotta font-bold px-3.5 transition-all duration-500 ease-[cubic-bezier(0.77,0,0.175,1)]",
-                searchOpen ? "w-48 md:w-56 text-sm" : "w-10 text-[0px] cursor-pointer"
+                "h-10 rounded-full border-2 border-terracotta bg-transparent outline-none text-terracotta font-bold transition-all duration-500",
+                searchOpen ? "w-52 pl-4 pr-8 text-sm" : "w-10 pl-3 pr-3 text-[0px] cursor-pointer"
               )}
-              style={{ caretColor: '#ff3628' }}
+              style={{ caretColor: 'transparent' }}
             />
-            {/* Animated cursor/handle line */}
+            {/* Handle that becomes blinking cursor */}
             <span
-              className={cn(
-                "inline-block h-[25px] w-[2px] bg-terracotta rounded-sm absolute transition-all duration-500 ease-[cubic-bezier(0.77,0,0.175,1)]",
-                searchOpen
-                  ? "left-3 top-1/2 -translate-y-1/2 rotate-0 animate-[blink_3s_0.7s_infinite_both]"
-                  : "left-[19px] top-[34px] -rotate-45"
-              )}
+              className="absolute pointer-events-none transition-all duration-500"
+              style={searchOpen ? {
+                left: 14,
+                top: '50%',
+                transform: 'translateY(-50%) rotate(0deg)',
+                width: 2,
+                height: 16,
+                borderRadius: 1,
+                backgroundColor: '#8E392B',
+                animation: 'blink 1s 0.5s infinite both',
+              } : {
+                left: 24,
+                top: 28,
+                transform: 'rotate(-45deg)',
+                transformOrigin: 'top left',
+                width: 2,
+                height: 12,
+                borderRadius: 1,
+                backgroundColor: '#8E392B',
+                animation: 'none',
+              }}
             />
             {searchQuery && (
               <button
