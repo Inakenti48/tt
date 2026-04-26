@@ -455,7 +455,7 @@ export function Catalog() {
       <div id="catalog-grid" className="space-y-3 mb-8">
         {/* Icons row with animated search */}
         <div className="flex items-center gap-3">
-          {/* Animated search toggle */}
+          {/* Animated search toggle — magnifying glass → input */}
           <div className="relative flex items-center shrink-0" style={{ height: 40 }}>
             <input
               type="text"
@@ -466,31 +466,60 @@ export function Catalog() {
               placeholder={searchOpen ? 'Поиск...' : ''}
               className={cn(
                 "h-10 rounded-full border-2 border-terracotta bg-transparent outline-none text-terracotta font-bold transition-all duration-500",
-                searchOpen ? "w-52 pl-4 pr-8 text-sm" : "w-10 pl-3 pr-3 text-[0px] cursor-pointer"
+                searchOpen ? "w-52 pl-5 pr-8 text-sm" : "w-10 pl-3 pr-3 text-[0px] cursor-pointer"
               )}
               style={{ caretColor: 'transparent' }}
             />
-            {/* Handle that becomes blinking cursor */}
+            {/* Magnifying glass SVG — circle + handle */}
+            <svg
+              className="absolute pointer-events-none transition-all duration-500"
+              style={searchOpen ? {
+                left: 10,
+                top: '50%',
+                transform: 'translateY(-50%) scale(0)',
+                opacity: 0,
+                width: 20,
+                height: 20,
+              } : {
+                left: 8,
+                top: 8,
+                transform: 'scale(1)',
+                opacity: 1,
+                width: 24,
+                height: 24,
+              }}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#8E392B"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="10" cy="10" r="7" />
+              <line x1="15.5" y1="15.5" x2="21" y2="21" />
+            </svg>
+            {/* Blinking cursor — appears when open */}
             <span
               className="absolute pointer-events-none transition-all duration-500"
               style={searchOpen ? {
                 left: 14,
                 top: '50%',
-                transform: 'translateY(-50%) rotate(0deg)',
+                transform: 'translateY(-50%)',
                 width: 2,
                 height: 16,
                 borderRadius: 1,
                 backgroundColor: '#8E392B',
+                opacity: 1,
                 animation: 'blink 1s 0.5s infinite both',
               } : {
-                left: 24,
-                top: 28,
-                transform: 'rotate(-45deg)',
-                transformOrigin: 'top left',
+                left: 14,
+                top: '50%',
+                transform: 'translateY(-50%)',
                 width: 2,
-                height: 12,
+                height: 16,
                 borderRadius: 1,
                 backgroundColor: '#8E392B',
+                opacity: 0,
                 animation: 'none',
               }}
             />
