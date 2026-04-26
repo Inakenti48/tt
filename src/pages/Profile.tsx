@@ -79,19 +79,19 @@ export function Profile() {
   const neuBg = isDark ? '#2a2a2e' : '#e0e5ec';
   const neuShadow = isDark
     ? '8px 8px 16px #1a1a1d, -8px -8px 16px #3a3a3f'
-    : '8px 8px 16px #b8bec7, -8px -8px 16px #ffffff';
+    : '6px 6px 12px #c8cdd4, -6px -6px 12px #d8dde4';
   const neuShadowSm = isDark
     ? '3px 3px 6px #1a1a1d, -3px -3px 6px #3a3a3f'
-    : '3px 3px 6px #b8bec7, -3px -3px 6px #ffffff';
+    : '3px 3px 6px #c8cdd4, -3px -3px 6px #d8dde4';
   const neuShadowMd = isDark
     ? '4px 4px 8px #1a1a1d, -4px -4px 8px #3a3a3f'
-    : '4px 4px 8px #b8bec7, -4px -4px 8px #ffffff';
+    : '4px 4px 8px #c8cdd4, -4px -4px 8px #d8dde4';
   const neuInsetShadow = isDark
     ? 'inset 4px 4px 8px #1a1a1d, inset -4px -4px 8px #3a3a3f'
-    : 'inset 4px 4px 8px #b8bec7, inset -4px -4px 8px #ffffff';
+    : 'inset 4px 4px 8px #c8cdd4, inset -4px -4px 8px #d8dde4';
   const neuInsetShadowSm = isDark
     ? 'inset 3px 3px 6px #1a1a1d, inset -3px -3px 6px #3a3a3f'
-    : 'inset 3px 3px 6px #b8bec7, inset -3px -3px 6px #ffffff';
+    : 'inset 3px 3px 6px #c8cdd4, inset -3px -3px 6px #d8dde4';
   const neuTextColor = isDark ? '#e0e0e0' : '#333';
   const neuLabelColor = isDark ? '#ccc' : '#000';
 
